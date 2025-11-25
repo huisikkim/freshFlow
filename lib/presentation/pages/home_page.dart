@@ -4,6 +4,7 @@ import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/pages/login_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart';
+import 'package:fresh_flow/presentation/pages/quote_request_list_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class HomePage extends StatelessWidget {
@@ -71,7 +72,7 @@ class HomePage extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 32),
-                if (isStoreOwner)
+                if (isStoreOwner) ...[
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.of(context).push(
@@ -98,7 +99,37 @@ class HomePage extends StatelessWidget {
                       elevation: 4,
                     ),
                   ),
-                if (isDistributor)
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) =>
+                                InjectionContainer.getQuoteRequestProvider(),
+                            child: const QuoteRequestListPage(
+                              isDistributor: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.request_quote),
+                    label: const Text('내 견적 요청'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFFF6F61),
+                      side: const BorderSide(color: Color(0xFFFF6F61)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+                if (isDistributor) ...[
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.of(context).push(
@@ -126,6 +157,36 @@ class HomePage extends StatelessWidget {
                       elevation: 4,
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) =>
+                                InjectionContainer.getQuoteRequestProvider(),
+                            child: const QuoteRequestListPage(
+                              isDistributor: true,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.inbox),
+                    label: const Text('받은 견적 요청'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF06D6A0),
+                      side: const BorderSide(color: Color(0xFF06D6A0)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ],
           ),

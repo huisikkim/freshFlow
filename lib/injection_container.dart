@@ -5,23 +5,28 @@ import 'package:fresh_flow/data/datasources/auth_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/store_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/distributor_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/matching_remote_datasource.dart';
+import 'package:fresh_flow/data/datasources/quote_request_remote_datasource.dart';
 import 'package:fresh_flow/data/repositories/auth_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/store_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/distributor_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/matching_repository_impl.dart';
+import 'package:fresh_flow/data/repositories/quote_request_repository_impl.dart';
 import 'package:fresh_flow/domain/repositories/auth_repository.dart';
 import 'package:fresh_flow/domain/repositories/store_repository.dart';
 import 'package:fresh_flow/domain/repositories/distributor_repository.dart';
 import 'package:fresh_flow/domain/repositories/matching_repository.dart';
+import 'package:fresh_flow/domain/repositories/quote_request_repository.dart';
 import 'package:fresh_flow/domain/usecases/login_usecase.dart';
 import 'package:fresh_flow/domain/usecases/signup_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_store_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_distributor_usecase.dart';
 import 'package:fresh_flow/domain/usecases/get_recommendations_usecase.dart';
+import 'package:fresh_flow/domain/usecases/quote_request_usecases.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/providers/store_provider.dart';
 import 'package:fresh_flow/presentation/providers/distributor_provider.dart';
 import 'package:fresh_flow/presentation/providers/matching_provider.dart';
+import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -31,15 +36,24 @@ class InjectionContainer {
   static late StoreRemoteDataSource _storeRemoteDataSource;
   static late DistributorRemoteDataSource _distributorRemoteDataSource;
   static late MatchingRemoteDataSource _matchingRemoteDataSource;
+  static late QuoteRequestRemoteDataSource _quoteRequestRemoteDataSource;
   static late AuthRepository _authRepository;
   static late StoreRepository _storeRepository;
   static late DistributorRepository _distributorRepository;
   static late MatchingRepository _matchingRepository;
+  static late QuoteRequestRepository _quoteRequestRepository;
   static late LoginUseCase _loginUseCase;
   static late SignUpUseCase _signUpUseCase;
   static late RegisterStoreUseCase _registerStoreUseCase;
   static late RegisterDistributorUseCase _registerDistributorUseCase;
   static late GetRecommendationsUseCase _getRecommendationsUseCase;
+  static late CreateQuoteRequestUseCase _createQuoteRequestUseCase;
+  static late GetStoreQuoteRequestsUseCase _getStoreQuoteRequestsUseCase;
+  static late GetDistributorQuoteRequestsUseCase
+      _getDistributorQuoteRequestsUseCase;
+  static late RespondToQuoteRequestUseCase _respondToQuoteRequestUseCase;
+  static late CompleteQuoteRequestUseCase _completeQuoteRequestUseCase;
+  static late CancelQuoteRequestUseCase _cancelQuoteRequestUseCase;
 
   static Future<void> init() async {
     // External
@@ -52,6 +66,8 @@ class InjectionContainer {
     _storeRemoteDataSource = StoreRemoteDataSourceImpl(_httpClient);
     _distributorRemoteDataSource = DistributorRemoteDataSourceImpl(_httpClient);
     _matchingRemoteDataSource = MatchingRemoteDataSourceImpl(_httpClient);
+    _quoteRequestRemoteDataSource =
+        QuoteRequestRemoteDataSourceImpl(_httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -70,6 +86,10 @@ class InjectionContainer {
       remoteDataSource: _matchingRemoteDataSource,
       authRepository: _authRepository,
     );
+    _quoteRequestRepository = QuoteRequestRepositoryImpl(
+      remoteDataSource: _quoteRequestRemoteDataSource,
+      authRepository: _authRepository,
+    );
 
     // Use cases
     _loginUseCase = LoginUseCase(_authRepository);
@@ -78,6 +98,18 @@ class InjectionContainer {
     _registerDistributorUseCase =
         RegisterDistributorUseCase(_distributorRepository);
     _getRecommendationsUseCase = GetRecommendationsUseCase(_matchingRepository);
+    _createQuoteRequestUseCase =
+        CreateQuoteRequestUseCase(_quoteRequestRepository);
+    _getStoreQuoteRequestsUseCase =
+        GetStoreQuoteRequestsUseCase(_quoteRequestRepository);
+    _getDistributorQuoteRequestsUseCase =
+        GetDistributorQuoteRequestsUseCase(_quoteRequestRepository);
+    _respondToQuoteRequestUseCase =
+        RespondToQuoteRequestUseCase(_quoteRequestRepository);
+    _completeQuoteRequestUseCase =
+        CompleteQuoteRequestUseCase(_quoteRequestRepository);
+    _cancelQuoteRequestUseCase =
+        CancelQuoteRequestUseCase(_quoteRequestRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -103,6 +135,17 @@ class InjectionContainer {
   static MatchingProvider getMatchingProvider() {
     return MatchingProvider(
       getRecommendationsUseCase: _getRecommendationsUseCase,
+    );
+  }
+
+  static QuoteRequestProvider getQuoteRequestProvider() {
+    return QuoteRequestProvider(
+      createQuoteRequestUseCase: _createQuoteRequestUseCase,
+      getStoreQuoteRequestsUseCase: _getStoreQuoteRequestsUseCase,
+      getDistributorQuoteRequestsUseCase: _getDistributorQuoteRequestsUseCase,
+      respondToQuoteRequestUseCase: _respondToQuoteRequestUseCase,
+      completeQuoteRequestUseCase: _completeQuoteRequestUseCase,
+      cancelQuoteRequestUseCase: _cancelQuoteRequestUseCase,
     );
   }
 }

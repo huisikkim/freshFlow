@@ -19,4 +19,9 @@ class ApiConstants {
   static const String storeInfoEndpoint = '/api/store/info';
   static const String distributorInfoEndpoint = '/api/distributor/info';
   static const String matchingRecommendEndpoint = '/api/matching/recommend';
+  static const String quoteRequestEndpoint = '/api/matching/quote-request';
+  static const String storeQuoteRequestsEndpoint =
+      '/api/matching/quote-requests/store';
+  static const String distributorQuoteRequestsEndpoint =
+      '/api/matching/quote-requests/distributor';
 }

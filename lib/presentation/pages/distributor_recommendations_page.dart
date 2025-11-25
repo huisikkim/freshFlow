@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/matching_provider.dart';
+import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
 import 'package:fresh_flow/domain/entities/distributor_recommendation.dart';
+import 'package:fresh_flow/injection_container.dart';
 
 class DistributorRecommendationsPage extends StatefulWidget {
   const DistributorRecommendationsPage({super.key});
@@ -271,6 +273,22 @@ class _DistributorRecommendationsPageState
               ),
             ],
             const Divider(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                _showQuoteRequestDialog(context, recommendation);
+              },
+              icon: const Icon(Icons.request_quote, size: 20),
+              label: const Text('견적 요청하기'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6F61),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -396,5 +414,127 @@ class _DistributorRecommendationsPageState
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
           (Match m) => '${m[1]},',
         );
+  }
+
+  void _showQuoteRequestDialog(
+      BuildContext context, DistributorRecommendation recommendation) {
+    final messageController = TextEditingController();
+    final selectedProducts = <String>[];
+    final availableProducts = recommendation.supplyProducts.split(',');
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('${recommendation.distributorName}에 견적 요청'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '요청 품목 선택',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: availableProducts.map((product) {
+                    final isSelected = selectedProducts.contains(product);
+                    return FilterChip(
+                      label: Text(product.trim()),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            selectedProducts.add(product.trim());
+                          } else {
+                            selectedProducts.remove(product.trim());
+                          }
+                        });
+                      },
+                      selectedColor: const Color(0xFFFF6F61).withOpacity(0.3),
+                      checkmarkColor: const Color(0xFFFF6F61),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '추가 요청사항',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: messageController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: '예: 매주 월요일 오전 배송 가능한지 확인 부탁드립니다.',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: selectedProducts.isEmpty
+                  ? null
+                  : () async {
+                      final quoteProvider =
+                          InjectionContainer.getQuoteRequestProvider();
+                      await quoteProvider.createQuoteRequest(
+                        distributorId: recommendation.distributorId,
+                        requestedProducts: selectedProducts.join(','),
+                        message: messageController.text.isEmpty
+                            ? null
+                            : messageController.text,
+                      );
+
+                      if (dialogContext.mounted) {
+                        Navigator.pop(dialogContext);
+                      }
+
+                      if (context.mounted) {
+                        if (quoteProvider.state == QuoteRequestState.success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('견적 요청이 전송되었습니다'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } else if (quoteProvider.state ==
+                            QuoteRequestState.error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(quoteProvider.errorMessage ??
+                                  '견적 요청 실패'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6F61),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('견적 요청'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
