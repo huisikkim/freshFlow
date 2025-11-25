@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/pages/login_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,6 +14,7 @@ class HomePage extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
     final isStoreOwner = user?.userType == 'STORE_OWNER';
+    final isDistributor = user?.userType == 'DISTRIBUTOR';
 
     return Scaffold(
       appBar: AppBar(
@@ -85,6 +87,34 @@ class HomePage extends StatelessWidget {
                     label: const Text('매장 등록'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF6F61),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                    ),
+                  ),
+                if (isDistributor)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) =>
+                                InjectionContainer.getDistributorProvider(),
+                            child: const DistributorRegistrationPage(),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.local_shipping),
+                    label: const Text('유통업자 정보 등록'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF06D6A0),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
