@@ -10,8 +10,8 @@ class DistributorRecommendation {
   final String supplyProducts;
   final String serviceRegions;
   final bool deliveryAvailable;
-  final String deliveryInfo;
-  final String certifications;
+  final String? deliveryInfo;
+  final String? certifications;
   final int minOrderAmount;
   final String phoneNumber;
   final String email;
@@ -28,8 +28,8 @@ class DistributorRecommendation {
     required this.supplyProducts,
     required this.serviceRegions,
     required this.deliveryAvailable,
-    required this.deliveryInfo,
-    required this.certifications,
+    this.deliveryInfo,
+    this.certifications,
     required this.minOrderAmount,
     required this.phoneNumber,
     required this.email,

@@ -253,23 +253,27 @@ class _DistributorRecommendationsPageState
               recommendation.serviceRegions,
             ),
             const SizedBox(height: 8),
-            _buildInfoRow(
-              Icons.verified_user,
-              '인증',
-              recommendation.certifications,
-            ),
+            if (recommendation.certifications != null &&
+                recommendation.certifications!.isNotEmpty)
+              _buildInfoRow(
+                Icons.verified_user,
+                '인증',
+                recommendation.certifications!,
+              ),
             const SizedBox(height: 8),
             _buildInfoRow(
               Icons.attach_money,
               '최소 주문 금액',
               '${_formatNumber(recommendation.minOrderAmount)}원',
             ),
-            if (recommendation.deliveryAvailable) ...[
+            if (recommendation.deliveryAvailable &&
+                recommendation.deliveryInfo != null &&
+                recommendation.deliveryInfo!.isNotEmpty) ...[
               const SizedBox(height: 8),
               _buildInfoRow(
                 Icons.local_shipping,
                 '배송 정보',
-                recommendation.deliveryInfo,
+                recommendation.deliveryInfo!,
               ),
             ],
             const Divider(height: 24),
