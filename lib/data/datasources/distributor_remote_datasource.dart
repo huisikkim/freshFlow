@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fresh_flow/data/models/distributor_model.dart';
+import 'package:fresh_flow/core/constants/api_constants.dart';
 
 abstract class DistributorRemoteDataSource {
   Future<DistributorModel> registerDistributor({
@@ -22,7 +23,6 @@ abstract class DistributorRemoteDataSource {
 
 class DistributorRemoteDataSourceImpl implements DistributorRemoteDataSource {
   final http.Client client;
-  static const String baseUrl = 'http://localhost:8080';
 
   DistributorRemoteDataSourceImpl(this.client);
 
@@ -43,7 +43,7 @@ class DistributorRemoteDataSourceImpl implements DistributorRemoteDataSource {
     required String address,
   }) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/api/distributor/info'),
+      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.distributorInfoEndpoint}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

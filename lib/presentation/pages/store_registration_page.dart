@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/store_provider.dart';
+import 'package:fresh_flow/presentation/pages/distributor_recommendations_page.dart';
+import 'package:fresh_flow/injection_container.dart';
 
 class StoreRegistrationPage extends StatefulWidget {
   const StoreRegistrationPage({super.key});
@@ -66,11 +68,14 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
           builder: (context, storeProvider, child) {
             if (storeProvider.state == StoreState.success) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pop(true);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('매장이 성공적으로 등록되었습니다'),
-                    backgroundColor: Colors.green,
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider(
+                      create: (_) =>
+                          InjectionContainer.getMatchingProvider(),
+                      child: const DistributorRecommendationsPage(),
+                    ),
                   ),
                 );
               });

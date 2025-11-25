@@ -4,19 +4,24 @@ import 'package:fresh_flow/data/datasources/auth_local_datasource.dart';
 import 'package:fresh_flow/data/datasources/auth_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/store_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/distributor_remote_datasource.dart';
+import 'package:fresh_flow/data/datasources/matching_remote_datasource.dart';
 import 'package:fresh_flow/data/repositories/auth_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/store_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/distributor_repository_impl.dart';
+import 'package:fresh_flow/data/repositories/matching_repository_impl.dart';
 import 'package:fresh_flow/domain/repositories/auth_repository.dart';
 import 'package:fresh_flow/domain/repositories/store_repository.dart';
 import 'package:fresh_flow/domain/repositories/distributor_repository.dart';
+import 'package:fresh_flow/domain/repositories/matching_repository.dart';
 import 'package:fresh_flow/domain/usecases/login_usecase.dart';
 import 'package:fresh_flow/domain/usecases/signup_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_store_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_distributor_usecase.dart';
+import 'package:fresh_flow/domain/usecases/get_recommendations_usecase.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/providers/store_provider.dart';
 import 'package:fresh_flow/presentation/providers/distributor_provider.dart';
+import 'package:fresh_flow/presentation/providers/matching_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -25,13 +30,16 @@ class InjectionContainer {
   static late AuthLocalDataSource _authLocalDataSource;
   static late StoreRemoteDataSource _storeRemoteDataSource;
   static late DistributorRemoteDataSource _distributorRemoteDataSource;
+  static late MatchingRemoteDataSource _matchingRemoteDataSource;
   static late AuthRepository _authRepository;
   static late StoreRepository _storeRepository;
   static late DistributorRepository _distributorRepository;
+  static late MatchingRepository _matchingRepository;
   static late LoginUseCase _loginUseCase;
   static late SignUpUseCase _signUpUseCase;
   static late RegisterStoreUseCase _registerStoreUseCase;
   static late RegisterDistributorUseCase _registerDistributorUseCase;
+  static late GetRecommendationsUseCase _getRecommendationsUseCase;
 
   static Future<void> init() async {
     // External
@@ -43,6 +51,7 @@ class InjectionContainer {
     _authLocalDataSource = AuthLocalDataSourceImpl(_sharedPreferences);
     _storeRemoteDataSource = StoreRemoteDataSourceImpl(_httpClient);
     _distributorRemoteDataSource = DistributorRemoteDataSourceImpl(_httpClient);
+    _matchingRemoteDataSource = MatchingRemoteDataSourceImpl(_httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -57,6 +66,10 @@ class InjectionContainer {
       remoteDataSource: _distributorRemoteDataSource,
       authRepository: _authRepository,
     );
+    _matchingRepository = MatchingRepositoryImpl(
+      remoteDataSource: _matchingRemoteDataSource,
+      authRepository: _authRepository,
+    );
 
     // Use cases
     _loginUseCase = LoginUseCase(_authRepository);
@@ -64,6 +77,7 @@ class InjectionContainer {
     _registerStoreUseCase = RegisterStoreUseCase(_storeRepository);
     _registerDistributorUseCase =
         RegisterDistributorUseCase(_distributorRepository);
+    _getRecommendationsUseCase = GetRecommendationsUseCase(_matchingRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -83,6 +97,12 @@ class InjectionContainer {
   static DistributorProvider getDistributorProvider() {
     return DistributorProvider(
       registerDistributorUseCase: _registerDistributorUseCase,
+    );
+  }
+
+  static MatchingProvider getMatchingProvider() {
+    return MatchingProvider(
+      getRecommendationsUseCase: _getRecommendationsUseCase,
     );
   }
 }

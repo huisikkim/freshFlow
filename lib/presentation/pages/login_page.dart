@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/pages/home_page.dart';
 import 'package:fresh_flow/presentation/pages/signup_page.dart';
+import 'package:fresh_flow/presentation/pages/debug_connection_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -38,6 +39,17 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFF),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const DebugConnectionPage(),
+            ),
+          );
+        },
+        backgroundColor: Colors.grey[700],
+        child: const Icon(Icons.bug_report),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

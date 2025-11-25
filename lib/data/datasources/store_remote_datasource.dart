@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fresh_flow/data/models/store_model.dart';
+import 'package:fresh_flow/core/constants/api_constants.dart';
 
 abstract class StoreRemoteDataSource {
   Future<StoreModel> registerStore({
@@ -19,7 +20,6 @@ abstract class StoreRemoteDataSource {
 
 class StoreRemoteDataSourceImpl implements StoreRemoteDataSource {
   final http.Client client;
-  static const String baseUrl = 'http://localhost:8080';
 
   StoreRemoteDataSourceImpl(this.client);
 
@@ -37,7 +37,7 @@ class StoreRemoteDataSourceImpl implements StoreRemoteDataSource {
     required String address,
   }) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/api/store/info'),
+      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.storeInfoEndpoint}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

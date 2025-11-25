@@ -25,22 +25,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> login(String username, String password) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.loginEndpoint}');
-    
-    final response = await client.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'username': username,
-        'password': password,
-      }),
-    );
+    try {
+      final url = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.loginEndpoint}');
+      print('🔵 로그인 요청 URL: $url');
+      
+      final response = await client.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      return UserModel.fromJson(jsonData);
-    } else {
-      throw Exception('로그인 실패: ${response.statusCode}');
+      print('🔵 로그인 응답 상태: ${response.statusCode}');
+      print('🔵 로그인 응답 본문: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        return UserModel.fromJson(jsonData);
+      } else {
+        throw Exception('로그인 실패 (${response.statusCode}): ${response.body}');
+      }
+    } catch (e) {
+      print('🔴 로그인 에러: $e');
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection') ||
+          e.toString().contains('Failed host lookup')) {
+        throw Exception('서버에 연결할 수 없습니다.\n\n확인사항:\n1. 백엔드 서버가 실행 중인지 확인\n2. URL: ${ApiConstants.baseUrl}\n3. Android 에뮬레이터는 10.0.2.2 사용\n4. iOS 시뮬레이터는 localhost 사용');
+      }
+      rethrow;
     }
   }
 
