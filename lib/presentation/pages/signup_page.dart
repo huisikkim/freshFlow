@@ -16,8 +16,15 @@ class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _businessNumberController = TextEditingController();
+  final _businessNameController = TextEditingController();
+  final _ownerNameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+  final _addressController = TextEditingController();
+  
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  String _selectedUserType = 'STORE_OWNER';
 
   @override
   void dispose() {
@@ -25,6 +32,11 @@ class _SignUpPageState extends State<SignUpPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _businessNumberController.dispose();
+    _businessNameController.dispose();
+    _ownerNameController.dispose();
+    _phoneNumberController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -33,7 +45,7 @@ class _SignUpPageState extends State<SignUpPage> {
       if (_passwordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Passwords do not match'),
+            content: Text('비밀번호가 일치하지 않습니다'),
             backgroundColor: Colors.red,
           ),
         );
@@ -42,9 +54,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
       final authProvider = context.read<AuthProvider>();
       authProvider.signUp(
-        _usernameController.text,
-        _passwordController.text,
-        _emailController.text,
+        username: _usernameController.text,
+        password: _passwordController.text,
+        email: _emailController.text,
+        userType: _selectedUserType,
+        businessNumber: _businessNumberController.text,
+        businessName: _businessNameController.text,
+        ownerName: _ownerNameController.text,
+        phoneNumber: _phoneNumberController.text,
+        address: _addressController.text,
       );
     }
   }
@@ -98,22 +116,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Illustration placeholder
-                        Container(
-                          height: 192,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Center(
-                            child: Text(
-                              '🥗 🥤 🍱',
-                              style: TextStyle(fontSize: 80),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
                         // Welcome text
                         const Text(
-                          'Create Account',
+                          '회원가입',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
@@ -122,323 +127,236 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 12),
-
-                        // Username label
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Username',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D405B),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Username field
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextFormField(
-                            controller: _usernameController,
-                            decoration: InputDecoration(
-                              hintText: 'Enter your username',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFFA9B4C2),
-                                fontSize: 16,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.person_outline,
-                                color: Color(0xFFA9B4C2),
-                                size: 24,
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFFF6F61),
-                                  width: 2,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your username';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Email label
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Email',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D405B),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Email field
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              hintText: 'Enter your email',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFFA9B4C2),
-                                fontSize: 16,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.email_outlined,
-                                color: Color(0xFFA9B4C2),
-                                size: 24,
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFFF6F61),
-                                  width: 2,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!value.contains('@')) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Password label
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Password',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D405B),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Password field
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            decoration: InputDecoration(
-                              hintText: 'Enter your password',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFFA9B4C2),
-                                fontSize: 16,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.lock_outline,
-                                color: Color(0xFFA9B4C2),
-                                size: 24,
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                  color: const Color(0xFFA9B4C2),
-                                  size: 24,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFFF6F61),
-                                  width: 2,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              if (value.length < 6) {
-                                return 'Password must be at least 6 characters';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Confirm Password label
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Confirm Password',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D405B),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Confirm Password field
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextFormField(
-                            controller: _confirmPasswordController,
-                            obscureText: _obscureConfirmPassword,
-                            decoration: InputDecoration(
-                              hintText: 'Confirm your password',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFFA9B4C2),
-                                fontSize: 16,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.lock_outline,
-                                color: Color(0xFFA9B4C2),
-                                size: 24,
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureConfirmPassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                  color: const Color(0xFFA9B4C2),
-                                  size: 24,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureConfirmPassword = !_obscureConfirmPassword;
-                                  });
-                                },
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE5E7EB),
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFFF6F61),
-                                  width: 2,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please confirm your password';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
                         const SizedBox(height: 24),
+
+                        // User Type Selection
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            '사용자 유형',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF3D405B),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFFE5E7EB),
+                                width: 1,
+                              ),
+                            ),
+                            child: DropdownButtonFormField<String>(
+                              value: _selectedUserType,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 16,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.business,
+                                  color: Color(0xFFA9B4C2),
+                                  size: 24,
+                                ),
+                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'STORE_OWNER',
+                                  child: Text('가게 사장님'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'DISTRIBUTOR',
+                                  child: Text('유통업자'),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedUserType = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Username
+                        _buildTextField(
+                          label: '사용자명',
+                          controller: _usernameController,
+                          hint: '사용자명을 입력하세요',
+                          icon: Icons.person_outline,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '사용자명을 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Email
+                        _buildTextField(
+                          label: '이메일',
+                          controller: _emailController,
+                          hint: '이메일을 입력하세요',
+                          icon: Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '이메일을 입력해주세요';
+                            }
+                            if (!value.contains('@')) {
+                              return '올바른 이메일 주소를 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Password
+                        _buildTextField(
+                          label: '비밀번호',
+                          controller: _passwordController,
+                          hint: '비밀번호를 입력하세요',
+                          icon: Icons.lock_outline,
+                          obscureText: _obscurePassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: const Color(0xFFA9B4C2),
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '비밀번호를 입력해주세요';
+                            }
+                            if (value.length < 6) {
+                              return '비밀번호는 최소 6자 이상이어야 합니다';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Confirm Password
+                        _buildTextField(
+                          label: '비밀번호 확인',
+                          controller: _confirmPasswordController,
+                          hint: '비밀번호를 다시 입력하세요',
+                          icon: Icons.lock_outline,
+                          obscureText: _obscureConfirmPassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: const Color(0xFFA9B4C2),
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '비밀번호를 다시 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Business Number
+                        _buildTextField(
+                          label: '사업자 번호',
+                          controller: _businessNumberController,
+                          hint: '123-45-67890',
+                          icon: Icons.badge_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '사업자 번호를 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Business Name
+                        _buildTextField(
+                          label: '상호명',
+                          controller: _businessNameController,
+                          hint: '상호명을 입력하세요',
+                          icon: Icons.store_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '상호명을 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Owner Name
+                        _buildTextField(
+                          label: '대표자명',
+                          controller: _ownerNameController,
+                          hint: '대표자명을 입력하세요',
+                          icon: Icons.person_pin_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '대표자명을 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Phone Number
+                        _buildTextField(
+                          label: '전화번호',
+                          controller: _phoneNumberController,
+                          hint: '010-1234-5678',
+                          icon: Icons.phone_outlined,
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '전화번호를 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Address
+                        _buildTextField(
+                          label: '주소',
+                          controller: _addressController,
+                          hint: '주소를 입력하세요',
+                          icon: Icons.location_on_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '주소를 입력해주세요';
+                            }
+                            return null;
+                          },
+                        ),
 
                         // Error message
                         if (authProvider.state == AuthState.error)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
                             child: Text(
-                              authProvider.errorMessage ?? 'Sign up failed',
+                              authProvider.errorMessage ?? '회원가입 실패',
                               style: const TextStyle(
                                 color: Colors.red,
                                 fontSize: 14,
@@ -475,7 +393,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ),
                                   )
                                 : const Text(
-                                    'Sign Up',
+                                    '회원가입',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
@@ -493,7 +411,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                'Already have an account? ',
+                                '이미 계정이 있으신가요? ',
                                 style: TextStyle(
                                   color: Color(0xFFA9B4C2),
                                   fontSize: 14,
@@ -509,7 +427,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: const Text(
-                                  'Login',
+                                  '로그인',
                                   style: TextStyle(
                                     color: Color(0xFF06D6A0),
                                     fontSize: 14,
@@ -529,6 +447,85 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF3D405B),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TextFormField(
+            controller: controller,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: const TextStyle(
+                color: Color(0xFFA9B4C2),
+                fontSize: 16,
+              ),
+              prefixIcon: Icon(
+                icon,
+                color: const Color(0xFFA9B4C2),
+                size: 24,
+              ),
+              suffixIcon: suffixIcon,
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE5E7EB),
+                  width: 1,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE5E7EB),
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFFF6F61),
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+            ),
+            validator: validator,
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }

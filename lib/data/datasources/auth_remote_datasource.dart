@@ -5,7 +5,17 @@ import 'package:fresh_flow/data/models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> login(String username, String password);
-  Future<String> signUp(String username, String password, String email);
+  Future<String> signUp({
+    required String username,
+    required String password,
+    required String email,
+    required String userType,
+    required String businessNumber,
+    required String businessName,
+    required String ownerName,
+    required String phoneNumber,
+    required String address,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -35,7 +45,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> signUp(String username, String password, String email) async {
+  Future<String> signUp({
+    required String username,
+    required String password,
+    required String email,
+    required String userType,
+    required String businessNumber,
+    required String businessName,
+    required String ownerName,
+    required String phoneNumber,
+    required String address,
+  }) async {
     final url = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.signUpEndpoint}');
     
     final response = await client.post(
@@ -45,6 +65,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'username': username,
         'password': password,
         'email': email,
+        'userType': userType,
+        'businessNumber': businessNumber,
+        'businessName': businessName,
+        'ownerName': ownerName,
+        'phoneNumber': phoneNumber,
+        'address': address,
       }),
     );
 

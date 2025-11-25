@@ -5,7 +5,17 @@ class SignUpUseCase {
 
   SignUpUseCase(this.repository);
 
-  Future<String> execute(String username, String password, String email) async {
+  Future<String> execute({
+    required String username,
+    required String password,
+    required String email,
+    required String userType,
+    required String businessNumber,
+    required String businessName,
+    required String ownerName,
+    required String phoneNumber,
+    required String address,
+  }) async {
     if (username.isEmpty || password.isEmpty || email.isEmpty) {
       throw Exception('모든 필드를 입력해주세요');
     }
@@ -17,7 +27,22 @@ class SignUpUseCase {
     if (password.length < 6) {
       throw Exception('비밀번호는 최소 6자 이상이어야 합니다');
     }
+
+    if (businessNumber.isEmpty || businessName.isEmpty || ownerName.isEmpty || 
+        phoneNumber.isEmpty || address.isEmpty) {
+      throw Exception('사업자 정보를 모두 입력해주세요');
+    }
     
-    return await repository.signUp(username, password, email);
+    return await repository.signUp(
+      username: username,
+      password: password,
+      email: email,
+      userType: userType,
+      businessNumber: businessNumber,
+      businessName: businessName,
+      ownerName: ownerName,
+      phoneNumber: phoneNumber,
+      address: address,
+    );
   }
 }

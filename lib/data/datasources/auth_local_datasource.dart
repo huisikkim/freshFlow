@@ -26,7 +26,13 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<UserModel?> getCachedUser() async {
     final jsonString = sharedPreferences.getString(cachedUserKey);
     if (jsonString != null) {
-      return UserModel.fromJson(jsonDecode(jsonString));
+      try {
+        return UserModel.fromJson(jsonDecode(jsonString));
+      } catch (e) {
+        // 기존 캐시 데이터가 새로운 스키마와 맞지 않으면 삭제
+        await clearCache();
+        return null;
+      }
     }
     return null;
   }

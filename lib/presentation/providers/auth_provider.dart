@@ -57,14 +57,34 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> signUp(String username, String password, String email) async {
+  Future<void> signUp({
+    required String username,
+    required String password,
+    required String email,
+    required String userType,
+    required String businessNumber,
+    required String businessName,
+    required String ownerName,
+    required String phoneNumber,
+    required String address,
+  }) async {
     _state = AuthState.loading;
     _errorMessage = null;
     _successMessage = null;
     notifyListeners();
 
     try {
-      final result = await signUpUseCase.execute(username, password, email);
+      final result = await signUpUseCase.execute(
+        username: username,
+        password: password,
+        email: email,
+        userType: userType,
+        businessNumber: businessNumber,
+        businessName: businessName,
+        ownerName: ownerName,
+        phoneNumber: phoneNumber,
+        address: address,
+      );
       _successMessage = result;
       _state = AuthState.signUpSuccess;
       notifyListeners();
