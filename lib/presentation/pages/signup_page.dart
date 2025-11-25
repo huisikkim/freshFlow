@@ -2,34 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/pages/home_page.dart';
-import 'package:fresh_flow/presentation/pages/signup_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
     _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleSignUp() {
     if (_formKey.currentState!.validate()) {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Passwords do not match'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final authProvider = context.read<AuthProvider>();
-      authProvider.login(
+      authProvider.signUp(
         _usernameController.text,
         _passwordController.text,
+        _emailController.text,
       );
     }
   }
@@ -82,23 +97,23 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Illustration placeholder
                         Container(
                           height: 192,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Center(
                             child: Text(
-                              '🍅 🧀 🥑',
+                              '🥗 🥤 🍱',
                               style: TextStyle(fontSize: 80),
                             ),
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Welcome text
                         const Text(
-                          'Welcome back!',
+                          'Create Account',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
@@ -108,12 +123,12 @@ class _LoginPageState extends State<LoginPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 12),
-                        
-                        // Email/Username label
+
+                        // Username label
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            'Email / Username',
+                            'Username',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -122,14 +137,14 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        
+
                         // Username field
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
-                              hintText: 'Enter your email or username',
+                              hintText: 'Enter your username',
                               hintStyle: const TextStyle(
                                 color: Color(0xFFA9B4C2),
                                 fontSize: 16,
@@ -176,7 +191,79 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        
+
+                        // Email label
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Email',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF3D405B),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Email field
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              hintText: 'Enter your email',
+                              hintStyle: const TextStyle(
+                                color: Color(0xFFA9B4C2),
+                                fontSize: 16,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.email_outlined,
+                                color: Color(0xFFA9B4C2),
+                                size: 24,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFFF6F61),
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
                         // Password label
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -190,7 +277,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        
+
                         // Password field
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -254,43 +341,104 @@ class _LoginPageState extends State<LoginPage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your password';
                               }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
                               return null;
                             },
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        
-                        // Forgot password
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                // TODO: Implement forgot password
-                              },
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                              ),
-                              child: const Text(
-                                'Forgot Password?',
-                                style: TextStyle(
-                                  color: Color(0xFF06D6A0),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                        const SizedBox(height: 16),
+
+                        // Confirm Password label
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Confirm Password',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF3D405B),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        
+                        const SizedBox(height: 8),
+
+                        // Confirm Password field
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: TextFormField(
+                            controller: _confirmPasswordController,
+                            obscureText: _obscureConfirmPassword,
+                            decoration: InputDecoration(
+                              hintText: 'Confirm your password',
+                              hintStyle: const TextStyle(
+                                color: Color(0xFFA9B4C2),
+                                fontSize: 16,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.lock_outline,
+                                color: Color(0xFFA9B4C2),
+                                size: 24,
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                  color: const Color(0xFFA9B4C2),
+                                  size: 24,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                                  });
+                                },
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE5E7EB),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFFF6F61),
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please confirm your password';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
                         // Error message
                         if (authProvider.state == AuthState.error)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
                             child: Text(
-                              authProvider.errorMessage ?? 'Login failed',
+                              authProvider.errorMessage ?? 'Sign up failed',
                               style: const TextStyle(
                                 color: Colors.red,
                                 fontSize: 14,
@@ -298,14 +446,14 @@ class _LoginPageState extends State<LoginPage> {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                        
-                        // Login button
+
+                        // Sign Up button
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: ElevatedButton(
                             onPressed: authProvider.state == AuthState.loading
                                 ? null
-                                : _handleLogin,
+                                : _handleSignUp,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFFF6F61),
                               foregroundColor: Colors.white,
@@ -327,7 +475,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   )
                                 : const Text(
-                                    'Login',
+                                    'Sign Up',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
@@ -337,15 +485,15 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
-                        // Sign up link
+
+                        // Login link
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                'New here? ',
+                                'Already have an account? ',
                                 style: TextStyle(
                                   color: Color(0xFFA9B4C2),
                                   fontSize: 14,
@@ -353,11 +501,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const SignUpPage(),
-                                    ),
-                                  );
+                                  Navigator.of(context).pop();
                                 },
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
@@ -365,7 +509,7 @@ class _LoginPageState extends State<LoginPage> {
                                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: const Text(
-                                  'Sign Up',
+                                  'Login',
                                   style: TextStyle(
                                     color: Color(0xFF06D6A0),
                                     fontSize: 14,

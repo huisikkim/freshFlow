@@ -25,6 +25,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<String> signUp(String username, String password, String email) async {
+    try {
+      final result = await remoteDataSource.signUp(username, password, email);
+      return result;
+    } catch (e) {
+      throw AuthFailure(e.toString());
+    }
+  }
+
+  @override
   Future<void> logout() async {
     await localDataSource.clearCache();
   }
