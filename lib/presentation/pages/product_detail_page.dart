@@ -327,6 +327,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     
+    // 기존 SnackBar 모두 제거
+    scaffoldMessenger.clearSnackBars();
+    
     try {
       // 로딩 표시
       if (context.mounted) {
@@ -355,15 +358,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       await cartProvider.addToCart(product.id, quantity);
       
       if (context.mounted) {
-        scaffoldMessenger.clearSnackBars();
+        // 로딩 SnackBar 제거
+        scaffoldMessenger.removeCurrentSnackBar();
+        
+        // 성공 메시지 표시
         scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('${product.productName} ${quantity}${product.unit}을(를) 장바구니에 담았습니다'),
             backgroundColor: const Color(0xFF10B981),
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
             action: SnackBarAction(
               label: '보기',
               textColor: Colors.white,
               onPressed: () {
+                scaffoldMessenger.hideCurrentSnackBar();
                 // 장바구니 페이지로 이동
                 if (product.distributorId != null && product.distributorName != null) {
                   navigator.push(
@@ -385,11 +394,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       }
     } catch (e) {
       if (context.mounted) {
-        scaffoldMessenger.clearSnackBars();
+        scaffoldMessenger.removeCurrentSnackBar();
         scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('장바구니 담기 실패: ${e.toString()}'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }

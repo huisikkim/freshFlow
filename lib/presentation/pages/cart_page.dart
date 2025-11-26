@@ -226,9 +226,10 @@ class _CartPageState extends State<CartPage> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Row(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(Icons.remove, size: 18),
+                                            icon: const Icon(Icons.remove, size: 16),
                                             onPressed: item.quantity > 1
                                                 ? () {
                                                     provider.updateQuantity(
@@ -240,19 +241,22 @@ class _CartPageState extends State<CartPage> {
                                                 : null,
                                             padding: EdgeInsets.zero,
                                             constraints: const BoxConstraints(
-                                              minWidth: 32,
-                                              minHeight: 32,
+                                              minWidth: 28,
+                                              minHeight: 28,
                                             ),
                                           ),
-                                          Text(
-                                            '${item.quantity}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            child: Text(
+                                              '${item.quantity}',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.add, size: 18),
+                                            icon: const Icon(Icons.add, size: 16),
                                             onPressed: () {
                                               provider.updateQuantity(
                                                 widget.distributorId,
@@ -262,20 +266,23 @@ class _CartPageState extends State<CartPage> {
                                             },
                                             padding: EdgeInsets.zero,
                                             constraints: const BoxConstraints(
-                                              minWidth: 32,
-                                              minHeight: 32,
+                                              minWidth: 28,
+                                              minHeight: 28,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    const Spacer(),
-                                    Text(
-                                      '${numberFormat.format(item.subtotal)}원',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF10B981),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        '${numberFormat.format(item.subtotal)}원',
+                                        textAlign: TextAlign.right,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF10B981),
+                                        ),
                                       ),
                                     ),
                                   ],
