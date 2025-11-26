@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
@@ -41,25 +42,177 @@ class HomePage extends StatelessWidget {
             onPressed: () async {
               final confirm = await showDialog<bool>(
                 context: context,
-                builder: (context) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  title: const Text('로그아웃'),
-                  content: const Text('정말 로그아웃 하시겠습니까?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('취소'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF4444),
+                barrierColor: const Color(0xFF0F172A).withOpacity(0.1),
+                builder: (context) => BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  child: Dialog(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 340),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // 메인 다이얼로그 컨테이너 (맨 뒤)
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFFBEB), // amber-50 더 연하게
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.25),
+                                  blurRadius: 50,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 20),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // 해질녘 아이콘 (흰색 배경)
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.wb_twilight,
+                                    size: 50,
+                                    color: Color(0xFFFB923C), // orange-400
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                
+                                // 제목
+                                const Text(
+                                  '로그아웃',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E293B), // slate-800
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                
+                                // 설명
+                                const Text(
+                                  '오늘 하루도 수고 많으셨습니다.\n잠시 쉬어가시겠어요?',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF475569), // slate-600
+                                    height: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 32),
+                                
+                                // 로그아웃 버튼
+                                Container(
+                                  width: double.infinity,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(28),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFFFB923C).withOpacity(0.3),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFFB923C), // orange-400
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(28),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      '로그아웃',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                
+                                // 취소 버튼
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 56,
+                                  child: ElevatedButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFE2E8F0), // slate-200
+                                      foregroundColor: const Color(0xFF475569), // slate-600
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(28),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      '취소',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          // 장식용 원형 배경 (오른쪽 위) - 버튼 바로 뒤
+                          Positioned(
+                            top: -64,
+                            right: -64,
+                            child: Container(
+                              width: 160,
+                              height: 160,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFED7AA).withOpacity(0.5), // orange-200 반투명
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                          
+                          // 장식용 원형 배경 (왼쪽 아래) - 버튼 바로 뒤
+                          Positioned(
+                            bottom: -80,
+                            left: -48,
+                            child: Container(
+                              width: 192,
+                              height: 192,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFA5F3FC).withOpacity(0.5), // cyan-200 반투명
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: const Text('로그아웃'),
                     ),
-                  ],
+                  ),
                 ),
               );
               
