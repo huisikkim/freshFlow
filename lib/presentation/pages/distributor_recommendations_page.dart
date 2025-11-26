@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/matching_provider.dart';
 import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
 import 'package:fresh_flow/domain/entities/distributor_recommendation.dart';
+import 'package:fresh_flow/presentation/pages/distributor_comparison_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class DistributorRecommendationsPage extends StatefulWidget {
@@ -31,6 +32,22 @@ class _DistributorRecommendationsPageState
         title: const Text('맞춤 유통업체 추천'),
         backgroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.compare_arrows),
+            tooltip: '유통업체 비교',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ChangeNotifierProvider(
+                    create: (_) => InjectionContainer.getComparisonProvider(),
+                    child: const DistributorComparisonPage(topN: 5),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<MatchingProvider>(
         builder: (context, matchingProvider, child) {

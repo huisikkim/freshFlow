@@ -24,4 +24,10 @@ class ApiConstants {
       '/api/matching/quote-requests/store';
   static const String distributorQuoteRequestsEndpoint =
       '/api/matching/quote-requests/distributor';
+  static const String compareTopEndpoint = '/api/matching/compare/top';
+  static const String compareEndpoint = '/api/matching/compare';
+  static const String compareBestByCategoryEndpoint =
+      '/api/matching/compare/best-by-category';
+  static const String catalogProductsEndpoint = '/api/catalog/products';
+  static const String catalogMyProductsEndpoint = '/api/catalog/my-products';
 }

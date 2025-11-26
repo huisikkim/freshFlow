@@ -5,6 +5,7 @@ import 'package:fresh_flow/presentation/pages/login_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/quote_request_list_page.dart';
+import 'package:fresh_flow/presentation/pages/my_catalog_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class HomePage extends StatelessWidget {
@@ -155,6 +156,33 @@ class HomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 4,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) =>
+                                InjectionContainer.getCatalogProvider(),
+                            child: const MyCatalogPage(),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.inventory),
+                    label: const Text('내 상품 관리'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF06D6A0),
+                      side: const BorderSide(color: Color(0xFF06D6A0)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
