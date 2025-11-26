@@ -42,13 +42,32 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final numberFormat = NumberFormat('#,###');
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
-        title: const Text('상품 상세 정보'),
+        backgroundColor: const Color(0xFFF9FAFB),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF1F2937)),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          '상품 상세 정보',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF111827),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Consumer<CatalogProvider>(
         builder: (context, provider, child) {
           if (provider.state == CatalogState.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF10B981),
+              ),
+            );
           }
 
           if (provider.state == CatalogState.error) {
@@ -56,12 +75,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(provider.errorMessage ?? '오류가 발생했습니다'),
+                  Text(
+                    provider.errorMessage ?? '오류가 발생했습니다',
+                    style: const TextStyle(color: Color(0xFF6B7280)),
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       provider.loadProductDetailWithDelivery(widget.productId);
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10B981),
+                    ),
                     child: const Text('다시 시도'),
                   ),
                 ],
@@ -71,7 +96,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
           final product = provider.currentProduct;
           if (product == null) {
-            return const Center(child: Text('상품 정보를 찾을 수 없습니다'));
+            return const Center(
+              child: Text(
+                '상품 정보를 찾을 수 없습니다',
+                style: TextStyle(color: Color(0xFF6B7280)),
+              ),
+            );
           }
 
           return SingleChildScrollView(
@@ -79,40 +109,52 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 상품 이미지
-                if (product.imageUrl != null)
-                  Image.network(
-                    product.imageUrl!,
-                    width: double.infinity,
-                    height: 250,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: double.infinity,
-                        height: 250,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image, size: 100),
-                      );
-                    },
-                  )
-                else
-                  Container(
-                    width: double.infinity,
-                    height: 250,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 100),
+                Container(
+                  margin: const EdgeInsets.all(24),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: product.imageUrl != null
+                          ? Image.network(
+                              product.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: const Color(0xFFE5E7EB),
+                                  child: const Icon(
+                                    Icons.image,
+                                    size: 80,
+                                    color: Color(0xFF9CA3AF),
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              color: const Color(0xFFE5E7EB),
+                              child: const Icon(
+                                Icons.image,
+                                size: 80,
+                                color: Color(0xFF9CA3AF),
+                              ),
+                            ),
+                    ),
                   ),
+                ),
 
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // 상품명
                       Text(
                         product.productName,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF111827),
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -120,11 +162,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       if (product.distributorName != null)
                         Text(
                           product.distributorName!,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF6B7280),
+                          ),
                         ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
                       // 가격 정보
                       _buildInfoCard(
@@ -206,33 +249,46 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFFF9FAFB),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),
               ],
             ),
             child: SafeArea(
-              child: ElevatedButton.icon(
-                onPressed: product.isAvailable
-                    ? () => _showAddToCartDialog(context, product)
-                    : null,
-                icon: const Icon(Icons.shopping_cart),
-                label: Text(
-                  product.isAvailable ? '장바구니 담기' : '품절',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              child: SizedBox(
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: product.isAvailable
+                      ? () => _showAddToCartDialog(context, product)
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981),
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: const Color(0xFFE5E7EB),
+                    disabledForegroundColor: const Color(0xFF9CA3AF),
+                    elevation: 0,
+                    shadowColor: const Color(0xFF10B981).withOpacity(0.3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF10B981),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.shopping_cart, size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        product.isAvailable ? '장바구니 담기' : '품절',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -430,49 +486,61 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildInfoCard(BuildContext context, String title, List<Widget> children) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
             ),
-            const SizedBox(height: 12),
-            ...children,
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value, {Color? valueColor}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF6B7280),
+              fontSize: 15,
             ),
           ),
-          Expanded(
+          const SizedBox(width: 16),
+          Flexible(
             child: Text(
               value,
               style: TextStyle(
-                color: valueColor,
-                fontWeight: FontWeight.w500,
+                color: valueColor ?? const Color(0xFF1F2937),
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
               ),
+              textAlign: TextAlign.right,
             ),
           ),
         ],
