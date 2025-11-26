@@ -140,3 +140,47 @@ class GetProductDetailUseCase {
     return await repository.getProductDetail(productId);
   }
 }
+
+class CreateOrUpdateDeliveryInfoUseCase {
+  final CatalogRepository repository;
+  CreateOrUpdateDeliveryInfoUseCase(this.repository);
+
+  Future<void> execute({
+    required int productId,
+    required String deliveryType,
+    required int deliveryFee,
+    required int freeDeliveryThreshold,
+    required String deliveryRegions,
+    required String deliveryDays,
+    required String deliveryTimeSlots,
+    required int estimatedDeliveryDays,
+    required String packagingType,
+    required bool isFragile,
+    required bool requiresRefrigeration,
+    String? specialInstructions,
+  }) async {
+    await repository.createOrUpdateDeliveryInfo(
+      productId: productId,
+      deliveryType: deliveryType,
+      deliveryFee: deliveryFee,
+      freeDeliveryThreshold: freeDeliveryThreshold,
+      deliveryRegions: deliveryRegions,
+      deliveryDays: deliveryDays,
+      deliveryTimeSlots: deliveryTimeSlots,
+      estimatedDeliveryDays: estimatedDeliveryDays,
+      packagingType: packagingType,
+      isFragile: isFragile,
+      requiresRefrigeration: requiresRefrigeration,
+      specialInstructions: specialInstructions,
+    );
+  }
+}
+
+class GetProductDetailWithDeliveryUseCase {
+  final CatalogRepository repository;
+  GetProductDetailWithDeliveryUseCase(this.repository);
+
+  Future<Product> execute(int productId) async {
+    return await repository.getProductDetailWithDelivery(productId);
+  }
+}

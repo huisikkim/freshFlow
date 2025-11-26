@@ -17,6 +17,8 @@ class CatalogProvider extends ChangeNotifier {
   final GetProductsByPriceRangeUseCase getProductsByPriceRangeUseCase;
   final GetInStockProductsUseCase getInStockProductsUseCase;
   final GetProductDetailUseCase getProductDetailUseCase;
+  final CreateOrUpdateDeliveryInfoUseCase createOrUpdateDeliveryInfoUseCase;
+  final GetProductDetailWithDeliveryUseCase getProductDetailWithDeliveryUseCase;
 
   CatalogState _state = CatalogState.initial;
   List<Product> _products = [];
@@ -41,6 +43,8 @@ class CatalogProvider extends ChangeNotifier {
     required this.getProductsByPriceRangeUseCase,
     required this.getInStockProductsUseCase,
     required this.getProductDetailUseCase,
+    required this.createOrUpdateDeliveryInfoUseCase,
+    required this.getProductDetailWithDeliveryUseCase,
   });
 
   Future<void> createProduct({
@@ -174,6 +178,64 @@ class CatalogProvider extends ChangeNotifier {
 
     try {
       await deleteProductUseCase.execute(productId);
+      _state = CatalogState.success;
+      notifyListeners();
+    } catch (e) {
+      _state = CatalogState.error;
+      _errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> createOrUpdateDeliveryInfo({
+    required int productId,
+    required String deliveryType,
+    required int deliveryFee,
+    required int freeDeliveryThreshold,
+    required String deliveryRegions,
+    required String deliveryDays,
+    required String deliveryTimeSlots,
+    required int estimatedDeliveryDays,
+    required String packagingType,
+    required bool isFragile,
+    required bool requiresRefrigeration,
+    String? specialInstructions,
+  }) async {
+    _state = CatalogState.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await createOrUpdateDeliveryInfoUseCase.execute(
+        productId: productId,
+        deliveryType: deliveryType,
+        deliveryFee: deliveryFee,
+        freeDeliveryThreshold: freeDeliveryThreshold,
+        deliveryRegions: deliveryRegions,
+        deliveryDays: deliveryDays,
+        deliveryTimeSlots: deliveryTimeSlots,
+        estimatedDeliveryDays: estimatedDeliveryDays,
+        packagingType: packagingType,
+        isFragile: isFragile,
+        requiresRefrigeration: requiresRefrigeration,
+        specialInstructions: specialInstructions,
+      );
+      _state = CatalogState.success;
+      notifyListeners();
+    } catch (e) {
+      _state = CatalogState.error;
+      _errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadProductDetailWithDelivery(int productId) async {
+    _state = CatalogState.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _currentProduct = await getProductDetailWithDeliveryUseCase.execute(productId);
       _state = CatalogState.success;
       notifyListeners();
     } catch (e) {

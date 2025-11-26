@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/catalog_provider.dart';
 import 'package:fresh_flow/domain/entities/product.dart';
 import 'package:fresh_flow/presentation/pages/product_form_page.dart';
+import 'package:fresh_flow/presentation/pages/delivery_info_form_page.dart';
+import 'package:fresh_flow/presentation/pages/product_detail_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class MyCatalogPage extends StatefulWidget {
@@ -361,6 +363,75 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFF87171),
                       side: const BorderSide(color: Color(0xFFF87171)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) => InjectionContainer.getCatalogProvider(),
+                            child: DeliveryInfoFormPage(
+                              productId: product.id,
+                              productName: product.productName,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.local_shipping_outlined, size: 16),
+                    label: const Text(
+                      '배송 정보',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF60A5FA),
+                      side: const BorderSide(color: Color(0xFF60A5FA)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) => InjectionContainer.getCatalogProvider(),
+                            child: ProductDetailPage(productId: product.id),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.info_outline, size: 16),
+                    label: const Text(
+                      '상세 보기',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF9333EA),
+                      side: const BorderSide(color: Color(0xFF9333EA)),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),

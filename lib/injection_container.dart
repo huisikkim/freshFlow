@@ -83,6 +83,8 @@ class InjectionContainer {
   static late GetProductsByPriceRangeUseCase _getProductsByPriceRangeUseCase;
   static late GetInStockProductsUseCase _getInStockProductsUseCase;
   static late GetProductDetailUseCase _getProductDetailUseCase;
+  static late CreateOrUpdateDeliveryInfoUseCase _createOrUpdateDeliveryInfoUseCase;
+  static late GetProductDetailWithDeliveryUseCase _getProductDetailWithDeliveryUseCase;
 
   static Future<void> init() async {
     // External
@@ -170,6 +172,8 @@ class InjectionContainer {
         GetProductsByPriceRangeUseCase(_catalogRepository);
     _getInStockProductsUseCase = GetInStockProductsUseCase(_catalogRepository);
     _getProductDetailUseCase = GetProductDetailUseCase(_catalogRepository);
+    _createOrUpdateDeliveryInfoUseCase = CreateOrUpdateDeliveryInfoUseCase(_catalogRepository);
+    _getProductDetailWithDeliveryUseCase = GetProductDetailWithDeliveryUseCase(_catalogRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -231,6 +235,8 @@ class InjectionContainer {
       getProductsByPriceRangeUseCase: _getProductsByPriceRangeUseCase,
       getInStockProductsUseCase: _getInStockProductsUseCase,
       getProductDetailUseCase: _getProductDetailUseCase,
+      createOrUpdateDeliveryInfoUseCase: _createOrUpdateDeliveryInfoUseCase,
+      getProductDetailWithDeliveryUseCase: _getProductDetailWithDeliveryUseCase,
     );
   }
 }

@@ -127,4 +127,43 @@ class CatalogRepositoryImpl implements CatalogRepository {
     final token = await _getToken();
     return await remoteDataSource.getProductDetail(token, productId);
   }
+
+  @override
+  Future<void> createOrUpdateDeliveryInfo({
+    required int productId,
+    required String deliveryType,
+    required int deliveryFee,
+    required int freeDeliveryThreshold,
+    required String deliveryRegions,
+    required String deliveryDays,
+    required String deliveryTimeSlots,
+    required int estimatedDeliveryDays,
+    required String packagingType,
+    required bool isFragile,
+    required bool requiresRefrigeration,
+    String? specialInstructions,
+  }) async {
+    final token = await _getToken();
+    final deliveryData = {
+      'deliveryType': deliveryType,
+      'deliveryFee': deliveryFee,
+      'freeDeliveryThreshold': freeDeliveryThreshold,
+      'deliveryRegions': deliveryRegions,
+      'deliveryDays': deliveryDays,
+      'deliveryTimeSlots': deliveryTimeSlots,
+      'estimatedDeliveryDays': estimatedDeliveryDays,
+      'packagingType': packagingType,
+      'isFragile': isFragile,
+      'requiresRefrigeration': requiresRefrigeration,
+      'specialInstructions': specialInstructions ?? '',
+    };
+    await remoteDataSource.createOrUpdateDeliveryInfo(
+        token, productId, deliveryData);
+  }
+
+  @override
+  Future<Product> getProductDetailWithDelivery(int productId) async {
+    final token = await _getToken();
+    return await remoteDataSource.getProductDetailWithDelivery(token, productId);
+  }
 }

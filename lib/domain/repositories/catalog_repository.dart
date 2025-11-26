@@ -28,6 +28,21 @@ abstract class CatalogRepository {
 
   Future<Product> toggleAvailability(int productId);
 
+  Future<void> createOrUpdateDeliveryInfo({
+    required int productId,
+    required String deliveryType,
+    required int deliveryFee,
+    required int freeDeliveryThreshold,
+    required String deliveryRegions,
+    required String deliveryDays,
+    required String deliveryTimeSlots,
+    required int estimatedDeliveryDays,
+    required String packagingType,
+    required bool isFragile,
+    required bool requiresRefrigeration,
+    String? specialInstructions,
+  });
+
   // 매장용
   Future<List<Product>> getDistributorCatalog(String distributorId);
 
@@ -43,4 +58,6 @@ abstract class CatalogRepository {
 
   // 공통
   Future<Product> getProductDetail(int productId);
+  
+  Future<Product> getProductDetailWithDelivery(int productId);
 }

@@ -22,6 +22,9 @@ abstract class CatalogRemoteDataSource {
   Future<List<ProductModel>> getInStockProducts(
       String token, String distributorId);
   Future<ProductModel> getProductDetail(String token, int productId);
+  Future<void> createOrUpdateDeliveryInfo(
+      String token, int productId, Map<String, dynamic> deliveryData);
+  Future<ProductModel> getProductDetailWithDelivery(String token, int productId);
 }
 
 class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
@@ -325,6 +328,64 @@ class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
             jsonDecode(utf8.decode(response.bodyBytes)));
       } else {
         throw Exception('상품 상세 조회 실패 (${response.statusCode})');
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection')) {
+        throw Exception('서버에 연결할 수 없습니다.');
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> createOrUpdateDeliveryInfo(
+      String token, int productId, Map<String, dynamic> deliveryData) async {
+    try {
+      print('배송 정보 API 요청: $deliveryData');
+      final response = await client.post(
+        Uri.parse(
+            '${ApiConstants.baseUrl}${ApiConstants.catalogProductsEndpoint}/$productId/delivery-info'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(deliveryData),
+      );
+
+      print('배송 정보 API 응답 코드: ${response.statusCode}');
+      print('배송 정보 API 응답 본문: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // 성공 - 배송 정보만 반환되므로 파싱하지 않음
+        return;
+      } else {
+        throw Exception('배송 정보 등록/수정 실패 (${response.statusCode}): ${response.body}');
+      }
+    } catch (e) {
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Connection')) {
+        throw Exception('서버에 연결할 수 없습니다.');
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ProductModel> getProductDetailWithDelivery(
+      String token, int productId) async {
+    try {
+      final response = await client.get(
+        Uri.parse(
+            '${ApiConstants.baseUrl}${ApiConstants.catalogProductsEndpoint}/$productId/detail'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        return ProductModel.fromJson(
+            jsonDecode(utf8.decode(response.bodyBytes)));
+      } else {
+        throw Exception('상품 상세 정보 조회 실패 (${response.statusCode})');
       }
     } catch (e) {
       if (e.toString().contains('SocketException') ||
