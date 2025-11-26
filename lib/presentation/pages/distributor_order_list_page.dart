@@ -130,28 +130,29 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 헤더
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 헤더
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
@@ -161,18 +162,18 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                           DateFormat('yyyy.MM.dd HH:mm').format(order.createdAt),
                           style: const TextStyle(
                             fontSize: 13,
-                            color: Color(0xFF6B7280),
+                            color: Color(0xFF9CA3AF),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
                             const Icon(
-                              Icons.store,
-                              size: 16,
+                              Icons.storefront,
+                              size: 18,
                               color: Color(0xFF6B7280),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 order.storeId,
@@ -188,6 +189,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -208,113 +210,99 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   ),
                 ],
               ),
-            ),
 
-            const Divider(height: 1),
+              const Divider(height: 32, color: Color(0xFFE5E7EB)),
 
-            // 상품 목록
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
+              // 상품 목록
+              ...order.items.take(2).map((item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.productName,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF374151),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${item.quantity}${item.unit}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              if (order.items.length > 2)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    '외 ${order.items.length - 2}개',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ),
+
+              const Divider(height: 32, color: Color(0xFFE5E7EB)),
+
+              // 배송 정보
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ...order.items.take(2).map((item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                item.productName,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF111827),
-                                ),
-                              ),
-                            ),
-                            Text(
-                              '${item.quantity}${item.unit}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF6B7280),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
-                  if (order.items.length > 2)
-                    Text(
-                      '외 ${order.items.length - 2}개',
+                  const Icon(
+                    Icons.location_on_outlined,
+                    size: 18,
+                    color: Color(0xFF6B7280),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      order.deliveryAddress,
                       style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF6B7280),
                       ),
                     ),
+                  ),
                 ],
               ),
-            ),
-
-            const Divider(height: 1),
-
-            // 배송 정보
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 8),
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                        color: Color(0xFF6B7280),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          order.deliveryAddress,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                      ),
-                    ],
+                  const Icon(
+                    Icons.phone_outlined,
+                    size: 18,
+                    color: Color(0xFF6B7280),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.phone_outlined,
-                        size: 16,
-                        color: Color(0xFF6B7280),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        order.deliveryPhone,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(width: 8),
+                  Text(
+                    order.deliveryPhone,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF6B7280),
+                    ),
                   ),
                 ],
               ),
-            ),
 
-            const Divider(height: 1),
+              const Divider(height: 32, color: Color(0xFFE5E7EB)),
 
-            // 하단 정보
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
+              // 하단 정보
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
                     '총 주문 금액',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF6B7280),
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                   Text(
@@ -327,8 +315,8 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
