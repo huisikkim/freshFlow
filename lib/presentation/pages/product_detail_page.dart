@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/catalog_provider.dart';
+import 'package:fresh_flow/presentation/providers/cart_provider.dart';
+import 'package:fresh_flow/presentation/pages/cart_page.dart';
 import 'package:fresh_flow/domain/entities/product.dart';
+import 'package:fresh_flow/injection_container.dart';
 import 'package:intl/intl.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -232,7 +235,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void _showAddToCartDialog(BuildContext context, Product product) {
-    int quantity = 1;
+    int quantity = product.minOrderQuantity;
     
     showDialog(
       context: context,
@@ -303,20 +306,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               child: const Text('취소'),
             ),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(dialogContext);
-                // TODO: CartProvider를 사용하여 장바구니에 추가
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${product.productName} ${quantity}${product.unit}을(를) 장바구니에 담았습니다'),
-                    action: SnackBarAction(
-                      label: '보기',
-                      onPressed: () {
-                        // TODO: 장바구니 페이지로 이동
-                      },
-                    ),
-                  ),
-                );
+                _addToCart(context, product, quantity);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF10B981),
@@ -327,6 +319,81 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _addToCart(BuildContext context, Product product, int quantity) async {
+    // CartProvider를 injection_container에서 가져와서 사용
+    final cartProvider = InjectionContainer.getCartProvider();
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    
+    try {
+      // 로딩 표시
+      if (context.mounted) {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Text('장바구니에 담는 중...'),
+              ],
+            ),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+
+      // 장바구니에 추가
+      await cartProvider.addToCart(product.id, quantity);
+      
+      if (context.mounted) {
+        scaffoldMessenger.clearSnackBars();
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('${product.productName} ${quantity}${product.unit}을(를) 장바구니에 담았습니다'),
+            backgroundColor: const Color(0xFF10B981),
+            action: SnackBarAction(
+              label: '보기',
+              textColor: Colors.white,
+              onPressed: () {
+                // 장바구니 페이지로 이동
+                if (product.distributorId != null && product.distributorName != null) {
+                  navigator.push(
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: cartProvider,
+                        child: CartPage(
+                          distributorId: product.distributorId!,
+                          distributorName: product.distributorName!,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        scaffoldMessenger.clearSnackBars();
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('장바구니 담기 실패: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildInfoCard(BuildContext context, String title, List<Widget> children) {
