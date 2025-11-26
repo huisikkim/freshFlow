@@ -40,7 +40,25 @@ class MatchingRemoteDataSourceImpl implements MatchingRemoteDataSource {
         // 매장 정보가 없거나 추천할 유통업체가 없는 경우
         return [];
       } else {
-        throw Exception('추천 조회 실패 (${response.statusCode}): ${response.body}');
+        // 에러 응답에서 메시지 추출 시도
+        String errorMessage = '추천 조회 실패 (${response.statusCode})';
+        try {
+          final errorJson = jsonDecode(response.body);
+          if (errorJson is Map<String, dynamic>) {
+            // message 필드가 있으면 사용
+            if (errorJson.containsKey('message')) {
+              errorMessage = errorJson['message'];
+            } 
+            // error 필드가 있으면 사용
+            else if (errorJson.containsKey('error')) {
+              errorMessage = errorJson['error'];
+            }
+          }
+        } catch (_) {
+          // JSON 파싱 실패시 원본 body 사용
+          errorMessage = response.body;
+        }
+        throw Exception(errorMessage);
       }
     } catch (e) {
       if (e.toString().contains('SocketException') ||

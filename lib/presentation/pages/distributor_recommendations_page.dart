@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/matching_provider.dart';
 import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
+import 'package:fresh_flow/presentation/providers/store_provider.dart';
 import 'package:fresh_flow/domain/entities/distributor_recommendation.dart';
 import 'package:fresh_flow/presentation/pages/distributor_comparison_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_catalog_page.dart';
+import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class DistributorRecommendationsPage extends StatefulWidget {
@@ -60,33 +62,90 @@ class _DistributorRecommendationsPageState
           }
 
           if (matchingProvider.state == MatchingState.error) {
+            final errorMsg = matchingProvider.errorMessage ?? '';
+            
+            // 500 에러이거나 매장 관련 키워드가 포함된 경우 매장 정보 등록 안내
+            final isStoreNotFound = errorMsg.contains('500') ||
+                                   errorMsg.contains('매장을 찾을 수 없습니다') || 
+                                   errorMsg.contains('매장 정보') ||
+                                   errorMsg.contains('매장이 등록되지') ||
+                                   errorMsg.contains('Store not found') ||
+                                   errorMsg.contains('IllegalArgumentException');
+            
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      matchingProvider.errorMessage ?? '추천 조회에 실패했습니다',
-                      style: const TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
+                    Icon(
+                      Icons.store_outlined,
+                      size: 80,
+                      color: const Color(0xFFFF6F61),
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
+                    const Text(
+                      '매장 정보가 등록되지 않았습니다',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF3D405B),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      '유통업체를 추천받으려면\n먼저 매장 정보를 등록해주세요',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFFA9B4C2),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
                       onPressed: () {
-                        matchingProvider.loadRecommendations();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ChangeNotifierProvider(
+                              create: (_) => InjectionContainer.getStoreProvider(),
+                              child: const StoreRegistrationPage(),
+                            ),
+                          ),
+                        );
                       },
+                      icon: const Icon(Icons.store),
+                      label: const Text('매장 정보 등록하기'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF6F61),
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('다시 시도'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.arrow_back),
+                      label: const Text('홈으로 돌아가기'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF6B7280),
+                        side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   ],
                 ),

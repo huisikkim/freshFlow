@@ -108,6 +108,16 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
             throw Exception('서버 응답 형식이 올바르지 않습니다. 서버 측 JSON 형식을 확인해주세요.');
           }
         }
+      } else if (response.statusCode == 500) {
+        // 500 에러는 빈 장바구니로 처리
+        return const CartModel(
+          id: 0,
+          storeId: '',
+          distributorId: '',
+          items: [],
+          totalAmount: 0,
+          totalQuantity: 0,
+        );
       } else {
         throw Exception('장바구니 조회 실패 (${response.statusCode})');
       }
@@ -115,6 +125,17 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       if (e.toString().contains('SocketException') ||
           e.toString().contains('Connection')) {
         throw Exception('서버에 연결할 수 없습니다.');
+      }
+      // 500 에러 관련 예외는 빈 장바구니로 처리
+      if (e.toString().contains('500')) {
+        return const CartModel(
+          id: 0,
+          storeId: '',
+          distributorId: '',
+          items: [],
+          totalAmount: 0,
+          totalQuantity: 0,
+        );
       }
       rethrow;
     }
