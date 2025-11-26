@@ -15,8 +15,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => InjectionContainer.getAuthProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => InjectionContainer.getAuthProvider()),
+        ChangeNotifierProvider(create: (_) => InjectionContainer.getCartProvider()),
+        ChangeNotifierProvider(create: (_) => InjectionContainer.getOrderProvider()),
+      ],
       child: MaterialApp(
         title: 'Fresh Flow',
         debugShowCheckedModeBanner: false,

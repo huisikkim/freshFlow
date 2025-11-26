@@ -5,6 +5,8 @@ class User {
   final String tokenType;
   final String userType;
   final String businessName;
+  final String? storeId;
+  final String? distributorId;
 
   const User({
     required this.userId,
@@ -13,5 +15,7 @@ class User {
     required this.tokenType,
     required this.userType,
     required this.businessName,
+    this.storeId,
+    this.distributorId,
   });
 }

@@ -9,6 +9,7 @@ import 'package:fresh_flow/data/datasources/quote_request_remote_datasource.dart
 import 'package:fresh_flow/data/datasources/comparison_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/catalog_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/cart_remote_datasource.dart';
+import 'package:fresh_flow/data/datasources/order_remote_data_source.dart';
 import 'package:fresh_flow/data/repositories/auth_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/store_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/distributor_repository_impl.dart';
@@ -25,6 +26,8 @@ import 'package:fresh_flow/domain/repositories/comparison_repository.dart';
 import 'package:fresh_flow/domain/repositories/catalog_repository.dart';
 import 'package:fresh_flow/domain/repositories/cart_repository.dart';
 import 'package:fresh_flow/data/repositories/cart_repository_impl.dart';
+import 'package:fresh_flow/domain/repositories/order_repository.dart';
+import 'package:fresh_flow/data/repositories/order_repository_impl.dart';
 import 'package:fresh_flow/domain/usecases/login_usecase.dart';
 import 'package:fresh_flow/domain/usecases/signup_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_store_usecase.dart';
@@ -34,6 +37,7 @@ import 'package:fresh_flow/domain/usecases/quote_request_usecases.dart';
 import 'package:fresh_flow/domain/usecases/comparison_usecases.dart';
 import 'package:fresh_flow/domain/usecases/catalog_usecases.dart';
 import 'package:fresh_flow/domain/usecases/cart_usecases.dart';
+import 'package:fresh_flow/domain/usecases/order_usecases.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/providers/store_provider.dart';
 import 'package:fresh_flow/presentation/providers/distributor_provider.dart';
@@ -42,6 +46,7 @@ import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
 import 'package:fresh_flow/presentation/providers/comparison_provider.dart';
 import 'package:fresh_flow/presentation/providers/catalog_provider.dart';
 import 'package:fresh_flow/presentation/providers/cart_provider.dart';
+import 'package:fresh_flow/presentation/providers/order_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -92,11 +97,18 @@ class InjectionContainer {
   static late GetProductDetailWithDeliveryUseCase _getProductDetailWithDeliveryUseCase;
   static late CartRemoteDataSource _cartRemoteDataSource;
   static late CartRepository _cartRepository;
+  static late OrderRemoteDataSource _orderRemoteDataSource;
+  static late OrderRepository _orderRepository;
   static late AddToCartUseCase _addToCartUseCase;
   static late GetCartUseCase _getCartUseCase;
   static late UpdateCartItemQuantityUseCase _updateCartItemQuantityUseCase;
   static late RemoveCartItemUseCase _removeCartItemUseCase;
   static late ClearCartUseCase _clearCartUseCase;
+  static late CreateOrderUseCase _createOrderUseCase;
+  static late GetOrdersUseCase _getOrdersUseCase;
+  static late GetDistributorOrdersUseCase _getDistributorOrdersUseCase;
+  static late GetOrderByIdUseCase _getOrderByIdUseCase;
+  static late CancelOrderUseCase _cancelOrderUseCase;
 
   static Future<void> init() async {
     // External
@@ -114,6 +126,7 @@ class InjectionContainer {
     _comparisonRemoteDataSource = ComparisonRemoteDataSourceImpl(_httpClient);
     _catalogRemoteDataSource = CatalogRemoteDataSourceImpl(_httpClient);
     _cartRemoteDataSource = CartRemoteDataSourceImpl(_httpClient);
+    _orderRemoteDataSource = OrderRemoteDataSourceImpl(_httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -146,6 +159,10 @@ class InjectionContainer {
     );
     _cartRepository = CartRepositoryImpl(
       remoteDataSource: _cartRemoteDataSource,
+      authRepository: _authRepository,
+    );
+    _orderRepository = OrderRepositoryImpl(
+      remoteDataSource: _orderRemoteDataSource,
       authRepository: _authRepository,
     );
 
@@ -196,6 +213,11 @@ class InjectionContainer {
     _updateCartItemQuantityUseCase = UpdateCartItemQuantityUseCase(_cartRepository);
     _removeCartItemUseCase = RemoveCartItemUseCase(_cartRepository);
     _clearCartUseCase = ClearCartUseCase(_cartRepository);
+    _createOrderUseCase = CreateOrderUseCase(_orderRepository);
+    _getOrdersUseCase = GetOrdersUseCase(_orderRepository);
+    _getDistributorOrdersUseCase = GetDistributorOrdersUseCase(_orderRepository);
+    _getOrderByIdUseCase = GetOrderByIdUseCase(_orderRepository);
+    _cancelOrderUseCase = CancelOrderUseCase(_orderRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -269,6 +291,16 @@ class InjectionContainer {
       updateCartItemQuantityUseCase: _updateCartItemQuantityUseCase,
       removeCartItemUseCase: _removeCartItemUseCase,
       clearCartUseCase: _clearCartUseCase,
+    );
+  }
+
+  static OrderProvider getOrderProvider() {
+    return OrderProvider(
+      createOrderUseCase: _createOrderUseCase,
+      getOrdersUseCase: _getOrdersUseCase,
+      getDistributorOrdersUseCase: _getDistributorOrdersUseCase,
+      getOrderByIdUseCase: _getOrderByIdUseCase,
+      cancelOrderUseCase: _cancelOrderUseCase,
     );
   }
 }

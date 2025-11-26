@@ -401,6 +401,7 @@ class _CartPageState extends State<CartPage> {
                               MaterialPageRoute(
                                 builder: (_) => OrderConfirmationPage(
                                   cart: cart,
+                                  distributorId: widget.distributorId,
                                   distributorName: widget.distributorName,
                                 ),
                               ),

@@ -7,6 +7,8 @@ import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart
 import 'package:fresh_flow/presentation/pages/quote_request_list_page.dart';
 import 'package:fresh_flow/presentation/pages/my_catalog_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_recommendations_page.dart';
+import 'package:fresh_flow/presentation/pages/order_list_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_order_list_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class HomePage extends StatelessWidget {
@@ -151,6 +153,24 @@ class HomePage extends StatelessWidget {
     return [
       _buildMenuCard(
         context: context,
+        title: '주문 내역',
+        subtitle: '주문한 내역 확인',
+        icon: Icons.receipt_long,
+        color: const Color(0xFF10B981),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider(
+                create: (_) => InjectionContainer.getOrderProvider(),
+                child: const OrderListPage(),
+              ),
+            ),
+          );
+        },
+      ),
+      const SizedBox(height: 12),
+      _buildMenuCard(
+        context: context,
         title: '견적 요청하기',
         subtitle: '필요한 식자재 견적 요청',
         icon: Icons.request_quote,
@@ -209,10 +229,28 @@ class HomePage extends StatelessWidget {
     return [
       _buildMenuCard(
         context: context,
+        title: '받은 주문',
+        subtitle: '가게에서 받은 주문 확인',
+        icon: Icons.receipt_long,
+        color: const Color(0xFF10B981),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider(
+                create: (_) => InjectionContainer.getOrderProvider(),
+                child: const DistributorOrderListPage(),
+              ),
+            ),
+          );
+        },
+      ),
+      const SizedBox(height: 12),
+      _buildMenuCard(
+        context: context,
         title: '상품 관리',
         subtitle: '판매 상품 등록 및 관리',
         icon: Icons.inventory_2,
-        color: const Color(0xFF10B981),
+        color: const Color(0xFF8B5CF6),
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(

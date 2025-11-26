@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:fresh_flow/domain/entities/cart.dart';
+import 'package:fresh_flow/presentation/providers/order_provider.dart';
+import 'package:fresh_flow/presentation/providers/cart_provider.dart';
 import 'package:intl/intl.dart';
 
 class OrderConfirmationPage extends StatefulWidget {
   final Cart cart;
+  final String distributorId;
   final String distributorName;
 
   const OrderConfirmationPage({
     super.key,
     required this.cart,
+    required this.distributorId,
     required this.distributorName,
   });
 
@@ -19,6 +24,7 @@ class OrderConfirmationPage extends StatefulWidget {
 class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
   final _formKey = GlobalKey<FormState>();
   String _deliveryAddress = '';
+  String _deliveryPhone = '';
   String _deliveryRequest = '';
   DateTime _desiredDeliveryDate = DateTime.now().add(const Duration(days: 1));
 
@@ -220,6 +226,24 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                       ),
                       const SizedBox(height: 16),
                       
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: '연락처',
+                          hintText: '010-1234-5678',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.phone),
+                        ),
+                        keyboardType: TextInputType.phone,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '연락처를 입력하세요';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => _deliveryPhone = value!,
+                      ),
+                      const SizedBox(height: 16),
+                      
                       InkWell(
                         onTap: () async {
                           final date = await showDatePicker(
@@ -417,6 +441,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                 style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
               ),
               Text(
+                '연락처: $_deliveryPhone',
+                style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+              ),
+              Text(
                 '희망 배송일: ${DateFormat('yyyy-MM-dd').format(_desiredDeliveryDate)}',
                 style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
               ),
@@ -448,67 +476,152 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     }
   }
 
-  void _processOrder() {
-    // TODO: 실제 주문 API 호출
-    // 현재는 성공 메시지만 표시
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFD1FAE5),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check,
-                color: Color(0xFF10B981),
-                size: 48,
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              '주문이 완료되었습니다!',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '유통업체에서 주문을 확인 중입니다.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF6B7280),
-              ),
-              textAlign: TextAlign.center,
+  Future<void> _processOrder() async {
+    final orderProvider = context.read<OrderProvider>();
+    final cartProvider = context.read<CartProvider>();
+
+    // 장바구니 확인
+    if (widget.cart.items.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('주문 불가'),
+          content: const Text('장바구니가 비어있습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
             ),
           ],
         ),
-        actions: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // 홈으로 돌아가기
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text('확인'),
-            ),
-          ),
-        ],
+      );
+      return;
+    }
+
+    print('🛒 장바구니 상태:');
+    print('  - 아이템 수: ${widget.cart.items.length}');
+    print('  - 총 금액: ${widget.cart.totalAmount}');
+    print('  - DistributorId: ${widget.cart.distributorId}');
+
+    // 로딩 다이얼로그 표시
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
       ),
     );
+
+    // 주문 생성 API 호출
+    // Cart에서 실제 distributorId 사용 (widget.distributorId는 유통업체 이름일 수 있음)
+    // 장바구니 아이템을 서버 형식으로 변환
+    final items = widget.cart.items.map((item) => {
+      'productId': item.productId,
+      'quantity': item.quantity,
+    }).toList();
+
+    print('📦 주문 아이템 전송: $items');
+
+    final success = await orderProvider.createOrder(
+      distributorId: widget.cart.distributorId,
+      deliveryAddress: _deliveryAddress,
+      deliveryPhone: _deliveryPhone,
+      deliveryRequest: _deliveryRequest.isNotEmpty ? _deliveryRequest : null,
+      desiredDeliveryDate: _desiredDeliveryDate,
+      items: items,
+    );
+
+    if (!mounted) return;
+
+    // 로딩 다이얼로그 닫기
+    Navigator.pop(context);
+
+    if (success) {
+      // 주문 성공 시 장바구니 비우기
+      await cartProvider.clearCart(widget.distributorId);
+
+      if (!mounted) return;
+
+      // 성공 다이얼로그 표시
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFD1FAE5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Color(0xFF10B981),
+                  size: 48,
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                '주문이 완료되었습니다!',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '유통업체에서 주문을 확인 중입니다.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF6B7280),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // 홈으로 돌아가기
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text('확인'),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // 실패 다이얼로그 표시
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text('주문 실패'),
+          content: Text(
+            orderProvider.errorMessage ?? '주문 처리 중 오류가 발생했습니다.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

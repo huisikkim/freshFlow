@@ -20,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDataSource.cacheUser(userModel);
       return userModel;
     } catch (e) {
-      throw AuthFailure(e.toString());
+      throw AuthFailure(message: e.toString());
     }
   }
 
@@ -50,7 +50,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return result;
     } catch (e) {
-      throw AuthFailure(e.toString());
+      throw AuthFailure(message: e.toString());
     }
   }
 
