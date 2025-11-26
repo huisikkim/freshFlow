@@ -65,11 +65,20 @@ class _DistributorRegistrationPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFF),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text('유통업자 정보 등록'),
-        backgroundColor: Colors.white,
+        title: const Text(
+          '유통업자 정보 등록',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFE1E2E2),
+          ),
+        ),
+        backgroundColor: const Color(0xFF1E1E1E),
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFFE1E2E2)),
+        centerTitle: true,
       ),
       body: SafeArea(
         child: Consumer<DistributorProvider>(
@@ -86,161 +95,174 @@ class _DistributorRegistrationPageState
               });
             }
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildTextField(
-                      controller: _distributorNameController,
-                      label: '유통업체명',
-                      hint: '예: 신선식자재 유통',
-                      icon: Icons.business,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _supplyProductsController,
-                      label: '공급 품목',
-                      hint: '예: 쌀/곡물,채소,과일,육류,수산물',
-                      icon: Icons.inventory,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _serviceRegionsController,
-                      label: '서비스 지역',
-                      hint: '예: 서울,경기,인천',
-                      icon: Icons.map,
-                    ),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Row(
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Icon(
-                            Icons.local_shipping,
-                            color: Color(0xFFA9B4C2),
-                            size: 20,
+                          _buildTextField(
+                            controller: _distributorNameController,
+                            label: '유통업체명',
+                            hint: '예: 신선식자재 유통',
+                            icon: Icons.business,
                           ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            '배송 가능 여부',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D405B),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _supplyProductsController,
+                            label: '공급 품목',
+                            hint: '예: 쌀/곡물,채소,과일,육류,수산물',
+                            icon: Icons.inventory_2_outlined,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _serviceRegionsController,
+                            label: '서비스 지역',
+                            hint: '예: 서울,경기,인천',
+                            icon: Icons.map_outlined,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _certificationsController,
+                            label: '인증 사항',
+                            hint: '예: HACCP,ISO22000',
+                            icon: Icons.verified_user_outlined,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _minOrderAmountController,
+                            label: '최소 주문 금액 (원)',
+                            hint: '예: 100000',
+                            icon: Icons.attach_money,
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _operatingHoursController,
+                            label: '운영 시간',
+                            hint: '예: 09:00-18:00',
+                            icon: Icons.schedule,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _phoneNumberController,
+                            label: '전화번호',
+                            hint: '예: 010-9876-5432',
+                            icon: Icons.call,
+                            keyboardType: TextInputType.phone,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _emailController,
+                            label: '이메일',
+                            hint: '예: distributor1@example.com',
+                            icon: Icons.mail_outline,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _addressController,
+                            label: '주소',
+                            hint: '예: 서울시 송파구 올림픽로 456',
+                            icon: Icons.home_outlined,
+                          ),
+                          const SizedBox(height: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.local_shipping_outlined,
+                                  color: Color(0xFFA9A9A9),
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 12),
+                                const Text(
+                                  '배송 가능 여부',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFE1E2E2),
+                                  ),
+                                ),
+                                const Spacer(),
+                                Switch(
+                                  value: _deliveryAvailable,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _deliveryAvailable = value;
+                                    });
+                                  },
+                                  activeColor: const Color(0xFFF26B5B),
+                                ),
+                              ],
                             ),
                           ),
-                          const Spacer(),
-                          Switch(
-                            value: _deliveryAvailable,
-                            onChanged: (value) {
-                              setState(() {
-                                _deliveryAvailable = value;
-                              });
-                            },
-                            activeTrackColor: const Color(0xFF06D6A0),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _deliveryInfoController,
+                            label: '배송 정보',
+                            hint: '예: 배송비 무료 (10만원 이상), 익일 배송',
+                            icon: Icons.info_outline,
+                            maxLines: 2,
                           ),
+                          const SizedBox(height: 24),
+                          _buildTextField(
+                            controller: _descriptionController,
+                            label: '업체 설명',
+                            hint: '예: 신선한 식자재를 공급하는 전문 유통업체입니다',
+                            icon: Icons.description_outlined,
+                            maxLines: 3,
+                          ),
+                          if (distributorProvider.state == DistributorState.error)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Text(
+                                distributorProvider.errorMessage ??
+                                    '유통업자 정보 등록에 실패했습니다',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _deliveryInfoController,
-                      label: '배송 정보',
-                      hint: '예: 배송비 무료 (10만원 이상), 익일 배송',
-                      icon: Icons.info_outline,
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _descriptionController,
-                      label: '업체 설명',
-                      hint: '예: 신선한 식자재를 공급하는 전문 유통업체입니다',
-                      icon: Icons.description,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _certificationsController,
-                      label: '인증 사항',
-                      hint: '예: HACCP,ISO22000',
-                      icon: Icons.verified,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _minOrderAmountController,
-                      label: '최소 주문 금액 (원)',
-                      hint: '예: 100000',
-                      icon: Icons.attach_money,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _operatingHoursController,
-                      label: '운영 시간',
-                      hint: '예: 09:00-18:00',
-                      icon: Icons.access_time,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _phoneNumberController,
-                      label: '전화번호',
-                      hint: '예: 010-9876-5432',
-                      icon: Icons.phone,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _emailController,
-                      label: '이메일',
-                      hint: '예: distributor1@example.com',
-                      icon: Icons.email,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _addressController,
-                      label: '주소',
-                      hint: '예: 서울시 송파구 올림픽로 456',
-                      icon: Icons.home,
-                    ),
-                    const SizedBox(height: 24),
-                    if (distributorProvider.state == DistributorState.error)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          distributorProvider.errorMessage ??
-                              '유통업자 정보 등록에 실패했습니다',
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ElevatedButton(
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  color: const Color(0xFF121212),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
                       onPressed:
                           distributorProvider.state == DistributorState.loading
                               ? null
                               : _handleSubmit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF6F61),
+                        backgroundColor: const Color(0xFFF26B5B),
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        elevation: 4,
+                        elevation: 8,
+                        shadowColor: const Color(0xFFF26B5B).withOpacity(0.3),
                       ),
                       child:
                           distributorProvider.state == DistributorState.loading
                               ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
+                                  height: 24,
+                                  width: 24,
                                   child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                                    strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                         Colors.white),
                                   ),
@@ -248,14 +270,15 @@ class _DistributorRegistrationPageState
                               : const Text(
                                   '유통업자 정보 등록',
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
                                   ),
                                 ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             );
           },
         ),
@@ -277,9 +300,9 @@ class _DistributorRegistrationPageState
         Text(
           label,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF3D405B),
+            color: Color(0xFFE1E2E2),
           ),
         ),
         const SizedBox(height: 8),
@@ -287,43 +310,67 @@ class _DistributorRegistrationPageState
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
+          style: const TextStyle(
+            color: Color(0xFFE1E2E2),
+            fontSize: 15,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(
-              color: Color(0xFFA9B4C2),
-              fontSize: 14,
+              color: Color(0xFFA9A9A9),
+              fontSize: 15,
             ),
-            prefixIcon: Icon(
-              icon,
-              color: const Color(0xFFA9B4C2),
-              size: 20,
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 12),
+              child: Icon(
+                icon,
+                color: const Color(0xFFA9A9A9),
+                size: 24,
+              ),
+            ),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 52,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFF1E1E1E),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFE5E7EB),
+                color: Color(0xFF3A3A3C),
                 width: 1,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFE5E7EB),
+                color: Color(0xFF3A3A3C),
                 width: 1,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFFF6F61),
+                color: Color(0xFFF26B5B),
+                width: 2,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(
+                color: Colors.red,
+                width: 1,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(
+                color: Colors.red,
                 width: 2,
               ),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: 16,
+              vertical: 12,
             ),
           ),
           validator: (value) {
