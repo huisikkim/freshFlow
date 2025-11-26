@@ -6,11 +6,11 @@ class ApiConstants {
 //static const String localBaseUrl = 'http://10.0.2.2:8080'; // Android 에뮬레이터용
    static const String localBaseUrl = 'http://localhost:8080';
   
-  // 프로덕션 URL
-  static const String productionBaseUrl = 'https://port-0-payflow-rm6l2llvxxefd7.sel5.cloudtype.app';
+  // 개발 URL
+  static const String devBaseUrl = 'https://port-0-payflow-rm6l2llvxxefd7.sel5.cloudtype.app';
   
   // 현재 사용할 Base URL
-  static String get baseUrl => isDevelopment ? localBaseUrl : productionBaseUrl;
+  static String get baseUrl => isDevelopment ? localBaseUrl : devBaseUrl;
   
   // API 엔드포인트
   static const String loginEndpoint = '/api/auth/login';
