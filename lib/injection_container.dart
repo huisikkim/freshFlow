@@ -8,6 +8,7 @@ import 'package:fresh_flow/data/datasources/matching_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/quote_request_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/comparison_remote_datasource.dart';
 import 'package:fresh_flow/data/datasources/catalog_remote_datasource.dart';
+import 'package:fresh_flow/data/datasources/cart_remote_datasource.dart';
 import 'package:fresh_flow/data/repositories/auth_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/store_repository_impl.dart';
 import 'package:fresh_flow/data/repositories/distributor_repository_impl.dart';
@@ -22,6 +23,8 @@ import 'package:fresh_flow/domain/repositories/matching_repository.dart';
 import 'package:fresh_flow/domain/repositories/quote_request_repository.dart';
 import 'package:fresh_flow/domain/repositories/comparison_repository.dart';
 import 'package:fresh_flow/domain/repositories/catalog_repository.dart';
+import 'package:fresh_flow/domain/repositories/cart_repository.dart';
+import 'package:fresh_flow/data/repositories/cart_repository_impl.dart';
 import 'package:fresh_flow/domain/usecases/login_usecase.dart';
 import 'package:fresh_flow/domain/usecases/signup_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_store_usecase.dart';
@@ -30,6 +33,7 @@ import 'package:fresh_flow/domain/usecases/get_recommendations_usecase.dart';
 import 'package:fresh_flow/domain/usecases/quote_request_usecases.dart';
 import 'package:fresh_flow/domain/usecases/comparison_usecases.dart';
 import 'package:fresh_flow/domain/usecases/catalog_usecases.dart';
+import 'package:fresh_flow/domain/usecases/cart_usecases.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/providers/store_provider.dart';
 import 'package:fresh_flow/presentation/providers/distributor_provider.dart';
@@ -37,6 +41,7 @@ import 'package:fresh_flow/presentation/providers/matching_provider.dart';
 import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
 import 'package:fresh_flow/presentation/providers/comparison_provider.dart';
 import 'package:fresh_flow/presentation/providers/catalog_provider.dart';
+import 'package:fresh_flow/presentation/providers/cart_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -85,6 +90,13 @@ class InjectionContainer {
   static late GetProductDetailUseCase _getProductDetailUseCase;
   static late CreateOrUpdateDeliveryInfoUseCase _createOrUpdateDeliveryInfoUseCase;
   static late GetProductDetailWithDeliveryUseCase _getProductDetailWithDeliveryUseCase;
+  static late CartRemoteDataSource _cartRemoteDataSource;
+  static late CartRepository _cartRepository;
+  static late AddToCartUseCase _addToCartUseCase;
+  static late GetCartUseCase _getCartUseCase;
+  static late UpdateCartItemQuantityUseCase _updateCartItemQuantityUseCase;
+  static late RemoveCartItemUseCase _removeCartItemUseCase;
+  static late ClearCartUseCase _clearCartUseCase;
 
   static Future<void> init() async {
     // External
@@ -101,6 +113,7 @@ class InjectionContainer {
         QuoteRequestRemoteDataSourceImpl(_httpClient);
     _comparisonRemoteDataSource = ComparisonRemoteDataSourceImpl(_httpClient);
     _catalogRemoteDataSource = CatalogRemoteDataSourceImpl(_httpClient);
+    _cartRemoteDataSource = CartRemoteDataSourceImpl(_httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -129,6 +142,10 @@ class InjectionContainer {
     );
     _catalogRepository = CatalogRepositoryImpl(
       remoteDataSource: _catalogRemoteDataSource,
+      authRepository: _authRepository,
+    );
+    _cartRepository = CartRepositoryImpl(
+      remoteDataSource: _cartRemoteDataSource,
       authRepository: _authRepository,
     );
 
@@ -174,6 +191,11 @@ class InjectionContainer {
     _getProductDetailUseCase = GetProductDetailUseCase(_catalogRepository);
     _createOrUpdateDeliveryInfoUseCase = CreateOrUpdateDeliveryInfoUseCase(_catalogRepository);
     _getProductDetailWithDeliveryUseCase = GetProductDetailWithDeliveryUseCase(_catalogRepository);
+    _addToCartUseCase = AddToCartUseCase(_cartRepository);
+    _getCartUseCase = GetCartUseCase(_cartRepository);
+    _updateCartItemQuantityUseCase = UpdateCartItemQuantityUseCase(_cartRepository);
+    _removeCartItemUseCase = RemoveCartItemUseCase(_cartRepository);
+    _clearCartUseCase = ClearCartUseCase(_cartRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -237,6 +259,16 @@ class InjectionContainer {
       getProductDetailUseCase: _getProductDetailUseCase,
       createOrUpdateDeliveryInfoUseCase: _createOrUpdateDeliveryInfoUseCase,
       getProductDetailWithDeliveryUseCase: _getProductDetailWithDeliveryUseCase,
+    );
+  }
+
+  static CartProvider getCartProvider() {
+    return CartProvider(
+      addToCartUseCase: _addToCartUseCase,
+      getCartUseCase: _getCartUseCase,
+      updateCartItemQuantityUseCase: _updateCartItemQuantityUseCase,
+      removeCartItemUseCase: _removeCartItemUseCase,
+      clearCartUseCase: _clearCartUseCase,
     );
   }
 }

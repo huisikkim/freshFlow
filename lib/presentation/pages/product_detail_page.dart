@@ -176,6 +176,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       // 배송 정보
                       if (product.deliveryInfo != null)
                         _buildDeliveryInfo(context, product.deliveryInfo!),
+                      
+                      const SizedBox(height: 80), // 하단 버튼 공간
                     ],
                   ),
                 ),
@@ -183,6 +185,146 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           );
         },
+      ),
+      bottomNavigationBar: Consumer<CatalogProvider>(
+        builder: (context, provider, child) {
+          final product = provider.currentProduct;
+          if (product == null) return const SizedBox.shrink();
+          
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: ElevatedButton.icon(
+                onPressed: product.isAvailable
+                    ? () => _showAddToCartDialog(context, product)
+                    : null,
+                icon: const Icon(Icons.shopping_cart),
+                label: Text(
+                  product.isAvailable ? '장바구니 담기' : '품절',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showAddToCartDialog(BuildContext context, Product product) {
+    int quantity = 1;
+    
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text('장바구니에 담기'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                product.productName,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: quantity > product.minOrderQuantity
+                        ? () => setState(() => quantity--)
+                        : null,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '$quantity ${product.unit}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    onPressed: quantity < product.maxOrderQuantity
+                        ? () => setState(() => quantity++)
+                        : null,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '최소 ${product.minOrderQuantity} ~ 최대 ${product.maxOrderQuantity} ${product.unit}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                // TODO: CartProvider를 사용하여 장바구니에 추가
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${product.productName} ${quantity}${product.unit}을(를) 장바구니에 담았습니다'),
+                    action: SnackBarAction(
+                      label: '보기',
+                      onPressed: () {
+                        // TODO: 장바구니 페이지로 이동
+                      },
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981),
+              ),
+              child: const Text('담기'),
+            ),
+          ],
+        ),
       ),
     );
   }

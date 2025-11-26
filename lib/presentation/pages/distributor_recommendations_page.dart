@@ -4,6 +4,7 @@ import 'package:fresh_flow/presentation/providers/matching_provider.dart';
 import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
 import 'package:fresh_flow/domain/entities/distributor_recommendation.dart';
 import 'package:fresh_flow/presentation/pages/distributor_comparison_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_catalog_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class DistributorRecommendationsPage extends StatefulWidget {
@@ -294,20 +295,48 @@ class _DistributorRecommendationsPageState
               ),
             ],
             const Divider(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                _showQuoteRequestDialog(context, recommendation);
-              },
-              icon: const Icon(Icons.request_quote, size: 20),
-              label: const Text('견적 요청하기'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6F61),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider(
+                            create: (_) => InjectionContainer.getCatalogProvider(),
+                            child: DistributorCatalogPage(
+                              distributorId: recommendation.distributorId,
+                              distributorName: recommendation.distributorName,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.inventory_2, size: 18),
+                    label: const Text('상품 보기'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF10B981),
+                      side: const BorderSide(color: Color(0xFF10B981)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      _showQuoteRequestDialog(context, recommendation);
+                    },
+                    icon: const Icon(Icons.request_quote, size: 18),
+                    label: const Text('견적 요청'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6F61),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             Row(
