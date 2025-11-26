@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/catalog_provider.dart';
@@ -20,12 +21,20 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
+  Timer? _snackBarTimer;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CatalogProvider>().loadProductDetailWithDelivery(widget.productId);
     });
+  }
+
+  @override
+  void dispose() {
+    _snackBarTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -358,39 +367,53 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       await cartProvider.addToCart(product.id, quantity);
       
       if (context.mounted) {
-        // 로딩 SnackBar 제거
-        scaffoldMessenger.removeCurrentSnackBar();
+        // 로딩 SnackBar 즉시 제거
+        scaffoldMessenger.clearSnackBars();
         
-        // 성공 메시지 표시
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text('${product.productName} ${quantity}${product.unit}을(를) 장바구니에 담았습니다'),
-            backgroundColor: const Color(0xFF10B981),
-            duration: const Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-            action: SnackBarAction(
-              label: '보기',
-              textColor: Colors.white,
-              onPressed: () {
-                scaffoldMessenger.hideCurrentSnackBar();
-                // 장바구니 페이지로 이동
-                if (product.distributorId != null && product.distributorName != null) {
-                  navigator.push(
-                    MaterialPageRoute(
-                      builder: (_) => ChangeNotifierProvider.value(
-                        value: cartProvider,
-                        child: CartPage(
-                          distributorId: product.distributorId!,
-                          distributorName: product.distributorName!,
+        // 잠시 대기 후 성공 메시지 표시
+        await Future.delayed(const Duration(milliseconds: 100));
+        
+        if (context.mounted) {
+          // 이전 타이머 취소
+          _snackBarTimer?.cancel();
+          
+          // 성공 메시지 표시
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text('${product.productName} ${quantity}${product.unit}을(를) 장바구니에 담았습니다'),
+              backgroundColor: const Color(0xFF10B981),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              action: SnackBarAction(
+                label: '보기',
+                textColor: Colors.white,
+                onPressed: () {
+                  _snackBarTimer?.cancel();
+                  scaffoldMessenger.hideCurrentSnackBar();
+                  // 장바구니 페이지로 이동
+                  if (product.distributorId != null && product.distributorName != null) {
+                    navigator.push(
+                      MaterialPageRoute(
+                        builder: (_) => ChangeNotifierProvider.value(
+                          value: cartProvider,
+                          child: CartPage(
+                            distributorId: product.distributorId!,
+                            distributorName: product.distributorName!,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-        );
+          );
+          
+          // Timer를 사용해서 정확히 3초 후에 SnackBar 제거
+          _snackBarTimer = Timer(const Duration(seconds: 3), () {
+            scaffoldMessenger.clearSnackBars();
+          });
+        }
       }
     } catch (e) {
       if (context.mounted) {
