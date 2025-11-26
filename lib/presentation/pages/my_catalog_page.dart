@@ -24,36 +24,68 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFF),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('내 상품 관리'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          '내 상품 관리',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1F2937),
         elevation: 0,
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_outlined),
             onPressed: () {
               context.read<CatalogProvider>().loadMyProducts();
             },
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ChangeNotifierProvider(
-                create: (_) => InjectionContainer.getCatalogProvider(),
-                child: const ProductFormPage(),
-              ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF10B981).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-          ).then((_) {
-            context.read<CatalogProvider>().loadMyProducts();
-          });
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('상품 등록'),
-        backgroundColor: const Color(0xFF06D6A0),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                  create: (_) => InjectionContainer.getCatalogProvider(),
+                  child: const ProductFormPage(),
+                ),
+              ),
+            ).then((_) {
+              context.read<CatalogProvider>().loadMyProducts();
+            });
+          },
+          icon: const Icon(Icons.add, size: 24),
+          label: const Text(
+            '상품 등록',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: const Color(0xFF10B981),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
       ),
       body: Consumer<CatalogProvider>(
         builder: (context, provider, child) {
@@ -145,11 +177,18 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
   }
 
   Widget _buildProductCard(Product product) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF7FF),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -157,6 +196,7 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Column(
@@ -165,9 +205,9 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       Text(
                         product.productName,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF3D405B),
+                          color: Color(0xFF1F2937),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -175,7 +215,7 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                         product.category,
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Color(0xFFA9B4C2),
+                          color: Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -188,49 +228,74 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                   ),
                   decoration: BoxDecoration(
                     color: product.isAvailable
-                        ? const Color(0xFF06D6A0).withOpacity(0.2)
-                        : Colors.red.withOpacity(0.2),
+                        ? const Color(0xFFD1FAE5)
+                        : const Color(0xFFFEE2E2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     product.isAvailable ? '판매중' : '품절',
                     style: TextStyle(
                       color: product.isAvailable
-                          ? const Color(0xFF06D6A0)
-                          : Colors.red,
-                      fontWeight: FontWeight.bold,
+                          ? const Color(0xFF059669)
+                          : const Color(0xFFDC2626),
+                      fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.attach_money, size: 16, color: Color(0xFFA9B4C2)),
-                const SizedBox(width: 4),
-                Text(
-                  '${_formatNumber(product.unitPrice)}원/${product.unit}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFFF6F61),
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      '\$',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6B7280),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _formatNumber(product.unitPrice),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFF87171),
+                      ),
+                    ),
+                    Text(
+                      '원/${product.unit}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6B7280),
+                      ),
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                const Icon(Icons.inventory, size: 16, color: Color(0xFFA9B4C2)),
-                const SizedBox(width: 4),
-                Text(
-                  '재고: ${product.stockQuantity}${product.unit}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF6B7280),
-                  ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.inventory_2_outlined,
+                      size: 16,
+                      color: Color(0xFF6B7280),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '재고: ${product.stockQuantity}${product.unit}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6B7280),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -251,16 +316,25 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                         }
                       }
                     },
-                    icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('재고 수정'),
+                    icon: const Icon(Icons.edit_outlined, size: 16),
+                    label: const Text(
+                      '재고 수정',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF06D6A0),
-                      side: const BorderSide(color: Color(0xFF06D6A0)),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      foregroundColor: const Color(0xFF34D399),
+                      side: const BorderSide(color: Color(0xFF34D399)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () async {
@@ -272,14 +346,25 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       }
                     },
                     icon: Icon(
-                      product.isAvailable ? Icons.visibility_off : Icons.visibility,
+                      product.isAvailable
+                          ? Icons.no_food_outlined
+                          : Icons.restaurant_outlined,
                       size: 16,
                     ),
-                    label: Text(product.isAvailable ? '품절 처리' : '판매 재개'),
+                    label: Text(
+                      product.isAvailable ? '품절 처리' : '판매 재개',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFFF6F61),
-                      side: const BorderSide(color: Color(0xFFFF6F61)),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      foregroundColor: const Color(0xFFF87171),
+                      side: const BorderSide(color: Color(0xFFF87171)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                     ),
                   ),
                 ),
