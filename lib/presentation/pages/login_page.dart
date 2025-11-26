@@ -97,29 +97,55 @@ class _LoginPageState extends State<LoginPage> {
                         
                         // Illustration placeholder
                         Container(
-                          height: 192,
+                          height: 160,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Center(
-                            child: Text(
-                              '🍅 🧀 🥑',
-                              style: TextStyle(fontSize: 80),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF6F61).withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.shopping_basket_outlined,
+                                    size: 48,
+                                    color: Color(0xFFFF6F61),
+                                  ),
+                                ),
+                                const SizedBox(width: 24),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF06D6A0).withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.eco_outlined,
+                                    size: 48,
+                                    color: Color(0xFF06D6A0),
+                                  ),
+                                ),
+                                const SizedBox(width: 24),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFFC857).withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.local_shipping_outlined,
+                                    size: 48,
+                                    color: Color(0xFFFFC857),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        
-                        // Welcome text
-                        const Text(
-                          'Welcome back!',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF3D405B),
-                            letterSpacing: -0.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 32),
                         
                         // Email/Username label
                         const Padding(

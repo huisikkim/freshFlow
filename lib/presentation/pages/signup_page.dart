@@ -94,29 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Logo and Title
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.eco,
-                              color: Color(0xFF06D6A0),
-                              size: 36,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'FreshFlow',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF3D405B),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Welcome text
+                        // Title
                         const Text(
                           '회원가입',
                           style: TextStyle(
@@ -127,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 32),
 
                         // User Type Selection
                         const Padding(
