@@ -565,115 +565,237 @@ class _DistributorRecommendationsPageState
 
     showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text('${recommendation.distributorName}에 견적 요청'),
-          content: SingleChildScrollView(
+        builder: (context, setState) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '요청 품목 선택',
-                  style: TextStyle(
+                // 타이틀
+                Text(
+                  '${recommendation.distributorName}에 견적 요청',
+                  style: const TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    color: Color(0xFF1F2937),
                   ),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  children: availableProducts.map((product) {
-                    final isSelected = selectedProducts.contains(product);
-                    return FilterChip(
-                      label: Text(product.trim()),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            selectedProducts.add(product.trim());
-                          } else {
-                            selectedProducts.remove(product.trim());
-                          }
-                        });
-                      },
-                      selectedColor: const Color(0xFFFF6F61).withOpacity(0.3),
-                      checkmarkColor: const Color(0xFFFF6F61),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  '추가 요청사항',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: messageController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    hintText: '예: 매주 월요일 오전 배송 가능한지 확인 부탁드립니다.',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                const SizedBox(height: 24),
+                
+                // 컨텐츠
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 요청 품목 선택
+                        const Text(
+                          '요청 품목 선택',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF374151),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: availableProducts.map((product) {
+                            final isSelected = selectedProducts.contains(product.trim());
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    selectedProducts.remove(product.trim());
+                                  } else {
+                                    selectedProducts.add(product.trim());
+                                  }
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFF373737)
+                                      : const Color(0xFFF3F4F6),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? const Color(0xFF373737)
+                                        : const Color(0xFFE5E7EB),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  product.trim(),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: isSelected
+                                        ? Colors.white
+                                        : const Color(0xFF6B7280),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 20),
+                        
+                        // 추가 요청사항
+                        const Text(
+                          '추가 요청사항',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF374151),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: messageController,
+                          maxLines: 4,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF1F2937),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '예: 매주 월요일 오전 배송 가능한지 확인 부탁드립니다.',
+                            hintStyle: const TextStyle(
+                              color: Color(0xFF9CA3AF),
+                              fontSize: 14,
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFF3F4F6),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE5E7EB),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE5E7EB),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF373737),
+                                width: 2,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(16),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                ),
+                const SizedBox(height: 24),
+                
+                // 버튼들
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFF373737),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                        ),
+                        child: const Text(
+                          '취소',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: selectedProducts.isEmpty
+                            ? null
+                            : () async {
+                                final quoteProvider =
+                                    InjectionContainer.getQuoteRequestProvider();
+                                await quoteProvider.createQuoteRequest(
+                                  distributorId: recommendation.distributorId,
+                                  requestedProducts: selectedProducts.join(','),
+                                  message: messageController.text.isEmpty
+                                      ? null
+                                      : messageController.text,
+                                );
+
+                                if (dialogContext.mounted) {
+                                  Navigator.pop(dialogContext);
+                                }
+
+                                if (context.mounted) {
+                                  if (quoteProvider.state == QuoteRequestState.success) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('견적 요청이 전송되었습니다'),
+                                        backgroundColor: Color(0xFF10B981),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  } else if (quoteProvider.state ==
+                                      QuoteRequestState.error) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(quoteProvider.errorMessage ??
+                                            '견적 요청 실패'),
+                                        backgroundColor: const Color(0xFFEF4444),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF373737),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: const Color(0xFFE5E7EB),
+                          disabledForegroundColor: const Color(0xFF9CA3AF),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                        ),
+                        child: const Text(
+                          '견적 요청',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('취소'),
-            ),
-            ElevatedButton(
-              onPressed: selectedProducts.isEmpty
-                  ? null
-                  : () async {
-                      final quoteProvider =
-                          InjectionContainer.getQuoteRequestProvider();
-                      await quoteProvider.createQuoteRequest(
-                        distributorId: recommendation.distributorId,
-                        requestedProducts: selectedProducts.join(','),
-                        message: messageController.text.isEmpty
-                            ? null
-                            : messageController.text,
-                      );
-
-                      if (dialogContext.mounted) {
-                        Navigator.pop(dialogContext);
-                      }
-
-                      if (context.mounted) {
-                        if (quoteProvider.state == QuoteRequestState.success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('견적 요청이 전송되었습니다'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        } else if (quoteProvider.state ==
-                            QuoteRequestState.error) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(quoteProvider.errorMessage ??
-                                  '견적 요청 실패'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6F61),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('견적 요청'),
-            ),
-          ],
         ),
       ),
     );
