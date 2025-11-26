@@ -30,7 +30,6 @@ class _DistributorRecommendationsPageState
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFF),
       appBar: AppBar(
-        title: const Text('맞춤 유통업체 추천'),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -166,139 +165,159 @@ class _DistributorRecommendationsPageState
   Widget _buildRecommendationCard(DistributorRecommendation recommendation) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
+      elevation: 1,
+      shadowColor: Colors.black.withOpacity(0.05),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 헤더: 업체명 + 점수
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
                     recommendation.distributorName,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF3D405B),
+                      color: Color(0xFF1F2937),
+                      height: 1.2,
                     ),
                   ),
                 ),
+                const SizedBox(width: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                    horizontal: 14,
+                    vertical: 7,
                   ),
                   decoration: BoxDecoration(
                     color: _getScoreColor(recommendation.totalScore),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
                     '${recommendation.totalScore.toStringAsFixed(1)}점',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 13,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
+            
+            // 매칭 이유 박스
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
-                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFFECFDF5),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
-                    Icons.lightbulb_outline,
+                    Icons.lightbulb,
                     color: Color(0xFF06D6A0),
                     size: 20,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       recommendation.matchReason,
                       style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF3D405B),
+                        fontSize: 13,
+                        color: Color(0xFF065F46),
+                        height: 1.4,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+            
+            // 점수 상세
             _buildScoreRow(
               '지역 매칭',
               recommendation.regionScore,
               Icons.location_on,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             _buildScoreRow(
               '품목 매칭',
               recommendation.productScore,
               Icons.inventory_2,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             _buildScoreRow(
               '배송 가능',
               recommendation.deliveryScore,
               Icons.local_shipping,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             _buildScoreRow(
               '인증',
               recommendation.certificationScore,
               Icons.verified,
             ),
-            const Divider(height: 24),
+            
+            const Divider(height: 32, thickness: 1),
+            
+            // 상세 정보
             _buildInfoRow(
               Icons.shopping_bag,
               '공급 품목',
               recommendation.supplyProducts,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             _buildInfoRow(
               Icons.map,
               '서비스 지역',
               recommendation.serviceRegions,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             if (recommendation.certifications != null &&
                 recommendation.certifications!.isNotEmpty)
-              _buildInfoRow(
-                Icons.verified_user,
-                '인증',
-                recommendation.certifications!,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _buildInfoRow(
+                  Icons.shield,
+                  '인증',
+                  recommendation.certifications!,
+                ),
               ),
-            const SizedBox(height: 8),
             _buildInfoRow(
-              Icons.attach_money,
+              Icons.payments,
               '최소 주문 금액',
               '${_formatNumber(recommendation.minOrderAmount)}원',
             ),
             if (recommendation.deliveryAvailable &&
                 recommendation.deliveryInfo != null &&
                 recommendation.deliveryInfo!.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               _buildInfoRow(
                 Icons.local_shipping,
                 '배송 정보',
                 recommendation.deliveryInfo!,
               ),
             ],
-            const Divider(height: 24),
+            
+            const SizedBox(height: 20),
+            
+            // 액션 버튼들
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton.icon(
+                  child: OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -312,61 +331,125 @@ class _DistributorRecommendationsPageState
                         ),
                       );
                     },
-                    icon: const Icon(Icons.inventory_2, size: 18),
-                    label: const Text('상품 보기'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF10B981),
-                      side: const BorderSide(color: Color(0xFF10B981)),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.shopping_cart, size: 18),
+                        SizedBox(width: 6),
+                        Text(
+                          '상품 보기',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton.icon(
+                  child: ElevatedButton(
                     onPressed: () {
                       _showQuoteRequestDialog(context, recommendation);
                     },
-                    icon: const Icon(Icons.request_quote, size: 18),
-                    label: const Text('견적 요청'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6F61),
+                      backgroundColor: const Color(0xFFFF6B6B),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.receipt_long, size: 18),
+                        SizedBox(width: 6),
+                        Text(
+                          '견적 요청',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton.icon(
+                  child: OutlinedButton(
                     onPressed: () {
                       // TODO: 전화 걸기
                     },
-                    icon: const Icon(Icons.phone, size: 18),
-                    label: Text(recommendation.phoneNumber),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF06D6A0),
-                      side: const BorderSide(color: Color(0xFF06D6A0)),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      foregroundColor: const Color(0xFF10B981),
+                      side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.call, size: 18),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            recommendation.phoneNumber,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: OutlinedButton.icon(
+                  child: OutlinedButton(
                     onPressed: () {
                       // TODO: 이메일 보내기
                     },
-                    icon: const Icon(Icons.email, size: 18),
-                    label: const Text('이메일'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFFF6F61),
-                      side: const BorderSide(color: Color(0xFFFF6F61)),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      foregroundColor: const Color(0xFFFF6B6B),
+                      side: const BorderSide(color: Color(0xFFFF6B6B), width: 1.5),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.mail, size: 18),
+                        SizedBox(width: 6),
+                        Text(
+                          '이메일',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -381,43 +464,46 @@ class _DistributorRecommendationsPageState
   Widget _buildScoreRow(String label, double score, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: const Color(0xFFA9B4C2)),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF3D405B),
+        Icon(icon, size: 20, color: const Color(0xFF9CA3AF)),
+        const SizedBox(width: 10),
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF6B7280),
+            ),
           ),
         ),
-        const Spacer(),
-        Container(
-          width: 100,
-          height: 8,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: score / 100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _getScoreColor(score),
-                borderRadius: BorderRadius.circular(4),
+        Expanded(
+          child: Container(
+            height: 8,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE5E7EB),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: score / 100,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _getScoreColor(score),
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         SizedBox(
-          width: 40,
+          width: 38,
           child: Text(
             '${score.toStringAsFixed(0)}점',
             style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF3D405B),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1F2937),
             ),
             textAlign: TextAlign.right,
           ),
@@ -430,19 +516,23 @@ class _DistributorRecommendationsPageState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: const Color(0xFFA9B4C2)),
+        Icon(icon, size: 18, color: const Color(0xFF9CA3AF)),
         const SizedBox(width: 8),
         Expanded(
-          child: RichText(
-            text: TextSpan(
+          child: Text.rich(
+            TextSpan(
               style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF3D405B),
+                fontSize: 13,
+                color: Color(0xFF6B7280),
+                height: 1.4,
               ),
               children: [
                 TextSpan(
                   text: '$label: ',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF4B5563),
+                  ),
                 ),
                 TextSpan(text: value),
               ],
@@ -454,9 +544,10 @@ class _DistributorRecommendationsPageState
   }
 
   Color _getScoreColor(double score) {
-    if (score >= 80) return const Color(0xFF06D6A0);
-    if (score >= 60) return const Color(0xFFFFB84D);
-    return const Color(0xFFFF6F61);
+    if (score >= 80) return const Color(0xFF10B981); // Green
+    if (score >= 60) return const Color(0xFFF59E0B); // Orange
+    if (score >= 40) return const Color(0xFFFF6B6B); // Red/Coral
+    return const Color(0xFF9CA3AF); // Gray
   }
 
   String _formatNumber(int number) {
