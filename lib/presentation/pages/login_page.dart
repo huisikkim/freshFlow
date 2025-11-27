@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
+import 'package:fresh_flow/presentation/providers/chat_provider.dart';
 import 'package:fresh_flow/presentation/pages/home_page.dart';
 import 'package:fresh_flow/presentation/pages/signup_page.dart';
 import 'package:fresh_flow/presentation/pages/debug_connection_page.dart';
@@ -57,10 +58,24 @@ class _LoginPageState extends State<LoginPage> {
             child: Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 if (authProvider.state == AuthState.authenticated) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const HomePage()),
-                    );
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    // WebSocket 연결
+                    final chatProvider = context.read<ChatProvider>();
+                    final accessToken = authProvider.user?.accessToken;
+                    if (accessToken != null) {
+                      try {
+                        await chatProvider.connectWebSocket(accessToken);
+                      } catch (e) {
+                        // WebSocket 연결 실패해도 로그인은 진행
+                        debugPrint('WebSocket connection failed: $e');
+                      }
+                    }
+                    
+                    if (context.mounted) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                      );
+                    }
                   });
                 }
 

@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InjectionContainer.getAuthProvider()),
         ChangeNotifierProvider(create: (_) => InjectionContainer.getCartProvider()),
         ChangeNotifierProvider(create: (_) => InjectionContainer.getOrderProvider()),
+        ChangeNotifierProvider(create: (_) => InjectionContainer.getChatProvider()),
       ],
       child: MaterialApp(
         title: 'Fresh Flow',

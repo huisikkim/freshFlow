@@ -204,8 +204,15 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => ChangeNotifierProvider(
-                create: (_) => InjectionContainer.getQuoteRequestProvider(),
+              builder: (_) => MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(
+                    create: (_) => InjectionContainer.getQuoteRequestProvider(),
+                  ),
+                  ChangeNotifierProvider(
+                    create: (_) => InjectionContainer.getChatProvider(),
+                  ),
+                ],
                 child: QuoteRequestDetailPage(
                   quoteRequest: request,
                   isDistributor: widget.isDistributor,
