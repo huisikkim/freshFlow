@@ -318,22 +318,18 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-              ),
+              color: const Color(0xFF007AFF),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF667eea).withOpacity(0.4),
+                  color: const Color(0xFF007AFF).withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: IconButton(
-              icon: const Icon(Icons.arrow_upward, size: 20),
+              icon: const Icon(Icons.send_rounded, size: 20),
               onPressed: _sendMessage,
               color: Colors.white,
               padding: EdgeInsets.zero,
