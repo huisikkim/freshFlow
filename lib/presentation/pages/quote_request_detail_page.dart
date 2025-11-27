@@ -23,11 +23,32 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFF),
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('견적 요청 상세'),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white.withOpacity(0.95),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 22),
+          onPressed: () => Navigator.pop(context),
+          color: const Color(0xFF1A1A1A),
+        ),
+        title: const Text(
+          '견적 요청 상세',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1A1A1A),
+            letterSpacing: -0.3,
+          ),
+        ),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Colors.grey.withOpacity(0.1),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -49,93 +70,110 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   }
 
   Widget _buildStatusCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: _getStatusColor(widget.quoteRequest.status),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                _getStatusText(widget.quoteRequest.status),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: _getStatusColor(widget.quoteRequest.status),
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 12),
-            Text(
-              widget.isDistributor
-                  ? widget.quoteRequest.storeName
-                  : widget.quoteRequest.distributorName,
+            child: Text(
+              _getStatusText(widget.quoteRequest.status),
               style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF3D405B),
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                letterSpacing: -0.2,
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            widget.isDistributor
+                ? widget.quoteRequest.storeName
+                : widget.quoteRequest.distributorName,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1A1A1A),
+              letterSpacing: -0.5,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildInfoCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '요청 정보',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF3D405B),
-              ),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '요청 정보',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1A1A1A),
+              letterSpacing: -0.3,
             ),
-            const Divider(height: 24),
+          ),
+          const SizedBox(height: 20),
+          _buildInfoRow(
+            Icons.inventory_2_outlined,
+            '요청 품목',
+            widget.quoteRequest.requestedProducts,
+          ),
+          if (widget.quoteRequest.message != null) ...[
+            const SizedBox(height: 20),
             _buildInfoRow(
-              Icons.inventory_2,
-              '요청 품목',
-              widget.quoteRequest.requestedProducts,
+              Icons.chat_bubble_outline,
+              '추가 요청사항',
+              widget.quoteRequest.message!,
             ),
-            if (widget.quoteRequest.message != null) ...[
-              const SizedBox(height: 12),
-              _buildInfoRow(
-                Icons.message,
-                '추가 요청사항',
-                widget.quoteRequest.message!,
-              ),
-            ],
-            const SizedBox(height: 12),
-            _buildInfoRow(
-              Icons.access_time,
-              '요청 시간',
-              _formatDateTime(widget.quoteRequest.requestedAt),
-            ),
-            if (widget.quoteRequest.estimatedAmount != null) ...[
-              const SizedBox(height: 12),
-              _buildInfoRow(
-                Icons.attach_money,
-                '예상 금액',
-                '${_formatNumber(widget.quoteRequest.estimatedAmount!)}원',
-                valueColor: const Color(0xFF06D6A0),
-              ),
-            ],
           ],
-        ),
+          const SizedBox(height: 20),
+          _buildInfoRow(
+            Icons.schedule_outlined,
+            '요청 시간',
+            _formatDateTime(widget.quoteRequest.requestedAt),
+          ),
+          if (widget.quoteRequest.estimatedAmount != null) ...[
+            const SizedBox(height: 20),
+            _buildInfoRow(
+              Icons.attach_money,
+              '예상 금액',
+              '${_formatNumber(widget.quoteRequest.estimatedAmount!)}원',
+              valueColor: const Color(0xFF06D6A0),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -215,16 +253,27 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   }
 
   Widget _buildChatButton() {
-    return ElevatedButton.icon(
-      onPressed: _openChat,
-      icon: const Icon(Icons.chat_bubble_outline),
-      label: Text(widget.isDistributor ? '매장과 채팅하기' : '유통업체와 채팅하기'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF4A90E2),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _openChat,
+        icon: const Icon(Icons.chat_bubble_outline, size: 20),
+        label: Text(
+          widget.isDistributor ? '매장과 채팅하기' : '유통업체와 채팅하기',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.3,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF4f46e5),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
         ),
       ),
     );
@@ -265,16 +314,27 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   }
 
   Widget _buildCancelButton() {
-    return OutlinedButton.icon(
-      onPressed: _handleCancel,
-      icon: const Icon(Icons.cancel),
-      label: const Text('견적 요청 취소'),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.red,
-        side: const BorderSide(color: Colors.red),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _handleCancel,
+        icon: const Icon(Icons.cancel_outlined, size: 20),
+        label: const Text(
+          '견적 요청 취소',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.3,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFFEF4444),
+          side: BorderSide.none,
+          backgroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -507,8 +567,8 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: const Color(0xFFA9B4C2)),
-        const SizedBox(width: 12),
+        Icon(icon, size: 24, color: const Color(0xFF6B7280)),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,17 +576,19 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
               Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFA9B4C2),
+                  fontSize: 13,
+                  color: Color(0xFF6B7280),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
                 value,
                 style: TextStyle(
                   fontSize: 15,
-                  color: valueColor ?? const Color(0xFF3D405B),
+                  color: valueColor ?? const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.w500,
+                  height: 1.4,
                 ),
               ),
             ],
@@ -554,15 +616,15 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'PENDING':
-        return Colors.orange;
+        return const Color(0xFFF59E0B);
       case 'ACCEPTED':
-        return Colors.green;
+        return const Color(0xFF10B981);
       case 'REJECTED':
-        return Colors.red;
+        return const Color(0xFFEF4444);
       case 'COMPLETED':
-        return Colors.blue;
+        return const Color(0xFF3B82F6);
       default:
-        return Colors.grey;
+        return const Color(0xFF6B7280);
     }
   }
 
