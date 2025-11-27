@@ -23,6 +23,13 @@ abstract class OrderRemoteDataSource {
   Future<OrderModel> getOrderById(String token, String storeId, String orderId);
 
   Future<OrderModel> cancelOrder(String token, String storeId, String orderId);
+
+  Future<OrderModel> confirmPayment({
+    required String token,
+    required String orderId,
+    required String paymentKey,
+    required int amount,
+  });
 }
 
 class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
@@ -288,6 +295,59 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
       throw ServerException(message: errorMessage);
     } else {
       throw ServerException(message: 'Failed to cancel order');
+    }
+  }
+
+  @override
+  Future<OrderModel> confirmPayment({
+    required String token,
+    required String orderId,
+    required String paymentKey,
+    required int amount,
+  }) async {
+    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.paymentConfirmEndpoint(orderId)}');
+    
+    final body = {
+      'paymentKey': paymentKey,
+      'orderId': orderId,
+      'amount': amount,
+    };
+
+    print('💳 결제 승인 요청');
+    print('URL: $uri');
+    print('Body: ${json.encode(body)}');
+
+    final response = await client.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(body),
+    );
+
+    print('📥 응답 상태 코드: ${response.statusCode}');
+    print('📥 응답 본문: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body.isEmpty) {
+        throw ServerException(message: '서버가 빈 응답을 반환했습니다');
+      }
+      final jsonResponse = json.decode(response.body);
+      return OrderModel.fromJson(jsonResponse);
+    } else if (response.statusCode == 401) {
+      throw UnauthorizedException();
+    } else {
+      String errorMessage = 'Failed to confirm payment';
+      if (response.body.isNotEmpty) {
+        try {
+          final errorJson = json.decode(response.body);
+          errorMessage = errorJson['message'] ?? errorJson['error'] ?? errorMessage;
+        } catch (e) {
+          errorMessage = '$errorMessage (${response.statusCode}): ${response.body}';
+        }
+      }
+      throw ServerException(message: errorMessage);
     }
   }
 }

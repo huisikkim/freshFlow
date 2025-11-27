@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fresh_flow/domain/entities/cart.dart';
 import 'package:fresh_flow/presentation/providers/order_provider.dart';
 import 'package:fresh_flow/presentation/providers/cart_provider.dart';
+import 'package:fresh_flow/presentation/pages/toss_payment_page.dart';
 import 'package:intl/intl.dart';
 
 class OrderConfirmationPage extends StatefulWidget {
@@ -512,9 +513,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
       ),
     );
 
-    // 주문 생성 API 호출
-    // Cart에서 실제 distributorId 사용 (widget.distributorId는 유통업체 이름일 수 있음)
-    // 장바구니 아이템을 서버 형식으로 변환
+    // 1단계: 주문 생성 API 호출
     final items = widget.cart.items.map((item) => {
       'productId': item.productId,
       'quantity': item.quantity,
@@ -522,7 +521,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
 
     print('📦 주문 아이템 전송: $items');
 
-    final success = await orderProvider.createOrder(
+    final orderSuccess = await orderProvider.createOrder(
       distributorId: widget.cart.distributorId,
       deliveryAddress: _deliveryAddress,
       deliveryPhone: _deliveryPhone,
@@ -536,74 +535,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     // 로딩 다이얼로그 닫기
     Navigator.pop(context);
 
-    if (success) {
-      // 주문 성공 시 장바구니 비우기
-      await cartProvider.clearCart(widget.distributorId);
-
-      if (!mounted) return;
-
-      // 성공 다이얼로그 표시
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFD1FAE5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check,
-                  color: Color(0xFF10B981),
-                  size: 48,
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                '주문이 완료되었습니다!',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '유통업체에서 주문을 확인 중입니다.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF6B7280),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // 홈으로 돌아가기
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF10B981),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: const Text('확인'),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // 실패 다이얼로그 표시
+    if (!orderSuccess) {
+      // 주문 생성 실패
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -622,6 +555,209 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
           ],
         ),
       );
+      return;
+    }
+
+    // 2단계: 주문 생성 성공 - 결제 진행
+    final createdOrder = orderProvider.currentOrder;
+    if (createdOrder == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('오류'),
+          content: const Text('주문 정보를 가져올 수 없습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    print('✅ 주문 생성 완료 - orderId: ${createdOrder.id}');
+
+    // 3단계: 토스페이 결제 페이지로 이동
+    final paymentResult = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute(
+        builder: (_) => TossPaymentPage(
+          orderId: 'ORDER-${createdOrder.id}', // 토스페이먼츠 형식: 6자 이상
+          orderName: _generateOrderName(),
+          amount: widget.cart.totalAmount,
+          customerEmail: _deliveryPhone, // 이메일 대신 전화번호 사용
+          customerName: '가게사장님', // 실제 사용자 이름으로 변경 가능
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    // 4단계: 결제 결과 처리
+    if (paymentResult == null) {
+      // 사용자가 뒤로가기로 취소
+      print('⚠️ 결제 취소됨');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('결제 취소'),
+          content: const Text('결제가 취소되었습니다.\n주문은 생성되었으나 결제가 완료되지 않았습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (paymentResult['success'] == true) {
+      // 결제 성공 - 승인 API 호출
+      print('💳 결제 성공 - 승인 진행');
+      
+      // 로딩 다이얼로그 표시
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      // paymentResult['orderId']는 'ORDER-6' 형식이므로 숫자만 추출
+      final orderIdFromPayment = paymentResult['orderId'].toString().replaceFirst('ORDER-', '');
+      
+      final confirmSuccess = await orderProvider.confirmPayment(
+        orderId: orderIdFromPayment, // 백엔드는 숫자 ID를 기대
+        paymentKey: paymentResult['paymentKey'],
+        amount: paymentResult['amount'],
+      );
+
+      if (!mounted) return;
+
+      // 로딩 다이얼로그 닫기
+      Navigator.pop(context);
+
+      if (confirmSuccess) {
+        // 결제 승인 성공 - 장바구니 비우기
+        await cartProvider.clearCart(widget.distributorId);
+
+        if (!mounted) return;
+
+        // 성공 다이얼로그 표시
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFD1FAE5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check,
+                    color: Color(0xFF10B981),
+                    size: 48,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  '결제 및 주문이 완료되었습니다!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '유통업체에서 주문을 확인 중입니다.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF6B7280),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actions: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // 홈으로 돌아가기
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // 결제 승인 실패
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text('결제 승인 실패'),
+            content: Text(
+              orderProvider.errorMessage ?? '결제 승인 중 오류가 발생했습니다.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('확인'),
+              ),
+            ],
+          ),
+        );
+      }
+    } else {
+      // 결제 실패
+      print('❌ 결제 실패: ${paymentResult['message']}');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text('결제 실패'),
+          content: Text(paymentResult['message'] ?? '결제에 실패했습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  String _generateOrderName() {
+    if (widget.cart.items.isEmpty) return '주문';
+    
+    final firstItem = widget.cart.items.first;
+    if (widget.cart.items.length == 1) {
+      return firstItem.productName;
+    } else {
+      return '${firstItem.productName} 외 ${widget.cart.items.length - 1}건';
     }
   }
 }

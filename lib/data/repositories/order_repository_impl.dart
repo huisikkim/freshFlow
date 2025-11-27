@@ -164,4 +164,42 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(ServerFailure(message: 'Unexpected error occurred'));
     }
   }
+
+  @override
+  Future<Either<Failure, entities.Order>> confirmPayment({
+    required String orderId,
+    required String paymentKey,
+    required int amount,
+  }) async {
+    try {
+      final user = await authRepository.getCurrentUser();
+      if (user == null) {
+        return Left(UnauthorizedFailure());
+      }
+
+      print('💳 결제 승인 시작');
+      print('  - orderId: $orderId');
+      print('  - paymentKey: $paymentKey');
+      print('  - amount: $amount');
+
+      final order = await remoteDataSource.confirmPayment(
+        token: user.accessToken,
+        orderId: orderId,
+        paymentKey: paymentKey,
+        amount: amount,
+      );
+      
+      print('✅ 결제 승인 완료');
+      return Right(order);
+    } on UnauthorizedException {
+      print('❌ 인증 오류');
+      return Left(UnauthorizedFailure());
+    } on ServerException catch (e) {
+      print('❌ 서버 예외: ${e.message}');
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      print('❌ 예상치 못한 오류: $e');
+      return Left(ServerFailure(message: 'Unexpected error occurred: ${e.toString()}'));
+    }
+  }
 }

@@ -66,3 +66,21 @@ class CancelOrderUseCase {
     return await repository.cancelOrder(orderId);
   }
 }
+
+class ConfirmPaymentUseCase {
+  final OrderRepository repository;
+
+  ConfirmPaymentUseCase(this.repository);
+
+  Future<Either<Failure, entities.Order>> call({
+    required String orderId,
+    required String paymentKey,
+    required int amount,
+  }) async {
+    return await repository.confirmPayment(
+      orderId: orderId,
+      paymentKey: paymentKey,
+      amount: amount,
+    );
+  }
+}

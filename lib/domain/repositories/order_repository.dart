@@ -19,4 +19,10 @@ abstract class OrderRepository {
   Future<Either<Failure, entities.Order>> getOrderById(String orderId);
 
   Future<Either<Failure, entities.Order>> cancelOrder(String orderId);
+
+  Future<Either<Failure, entities.Order>> confirmPayment({
+    required String orderId,
+    required String paymentKey,
+    required int amount,
+  });
 }

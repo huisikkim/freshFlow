@@ -109,6 +109,7 @@ class InjectionContainer {
   static late GetDistributorOrdersUseCase _getDistributorOrdersUseCase;
   static late GetOrderByIdUseCase _getOrderByIdUseCase;
   static late CancelOrderUseCase _cancelOrderUseCase;
+  static late ConfirmPaymentUseCase _confirmPaymentUseCase;
 
   static Future<void> init() async {
     // External
@@ -218,6 +219,7 @@ class InjectionContainer {
     _getDistributorOrdersUseCase = GetDistributorOrdersUseCase(_orderRepository);
     _getOrderByIdUseCase = GetOrderByIdUseCase(_orderRepository);
     _cancelOrderUseCase = CancelOrderUseCase(_orderRepository);
+    _confirmPaymentUseCase = ConfirmPaymentUseCase(_orderRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -301,6 +303,7 @@ class InjectionContainer {
       getDistributorOrdersUseCase: _getDistributorOrdersUseCase,
       getOrderByIdUseCase: _getOrderByIdUseCase,
       cancelOrderUseCase: _cancelOrderUseCase,
+      confirmPaymentUseCase: _confirmPaymentUseCase,
     );
   }
 }

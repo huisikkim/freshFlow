@@ -1,6 +1,6 @@
 class ApiConstants {
   // 개발 환경 설정
-  static const bool isDevelopment = true; // 로컬 개발시 true, 배포시 false로 변경
+  static const bool isDevelopment = false; // 로컬 개발시 true, 배포시 false로 변경
   
   // 로컬 개발 URL (Android 에뮬레이터: 10.0.2.2, iOS 시뮬레이터: localhost)
 //static const String localBaseUrl = 'http://10.0.2.2:8080'; // Android 에뮬레이터용
@@ -30,4 +30,10 @@ class ApiConstants {
       '/api/matching/compare/best-by-category';
   static const String catalogProductsEndpoint = '/api/catalog/products';
   static const String catalogMyProductsEndpoint = '/api/catalog/my-products';
+  
+  // 결제 관련 엔드포인트
+  static String paymentConfirmEndpoint(String orderId) => '/api/orders/$orderId/payment/confirm';
+  
+  // 토스페이먼츠 클라이언트 키
+  static const String tossPaymentsClientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
 }

@@ -10,6 +10,7 @@ class OrderProvider with ChangeNotifier {
   final GetDistributorOrdersUseCase getDistributorOrdersUseCase;
   final GetOrderByIdUseCase getOrderByIdUseCase;
   final CancelOrderUseCase cancelOrderUseCase;
+  final ConfirmPaymentUseCase confirmPaymentUseCase;
 
   OrderState _state = OrderState.initial;
   String? _errorMessage;
@@ -27,6 +28,7 @@ class OrderProvider with ChangeNotifier {
     required this.getDistributorOrdersUseCase,
     required this.getOrderByIdUseCase,
     required this.cancelOrderUseCase,
+    required this.confirmPaymentUseCase,
   });
 
   Future<bool> createOrder({
@@ -151,6 +153,37 @@ class OrderProvider with ChangeNotifier {
         if (index != -1) {
           _orders[index] = order;
         }
+        notifyListeners();
+        return true;
+      },
+    );
+  }
+
+  Future<bool> confirmPayment({
+    required String orderId,
+    required String paymentKey,
+    required int amount,
+  }) async {
+    _state = OrderState.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    final result = await confirmPaymentUseCase(
+      orderId: orderId,
+      paymentKey: paymentKey,
+      amount: amount,
+    );
+
+    return result.fold(
+      (failure) {
+        _state = OrderState.error;
+        _errorMessage = failure.message;
+        notifyListeners();
+        return false;
+      },
+      (order) {
+        _state = OrderState.loaded;
+        _currentOrder = order;
         notifyListeners();
         return true;
       },
