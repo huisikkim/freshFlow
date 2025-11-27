@@ -84,3 +84,13 @@ class ConfirmPaymentUseCase {
     );
   }
 }
+
+class ConfirmOrderUseCase {
+  final OrderRepository repository;
+
+  ConfirmOrderUseCase(this.repository);
+
+  Future<Either<Failure, entities.Order>> call(String orderId) async {
+    return await repository.confirmOrder(orderId);
+  }
+}

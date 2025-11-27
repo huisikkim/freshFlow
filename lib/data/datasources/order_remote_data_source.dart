@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:fresh_flow/core/constants/api_constants.dart';
 import 'package:fresh_flow/core/errors/exceptions.dart';
 import 'package:fresh_flow/data/models/order_model.dart';
+import 'package:fresh_flow/domain/entities/order.dart';
 
 abstract class OrderRemoteDataSource {
   Future<OrderModel> createOrder({
@@ -29,6 +30,11 @@ abstract class OrderRemoteDataSource {
     required String orderId,
     required String paymentKey,
     required int amount,
+  });
+
+  Future<OrderModel> confirmOrder({
+    required String token,
+    required String orderId,
   });
 }
 
@@ -305,7 +311,8 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
     required String paymentKey,
     required int amount,
   }) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.paymentConfirmEndpoint(orderId)}');
+    // 인증 불필요 (paymentKey가 인증 역할)
+    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.paymentConfirmEndpoint}');
     
     final body = {
       'paymentKey': paymentKey,
@@ -321,7 +328,6 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
       uri,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': 'Bearer $token',
       },
       body: json.encode(body),
     );
@@ -333,12 +339,76 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
       if (response.body.isEmpty) {
         throw ServerException(message: '서버가 빈 응답을 반환했습니다');
       }
-      final jsonResponse = json.decode(response.body);
-      return OrderModel.fromJson(jsonResponse);
+      
+      final paymentResponse = json.decode(response.body);
+      print('✅ 결제 승인 성공: ${paymentResponse['status']}');
+      print('✅ 결제 방법: ${paymentResponse['method']}');
+      print('✅ 승인 시간: ${paymentResponse['approvedAt']}');
+      
+      // 결제 승인 성공 - 간단한 주문 정보 반환 (UI에서 성공 처리용)
+      return OrderModel(
+        id: orderId,
+        storeId: '',
+        distributorId: '',
+        distributorName: '',
+        items: [],
+        totalAmount: amount,
+        deliveryAddress: '',
+        deliveryPhone: '',
+        deliveryRequest: null,
+        desiredDeliveryDate: null,
+        status: OrderStatus.confirmed,
+        createdAt: DateTime.now(),
+        updatedAt: null,
+      );
     } else if (response.statusCode == 401) {
       throw UnauthorizedException();
     } else {
       String errorMessage = 'Failed to confirm payment';
+      if (response.body.isNotEmpty) {
+        try {
+          final errorJson = json.decode(response.body);
+          errorMessage = errorJson['message'] ?? errorJson['error'] ?? errorMessage;
+        } catch (e) {
+          errorMessage = '$errorMessage (${response.statusCode}): ${response.body}';
+        }
+      }
+      throw ServerException(message: errorMessage);
+    }
+  }
+
+  @override
+  Future<OrderModel> confirmOrder({
+    required String token,
+    required String orderId,
+  }) async {
+    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.orderConfirmEndpoint(orderId)}');
+
+    print('✅ 주문 확정 요청');
+    print('URL: $uri');
+
+    final response = await client.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('📥 응답 상태 코드: ${response.statusCode}');
+    print('📥 응답 본문: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body.isEmpty) {
+        throw ServerException(message: '서버가 빈 응답을 반환했습니다');
+      }
+      return OrderModel.fromJson(json.decode(response.body));
+    } else if (response.statusCode == 401) {
+      throw UnauthorizedException();
+    } else if (response.statusCode == 404) {
+      throw NotFoundException(message: 'Order not found');
+    } else {
+      String errorMessage = 'Failed to confirm order';
       if (response.body.isNotEmpty) {
         try {
           final errorJson = json.decode(response.body);

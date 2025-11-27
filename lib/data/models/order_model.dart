@@ -19,7 +19,7 @@ class OrderModel extends Order {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-      id: json['id'].toString(),  // int를 String으로 변환
+      id: json['orderNumber'] as String,  // orderNumber 필드 사용 (ORD-20251127-035844-153)
       storeId: json['storeId'] as String,
       distributorId: json['distributorId'] as String,
       distributorName: json['distributorName'] as String? ?? json['distributorId'] as String,  // 없으면 distributorId 사용

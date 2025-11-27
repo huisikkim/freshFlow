@@ -25,4 +25,6 @@ abstract class OrderRepository {
     required String paymentKey,
     required int amount,
   });
+
+  Future<Either<Failure, entities.Order>> confirmOrder(String orderId);
 }

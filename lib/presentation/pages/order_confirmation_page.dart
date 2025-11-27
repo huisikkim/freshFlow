@@ -578,12 +578,27 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     }
 
     print('✅ 주문 생성 완료 - orderId: ${createdOrder.id}');
+    print('📊 orderId 길이: ${createdOrder.id.length}');
+    print('📊 orderId 바이트: ${createdOrder.id.codeUnits}');
+    
+    // 백엔드 orderId를 토스페이먼츠 규칙에 맞게 변환
+    // 한글이나 특수문자를 제거하고 영문, 숫자, -, _ 만 남김
+    String sanitizedOrderId = createdOrder.id
+        .replaceAll(RegExp(r'[^a-zA-Z0-9\-_]'), '-')
+        .replaceAll(RegExp(r'-+'), '-'); // 연속된 - 를 하나로
+    
+    // 6자 미만이면 패딩 추가
+    if (sanitizedOrderId.length < 6) {
+      sanitizedOrderId = 'ORDER-$sanitizedOrderId';
+    }
+    
+    print('🔄 변환된 orderId: $sanitizedOrderId');
 
     // 3단계: 토스페이 결제 페이지로 이동
     final paymentResult = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
         builder: (_) => TossPaymentPage(
-          orderId: 'ORDER-${createdOrder.id}', // 토스페이먼츠 형식: 6자 이상
+          orderId: sanitizedOrderId, // 토스페이먼츠 규칙에 맞게 변환된 orderId
           orderName: _generateOrderName(),
           amount: widget.cart.totalAmount,
           customerEmail: _deliveryPhone, // 이메일 대신 전화번호 사용
@@ -627,11 +642,12 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
         ),
       );
 
-      // paymentResult['orderId']는 'ORDER-6' 형식이므로 숫자만 추출
-      final orderIdFromPayment = paymentResult['orderId'].toString().replaceFirst('ORDER-', '');
+      // 결제 승인 시에는 백엔드 원본 orderId 사용
+      print('💳 결제 승인 요청 - 백엔드 orderId: ${createdOrder.id}');
+      print('💳 토스페이먼츠 orderId: ${paymentResult['orderId']}');
       
       final confirmSuccess = await orderProvider.confirmPayment(
-        orderId: orderIdFromPayment, // 백엔드는 숫자 ID를 기대
+        orderId: createdOrder.id, // 백엔드 원본 orderId 사용
         paymentKey: paymentResult['paymentKey'],
         amount: paymentResult['amount'],
       );
@@ -642,7 +658,37 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
       Navigator.pop(context);
 
       if (confirmSuccess) {
-        // 결제 승인 성공 - 장바구니 비우기
+        // 결제 승인 성공 - 주문 확정 API 호출
+        print('✅ 결제 승인 완료 - 주문 확정 진행');
+        
+        final orderConfirmSuccess = await orderProvider.confirmOrder(createdOrder.id);
+        
+        if (!mounted) return;
+        
+        if (!orderConfirmSuccess) {
+          // 주문 확정 실패 (결제는 완료됨)
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('주문 확정 실패'),
+              content: Text('결제는 완료되었으나 주문 확정에 실패했습니다.\n${orderProvider.errorMessage ?? "알 수 없는 오류"}'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+        
+        print('✅ 주문 확정 완료');
+        
+        // 장바구니 비우기
         await cartProvider.clearCart(widget.distributorId);
 
         if (!mounted) return;
