@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../domain/entities/chat_room.dart';
-import '../../domain/repositories/chat_repository.dart';
 import '../../domain/repositories/websocket_repository.dart';
 import '../../domain/usecases/create_or_get_chat_room.dart';
 import '../../domain/usecases/get_chat_rooms.dart';
@@ -163,13 +162,28 @@ class ChatProvider with ChangeNotifier {
   }
 
   /// 채팅방 입장 (구독 + 읽음 처리)
-  Future<void> enterRoom(String roomId) async {
+  Future<void> enterRoom(String roomId, String accessToken) async {
+    // WebSocket이 연결되지 않았으면 연결 시도
+    if (!_isConnected) {
+      try {
+        await connectWebSocket(accessToken);
+      } catch (e) {
+        _error = 'WebSocket 연결 실패: ${e.toString()}';
+        notifyListeners();
+      }
+    }
+
     if (_isConnected) {
       // WebSocket 구독
-      webSocketRepository.subscribe(roomId, (message) {
-        _messages.add(message);
+      try {
+        webSocketRepository.subscribe(roomId, (message) {
+          _messages.add(message);
+          notifyListeners();
+        });
+      } catch (e) {
+        _error = 'WebSocket 구독 실패: ${e.toString()}';
         notifyListeners();
-      });
+      }
     }
 
     // 읽음 처리
@@ -195,6 +209,13 @@ class ChatProvider with ChangeNotifier {
     String messageType = 'TEXT',
     String? metadata,
   }) async {
+    // WebSocket 연결 확인
+    if (!_isConnected) {
+      _error = 'WebSocket이 연결되지 않았습니다. 잠시 후 다시 시도해주세요.';
+      notifyListeners();
+      return;
+    }
+
     final result = await sendMessage(
       roomId: roomId,
       content: content,

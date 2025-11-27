@@ -30,8 +30,8 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
     final completer = Completer<void>();
 
     _stompClient = StompClient(
-      config: StompConfig(
-        url: '${ApiConstants.wsUrl}/ws/chat',
+      config: StompConfig.sockJS(
+        url: '${ApiConstants.baseUrl}/ws/chat',
         onConnect: (StompFrame frame) {
           _connectionStateController.add(true);
           if (!completer.isCompleted) {

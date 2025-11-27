@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../../domain/entities/chat_message.dart';
 import '../../../domain/entities/chat_room.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../widgets/chat/message_bubble.dart';
 
 /// 채팅방 페이지
@@ -27,10 +26,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<ChatProvider>();
-      provider.loadMessages(widget.room.roomId, refresh: true);
-      provider.enterRoom(widget.room.roomId);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final chatProvider = context.read<ChatProvider>();
+      final authProvider = context.read<AuthProvider>();
+      final accessToken = authProvider.user?.accessToken ?? '';
+      
+      chatProvider.loadMessages(widget.room.roomId, refresh: true);
+      await chatProvider.enterRoom(widget.room.roomId, accessToken);
 
       // 스크롤 리스너 (무한 스크롤)
       _scrollController.addListener(_onScroll);
@@ -63,7 +65,23 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(displayName),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(displayName),
+            Consumer<ChatProvider>(
+              builder: (context, provider, child) {
+                return Text(
+                  provider.isConnected ? '온라인' : '오프라인',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: provider.isConnected ? Colors.green : Colors.grey,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         elevation: 0,
       ),
       body: Column(
@@ -187,15 +205,39 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     );
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    context.read<ChatProvider>().sendTextMessage(
-          roomId: widget.room.roomId,
-          content: text,
-        );
+    final chatProvider = context.read<ChatProvider>();
+    
+    await chatProvider.sendTextMessage(
+      roomId: widget.room.roomId,
+      content: text,
+    );
 
-    _messageController.clear();
+    // 에러가 있으면 표시
+    if (chatProvider.error != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(chatProvider.error!),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: '재연결',
+              textColor: Colors.white,
+              onPressed: () async {
+                final authProvider = context.read<AuthProvider>();
+                final accessToken = authProvider.user?.accessToken ?? '';
+                await chatProvider.connectWebSocket(accessToken);
+              },
+            ),
+          ),
+        );
+        chatProvider.clearError();
+      }
+    } else {
+      _messageController.clear();
+    }
   }
 }
