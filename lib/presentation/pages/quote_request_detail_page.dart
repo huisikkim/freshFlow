@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/quote_request_provider.dart';
+import 'package:fresh_flow/presentation/providers/chat_provider.dart';
 import 'package:fresh_flow/domain/entities/quote_request.dart';
+import 'package:fresh_flow/presentation/pages/chat/chat_room_page.dart';
 
 class QuoteRequestDetailPage extends StatefulWidget {
   final QuoteRequest quoteRequest;
@@ -194,17 +196,38 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   Widget _buildActionButtons() {
     final status = widget.quoteRequest.status;
 
-    if (widget.isDistributor && status == 'PENDING') {
-      return _buildDistributorActions();
-    } else if (!widget.isDistributor) {
-      if (status == 'PENDING') {
-        return _buildCancelButton();
-      } else if (status == 'ACCEPTED') {
-        return _buildCompleteButton();
-      }
-    }
+    return Column(
+      children: [
+        // 채팅하기 버튼 (항상 표시)
+        _buildChatButton(),
+        const SizedBox(height: 8),
+        // 상태별 액션 버튼
+        if (widget.isDistributor && status == 'PENDING')
+          _buildDistributorActions()
+        else if (!widget.isDistributor) ...[
+          if (status == 'PENDING')
+            _buildCancelButton()
+          else if (status == 'ACCEPTED')
+            _buildCompleteButton(),
+        ],
+      ],
+    );
+  }
 
-    return const SizedBox.shrink();
+  Widget _buildChatButton() {
+    return ElevatedButton.icon(
+      onPressed: _openChat,
+      icon: const Icon(Icons.chat_bubble_outline),
+      label: Text(widget.isDistributor ? '매장과 채팅하기' : '유통업체와 채팅하기'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF4A90E2),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
   }
 
   Widget _buildDistributorActions() {
@@ -552,5 +575,46 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
           (Match m) => '${m[1]},',
         );
+  }
+
+  void _openChat() async {
+    final chatProvider = context.read<ChatProvider>();
+
+    // 로딩 표시
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    // 채팅방 생성 또는 조회
+    final room = await chatProvider.createOrGetRoom(
+      storeId: widget.quoteRequest.storeId,
+      distributorId: widget.quoteRequest.distributorId,
+    );
+
+    if (mounted) {
+      Navigator.pop(context); // 로딩 다이얼로그 닫기
+
+      if (room != null) {
+        // 채팅방으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatRoomPage(room: room),
+          ),
+        );
+      } else {
+        // 에러 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(chatProvider.error ?? '채팅방을 열 수 없습니다'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

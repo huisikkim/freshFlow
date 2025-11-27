@@ -6,13 +6,18 @@ class ApiConstants {
   // - Android 에뮬레이터: 10.0.2.2
   // - iOS 시뮬레이터: localhost
   // - 실제 기기: Mac의 실제 IP 주소 (예: 192.168.45.80)
-  static const String localBaseUrl = 'http://192.168.45.80:8080'; // 실제 기기용
-  
+  //static const String localBaseUrl = 'http://192.168.45.80:8080'; // 실제 기기용
+  static const String localBaseUrl = 'http://localhost:8080';
   // 개발 URL
   static const String devBaseUrl = 'https://port-0-payflow-rm6l2llvxxefd7.sel5.cloudtype.app';
   
   // 현재 사용할 Base URL
   static String get baseUrl => isDevelopment ? localBaseUrl : devBaseUrl;
+  
+  // WebSocket URL
+  static String get wsUrl => isDevelopment 
+      ? localBaseUrl.replaceFirst('http', 'ws')
+      : devBaseUrl.replaceFirst('https', 'wss');
   
   // API 엔드포인트
   static const String loginEndpoint = '/api/auth/login';

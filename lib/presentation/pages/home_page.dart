@@ -10,6 +10,7 @@ import 'package:fresh_flow/presentation/pages/my_catalog_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_recommendations_page.dart';
 import 'package:fresh_flow/presentation/pages/order_list_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_order_list_page.dart';
+import 'package:fresh_flow/presentation/pages/chat/chat_list_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class HomePage extends StatelessWidget {
@@ -306,6 +307,24 @@ class HomePage extends StatelessWidget {
     return [
       _buildMenuCard(
         context: context,
+        title: '채팅',
+        subtitle: '유통업체와 대화하기',
+        icon: Icons.chat_bubble_outline,
+        color: const Color(0xFF4A90E2),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider(
+                create: (_) => InjectionContainer.getChatProvider(),
+                child: const ChatListPage(),
+              ),
+            ),
+          );
+        },
+      ),
+      const SizedBox(height: 12),
+      _buildMenuCard(
+        context: context,
         title: '주문 내역',
         subtitle: '주문한 내역 확인',
         icon: Icons.receipt_long,
@@ -380,6 +399,24 @@ class HomePage extends StatelessWidget {
 
   List<Widget> _buildDistributorMenu(BuildContext context) {
     return [
+      _buildMenuCard(
+        context: context,
+        title: '채팅',
+        subtitle: '가게와 대화하기',
+        icon: Icons.chat_bubble_outline,
+        color: const Color(0xFF4A90E2),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider(
+                create: (_) => InjectionContainer.getChatProvider(),
+                child: const ChatListPage(),
+              ),
+            ),
+          );
+        },
+      ),
+      const SizedBox(height: 12),
       _buildMenuCard(
         context: context,
         title: '받은 주문',

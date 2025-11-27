@@ -47,6 +47,20 @@ import 'package:fresh_flow/presentation/providers/comparison_provider.dart';
 import 'package:fresh_flow/presentation/providers/catalog_provider.dart';
 import 'package:fresh_flow/presentation/providers/cart_provider.dart';
 import 'package:fresh_flow/presentation/providers/order_provider.dart';
+import 'package:fresh_flow/data/datasources/chat_remote_data_source.dart';
+import 'package:fresh_flow/data/datasources/chat_remote_data_source_impl.dart';
+import 'package:fresh_flow/data/datasources/websocket_data_source.dart';
+import 'package:fresh_flow/data/datasources/websocket_data_source_impl.dart';
+import 'package:fresh_flow/data/repositories/chat_repository_impl.dart';
+import 'package:fresh_flow/data/repositories/websocket_repository_impl.dart';
+import 'package:fresh_flow/domain/repositories/chat_repository.dart';
+import 'package:fresh_flow/domain/repositories/websocket_repository.dart';
+import 'package:fresh_flow/domain/usecases/get_chat_rooms.dart';
+import 'package:fresh_flow/domain/usecases/create_or_get_chat_room.dart';
+import 'package:fresh_flow/domain/usecases/get_messages.dart';
+import 'package:fresh_flow/domain/usecases/mark_messages_as_read.dart';
+import 'package:fresh_flow/domain/usecases/send_message.dart';
+import 'package:fresh_flow/presentation/providers/chat_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -111,6 +125,15 @@ class InjectionContainer {
   static late CancelOrderUseCase _cancelOrderUseCase;
   static late ConfirmPaymentUseCase _confirmPaymentUseCase;
   static late ConfirmOrderUseCase _confirmOrderUseCase;
+  static late ChatRemoteDataSource _chatRemoteDataSource;
+  static late WebSocketDataSource _webSocketDataSource;
+  static late ChatRepository _chatRepository;
+  static late WebSocketRepository _webSocketRepository;
+  static late GetChatRooms _getChatRooms;
+  static late CreateOrGetChatRoom _createOrGetChatRoom;
+  static late GetMessages _getMessages;
+  static late MarkMessagesAsRead _markMessagesAsRead;
+  static late SendMessage _sendMessage;
 
   static Future<void> init() async {
     // External
@@ -129,6 +152,11 @@ class InjectionContainer {
     _catalogRemoteDataSource = CatalogRemoteDataSourceImpl(_httpClient);
     _cartRemoteDataSource = CartRemoteDataSourceImpl(_httpClient);
     _orderRemoteDataSource = OrderRemoteDataSourceImpl(_httpClient);
+    _chatRemoteDataSource = ChatRemoteDataSourceImpl(
+      client: _httpClient,
+      getAccessToken: () => _authRepository.getAccessToken(),
+    );
+    _webSocketDataSource = WebSocketDataSourceImpl();
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -166,6 +194,13 @@ class InjectionContainer {
     _orderRepository = OrderRepositoryImpl(
       remoteDataSource: _orderRemoteDataSource,
       authRepository: _authRepository,
+    );
+    _chatRepository = ChatRepositoryImpl(
+      remoteDataSource: _chatRemoteDataSource,
+      webSocketDataSource: _webSocketDataSource,
+    );
+    _webSocketRepository = WebSocketRepositoryImpl(
+      dataSource: _webSocketDataSource,
     );
 
     // Use cases
@@ -222,6 +257,11 @@ class InjectionContainer {
     _cancelOrderUseCase = CancelOrderUseCase(_orderRepository);
     _confirmPaymentUseCase = ConfirmPaymentUseCase(_orderRepository);
     _confirmOrderUseCase = ConfirmOrderUseCase(_orderRepository);
+    _getChatRooms = GetChatRooms(_chatRepository);
+    _createOrGetChatRoom = CreateOrGetChatRoom(_chatRepository);
+    _getMessages = GetMessages(_chatRepository);
+    _markMessagesAsRead = MarkMessagesAsRead(_chatRepository);
+    _sendMessage = SendMessage(_chatRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -307,6 +347,17 @@ class InjectionContainer {
       cancelOrderUseCase: _cancelOrderUseCase,
       confirmPaymentUseCase: _confirmPaymentUseCase,
       confirmOrderUseCase: _confirmOrderUseCase,
+    );
+  }
+
+  static ChatProvider getChatProvider() {
+    return ChatProvider(
+      getChatRooms: _getChatRooms,
+      createOrGetChatRoom: _createOrGetChatRoom,
+      getMessages: _getMessages,
+      markMessagesAsRead: _markMessagesAsRead,
+      sendMessage: _sendMessage,
+      webSocketRepository: _webSocketRepository,
     );
   }
 }

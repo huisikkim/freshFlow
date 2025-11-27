@@ -69,4 +69,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final user = await localDataSource.getCachedUser();
     return user != null;
   }
+
+  @override
+  Future<String?> getAccessToken() async {
+    final user = await localDataSource.getCachedUser();
+    return user?.accessToken;
+  }
 }
