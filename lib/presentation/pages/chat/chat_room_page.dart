@@ -31,6 +31,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       final authProvider = context.read<AuthProvider>();
       final accessToken = authProvider.user?.accessToken ?? '';
       
+      print('=== 채팅방 입장 ===');
+      print('로그인 사용자: ${authProvider.user?.username}');
+      print('사용자 타입: ${authProvider.user?.userType}');
+      print('storeId: ${authProvider.user?.storeId}');
+      print('distributorId: ${authProvider.user?.distributorId}');
+      print('채팅방 ID: ${widget.room.roomId}');
+      print('==================\n');
+      
       chatProvider.loadMessages(widget.room.roomId, refresh: true);
       await chatProvider.enterRoom(widget.room.roomId, accessToken);
 
@@ -143,12 +151,28 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     final message =
                         provider.messages[provider.messages.length - 1 - index];
                     
-                    // 현재 사용자 ID와 비교
+                    // 현재 사용자 ID와 비교 (로그인한 사용자의 ID 사용)
                     final authProvider = context.read<AuthProvider>();
                     final currentUserId = authProvider.user?.userType == 'STORE_OWNER'
-                        ? widget.room.storeId
-                        : widget.room.distributorId;
+                        ? authProvider.user?.storeId
+                        : authProvider.user?.distributorId;
                     final isMe = message.senderId == currentUserId;
+
+                    // 디버깅 로그
+                    print('=== 메시지 정렬 디버그 ===');
+                    print('메시지 ID: ${message.id}');
+                    print('메시지 내용: ${message.content}');
+                    print('발신자 ID (senderId): ${message.senderId}');
+                    print('발신자 타입 (senderType): ${message.senderType}');
+                    print('현재 사용자 타입: ${authProvider.user?.userType}');
+                    print('현재 로그인 사용자 username: ${authProvider.user?.username}');
+                    print('현재 로그인 사용자 storeId: ${authProvider.user?.storeId}');
+                    print('현재 로그인 사용자 distributorId: ${authProvider.user?.distributorId}');
+                    print('현재 사용자 ID (currentUserId): $currentUserId');
+                    print('채팅방 storeId: ${widget.room.storeId}');
+                    print('채팅방 distributorId: ${widget.room.distributorId}');
+                    print('isMe 판단 결과: $isMe (${message.senderId} == $currentUserId)');
+                    print('========================\n');
 
                     return MessageBubble(
                       message: message,

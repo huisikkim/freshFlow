@@ -164,24 +164,39 @@ class ChatProvider with ChangeNotifier {
 
   /// 채팅방 입장 (구독 + 읽음 처리)
   Future<void> enterRoom(String roomId, String accessToken) async {
+    print('=== enterRoom 시작 ===');
+    print('roomId: $roomId');
+    print('현재 구독 중인 방: $_subscribedRoomId');
+    print('WebSocket 연결 상태: $_isConnected');
+    
     // 이미 같은 채팅방을 구독 중이면 리턴
-    if (_subscribedRoomId == roomId) {
+    if (_subscribedRoomId == roomId && _isConnected) {
+      print('이미 같은 채팅방 구독 중');
       return;
     }
 
     // 이전 채팅방 구독 해제
     if (_subscribedRoomId != null && _isConnected) {
+      print('이전 채팅방 구독 해제: $_subscribedRoomId');
       webSocketRepository.unsubscribe(_subscribedRoomId!);
     }
 
-    // WebSocket이 연결되지 않았으면 연결 시도
-    if (!_isConnected) {
-      try {
-        await connectWebSocket(accessToken);
-      } catch (e) {
-        _error = 'WebSocket 연결 실패: ${e.toString()}';
-        notifyListeners();
+    // WebSocket 재연결 (새로운 토큰으로 연결하기 위해 항상 재연결)
+    try {
+      if (_isConnected) {
+        print('기존 WebSocket 연결 해제 중...');
+        await disconnectWebSocket();
+        // 연결 해제 후 잠시 대기
+        await Future.delayed(const Duration(milliseconds: 300));
       }
+      print('새로운 WebSocket 연결 시도...');
+      await connectWebSocket(accessToken);
+      print('WebSocket 연결 완료');
+    } catch (e) {
+      print('❌ WebSocket 연결 실패: $e');
+      _error = 'WebSocket 연결 실패: ${e.toString()}';
+      notifyListeners();
+      return;
     }
 
     if (_isConnected) {
@@ -254,6 +269,29 @@ class ChatProvider with ChangeNotifier {
   /// 에러 초기화
   void clearError() {
     _error = null;
+    notifyListeners();
+  }
+
+  /// 모든 상태 초기화 (로그아웃 시 사용)
+  Future<void> reset() async {
+    print('=== ChatProvider 상태 초기화 ===');
+    
+    // WebSocket 연결 해제
+    if (_isConnected) {
+      await disconnectWebSocket();
+    }
+    
+    // 모든 상태 초기화
+    _chatRooms = [];
+    _messages = [];
+    _currentRoom = null;
+    _isLoading = false;
+    _error = null;
+    _currentPage = 0;
+    _hasMoreMessages = true;
+    _subscribedRoomId = null;
+    
+    print('ChatProvider 초기화 완료');
     notifyListeners();
   }
 }

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
+import 'package:fresh_flow/presentation/providers/chat_provider.dart';
 import 'package:fresh_flow/presentation/pages/login_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart';
@@ -218,7 +219,13 @@ class HomePage extends StatelessWidget {
               );
               
               if (confirm == true && context.mounted) {
+                // ChatProvider 초기화
+                final chatProvider = context.read<ChatProvider>();
+                await chatProvider.reset();
+                
+                // 로그아웃
                 await authProvider.logout();
+                
                 if (context.mounted) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const LoginPage()),

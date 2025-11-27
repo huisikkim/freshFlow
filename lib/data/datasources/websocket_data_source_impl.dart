@@ -23,9 +23,16 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
 
   @override
   Future<void> connect(String accessToken) async {
+    // 기존 연결이 있으면 먼저 끊기 (다른 사용자로 로그인한 경우 대비)
     if (_stompClient?.connected ?? false) {
-      return;
+      print('⚠️ 기존 WebSocket 연결 해제 후 재연결');
+      await disconnect();
     }
+
+    print('=== WebSocket 연결 시도 ===');
+    print('accessToken: ${accessToken.substring(0, 20)}...');
+    print('URL: ${ApiConstants.baseUrl}/ws/chat');
+    print('==========================\n');
 
     final completer = Completer<void>();
 
@@ -33,21 +40,25 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
       config: StompConfig.sockJS(
         url: '${ApiConstants.baseUrl}/ws/chat',
         onConnect: (StompFrame frame) {
+          print('✅ WebSocket 연결 성공');
           _connectionStateController.add(true);
           if (!completer.isCompleted) {
             completer.complete();
           }
         },
         onWebSocketError: (dynamic error) {
+          print('❌ WebSocket 에러: $error');
           _connectionStateController.add(false);
           if (!completer.isCompleted) {
             completer.completeError(error);
           }
         },
         onStompError: (StompFrame frame) {
+          print('❌ STOMP 에러: ${frame.body}');
           _connectionStateController.add(false);
         },
         onDisconnect: (StompFrame frame) {
+          print('🔌 WebSocket 연결 해제');
           _connectionStateController.add(false);
         },
         stompConnectHeaders: {
@@ -60,16 +71,45 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
     );
 
     _stompClient!.activate();
-    return completer.future;
+    
+    // 10초 타임아웃 설정
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        print('❌ WebSocket 연결 타임아웃');
+        throw Exception('WebSocket 연결 타임아웃 (10초)');
+      },
+    );
   }
 
   @override
   Future<void> disconnect() async {
+    print('=== WebSocket 연결 해제 시작 ===');
+    
+    // 모든 구독 해제
+    for (var roomId in _unsubscribeFunctions.keys.toList()) {
+      try {
+        _unsubscribeFunctions[roomId]?.call();
+      } catch (e) {
+        print('구독 해제 실패 ($roomId): $e');
+      }
+    }
+    
     _subscriptions.clear();
     _unsubscribeFunctions.clear();
-    _stompClient?.deactivate();
-    _stompClient = null;
+    
+    // STOMP 클라이언트 비활성화
+    if (_stompClient != null) {
+      try {
+        _stompClient!.deactivate();
+      } catch (e) {
+        print('STOMP 비활성화 실패: $e');
+      }
+      _stompClient = null;
+    }
+    
     _connectionStateController.add(false);
+    print('=== WebSocket 연결 해제 완료 ===\n');
   }
 
   @override
@@ -117,13 +157,23 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
       throw Exception('WebSocket is not connected');
     }
 
+    final messageBody = {
+      'content': content,
+      'messageType': messageType,
+      'metadata': metadata,
+    };
+
+    print('=== WebSocket 메시지 전송 ===');
+    print('roomId: $roomId');
+    print('content: $content');
+    print('messageType: $messageType');
+    print('messageBody: ${jsonEncode(messageBody)}');
+    print('WebSocket 연결 상태: ${_stompClient?.connected}');
+    print('============================\n');
+
     _stompClient!.send(
       destination: '/app/chat/$roomId',
-      body: jsonEncode({
-        'content': content,
-        'messageType': messageType,
-        'metadata': metadata,
-      }),
+      body: jsonEncode(messageBody),
     );
   }
 }
