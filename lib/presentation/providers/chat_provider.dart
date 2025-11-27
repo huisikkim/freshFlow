@@ -36,6 +36,7 @@ class ChatProvider with ChangeNotifier {
   int _currentPage = 0;
   bool _hasMoreMessages = true;
   bool _isConnected = false;
+  String? _subscribedRoomId; // 현재 구독 중인 채팅방 ID
 
   // Getters
   List<ChatRoom> get chatRooms => _chatRooms;
@@ -163,6 +164,16 @@ class ChatProvider with ChangeNotifier {
 
   /// 채팅방 입장 (구독 + 읽음 처리)
   Future<void> enterRoom(String roomId, String accessToken) async {
+    // 이미 같은 채팅방을 구독 중이면 리턴
+    if (_subscribedRoomId == roomId) {
+      return;
+    }
+
+    // 이전 채팅방 구독 해제
+    if (_subscribedRoomId != null && _isConnected) {
+      webSocketRepository.unsubscribe(_subscribedRoomId!);
+    }
+
     // WebSocket이 연결되지 않았으면 연결 시도
     if (!_isConnected) {
       try {
@@ -177,9 +188,14 @@ class ChatProvider with ChangeNotifier {
       // WebSocket 구독
       try {
         webSocketRepository.subscribe(roomId, (message) {
-          _messages.add(message);
-          notifyListeners();
+          // 중복 메시지 방지: 이미 존재하는 메시지인지 확인
+          final isDuplicate = _messages.any((m) => m.id == message.id);
+          if (!isDuplicate) {
+            _messages.add(message);
+            notifyListeners();
+          }
         });
+        _subscribedRoomId = roomId;
       } catch (e) {
         _error = 'WebSocket 구독 실패: ${e.toString()}';
         notifyListeners();
@@ -192,8 +208,9 @@ class ChatProvider with ChangeNotifier {
 
   /// 채팅방 퇴장 (구독 해제)
   void leaveRoom(String roomId) {
-    if (_isConnected) {
+    if (_isConnected && _subscribedRoomId == roomId) {
       webSocketRepository.unsubscribe(roomId);
+      _subscribedRoomId = null;
     }
     _currentRoom = null;
     _messages = [];

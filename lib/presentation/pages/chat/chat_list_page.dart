@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../domain/entities/chat_room.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/auth_provider.dart';
 import 'chat_room_page.dart';
 
 /// 채팅 목록 페이지
@@ -100,8 +101,13 @@ class _ChatRoomTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: userType에 따라 표시할 이름 결정
-    final displayName = room.distributorName; // 또는 room.storeName
+    final authProvider = context.watch<AuthProvider>();
+    final userType = authProvider.user?.userType;
+    
+    // userType에 따라 표시할 이름 결정
+    final displayName = userType == 'STORE_OWNER'
+        ? room.distributorName
+        : room.storeName;
 
     return ListTile(
       onTap: onTap,

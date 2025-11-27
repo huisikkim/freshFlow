@@ -60,8 +60,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: userType에 따라 표시할 이름 결정
-    final displayName = widget.room.distributorName; // 또는 widget.room.storeName
+    final authProvider = context.watch<AuthProvider>();
+    final userType = authProvider.user?.userType;
+    
+    // userType에 따라 표시할 이름 결정
+    final displayName = userType == 'STORE_OWNER'
+        ? widget.room.distributorName
+        : widget.room.storeName;
 
     return Scaffold(
       appBar: AppBar(
@@ -137,8 +142,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
                     final message =
                         provider.messages[provider.messages.length - 1 - index];
-                    // TODO: 현재 사용자 ID와 비교
-                    final isMe = false; // message.senderId == currentUserId
+                    
+                    // 현재 사용자 ID와 비교
+                    final authProvider = context.read<AuthProvider>();
+                    final currentUserId = authProvider.user?.userType == 'STORE_OWNER'
+                        ? widget.room.storeId
+                        : widget.room.distributorId;
+                    final isMe = message.senderId == currentUserId;
 
                     return MessageBubble(
                       message: message,
