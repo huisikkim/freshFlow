@@ -33,7 +33,7 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildTextMessage(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -47,17 +47,30 @@ class MessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 10,
+                vertical: 12,
               ),
               decoration: BoxDecoration(
-                color: isMe ? Colors.blue : Colors.grey[300],
-                borderRadius: BorderRadius.circular(18),
+                color: isMe ? const Color(0xFF007AFF) : const Color(0xFFE5E5EA),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(20),
+                  topRight: const Radius.circular(20),
+                  bottomLeft: Radius.circular(isMe ? 20 : 6),
+                  bottomRight: Radius.circular(isMe ? 6 : 20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 message.content,
                 style: TextStyle(
-                  color: isMe ? Colors.white : Colors.black87,
+                  color: isMe ? Colors.white : const Color(0xFF1A1A1A),
                   fontSize: 15,
+                  height: 1.4,
                 ),
               ),
             ),
@@ -73,22 +86,23 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildSystemMessage(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 6,
+            horizontal: 16,
+            vertical: 8,
           ),
           decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             message.content,
-            style: TextStyle(
-              color: Colors.grey[700],
+            style: const TextStyle(
+              color: Color(0xFF6B7280),
               fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -98,7 +112,7 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildSpecialMessage(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -110,13 +124,30 @@ class MessageBubble extends StatelessWidget {
           ],
           Flexible(
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isMe ? Colors.blue[50] : Colors.grey[100],
+                color: isMe 
+                    ? const Color(0xFF667eea).withOpacity(0.1)
+                    : const Color(0xFFE5E5EA),
                 border: Border.all(
-                  color: isMe ? Colors.blue : Colors.grey,
+                  color: isMe 
+                      ? const Color(0xFF667eea).withOpacity(0.3)
+                      : Colors.grey.withOpacity(0.2),
+                  width: 1.5,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isMe ? 16 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 16),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,24 +156,32 @@ class MessageBubble extends StatelessWidget {
                     children: [
                       Icon(
                         _getIconForMessageType(),
-                        size: 16,
-                        color: isMe ? Colors.blue : Colors.grey[700],
+                        size: 18,
+                        color: isMe 
+                            ? const Color(0xFF667eea)
+                            : const Color(0xFF6B7280),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
                       Text(
                         _getTypeLabel(),
                         style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: isMe ? Colors.blue : Colors.grey[700],
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: isMe 
+                              ? const Color(0xFF667eea)
+                              : const Color(0xFF6B7280),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Text(
                     message.content,
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1A1A1A),
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
@@ -160,9 +199,10 @@ class MessageBubble extends StatelessWidget {
   Widget _buildTime() {
     return Text(
       DateFormat('HH:mm').format(message.createdAt),
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 11,
-        color: Colors.grey[600],
+        color: Color(0xFF6B7280),
+        fontWeight: FontWeight.w500,
       ),
     );
   }

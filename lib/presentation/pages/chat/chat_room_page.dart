@@ -77,25 +77,77 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         : widget.room.storeName;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
+        backgroundColor: Colors.white.withOpacity(0.95),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 22),
+          onPressed: () => Navigator.pop(context),
+          color: const Color(0xFF1A1A1A),
+        ),
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(displayName),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Consumer<ChatProvider>(
+                  builder: (context, provider, child) {
+                    return Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: provider.isConnected 
+                            ? const Color(0xFF10B981) 
+                            : Colors.grey,
+                        shape: BoxShape.circle,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  displayName,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A1A),
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ],
+            ),
             Consumer<ChatProvider>(
               builder: (context, provider, child) {
                 return Text(
                   provider.isConnected ? '온라인' : '오프라인',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: provider.isConnected ? Colors.green : Colors.grey,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: provider.isConnected 
+                        ? const Color(0xFF10B981) 
+                        : Colors.grey,
                   ),
                 );
               },
             ),
           ],
         ),
-        elevation: 0,
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, size: 24),
+            onPressed: () {},
+            color: const Color(0xFF1A1A1A),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Colors.grey.withOpacity(0.1),
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -134,7 +186,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 return ListView.builder(
                   controller: _scrollController,
                   reverse: true,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   itemCount: provider.messages.length +
                       (provider.hasMoreMessages ? 1 : 0),
                   itemBuilder: (context, index) {
@@ -191,47 +243,100 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   Widget _buildMessageInput() {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, -1),
+        color: const Color(0xFFF8F9FA),
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey.withOpacity(0.1),
+            width: 1,
           ),
-        ],
+        ),
       ),
       child: Row(
         children: [
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline, size: 26),
+            onPressed: () {},
+            color: const Color(0xFF6B7280),
+          ),
+          const SizedBox(width: 8),
           Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                hintText: '메시지를 입력하세요',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: Colors.grey.withOpacity(0.2),
+                  width: 1,
                 ),
-                filled: true,
-                fillColor: Colors.grey[100],
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
-              maxLines: null,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => _sendMessage(),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        hintText: '메시지를 입력하세요',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF6B7280),
+                          fontSize: 15,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                      maxLines: null,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => _sendMessage(),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.sentiment_satisfied_outlined, size: 22),
+                    onPressed: () {},
+                    color: const Color(0xFF6B7280),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 8),
-          CircleAvatar(
-            backgroundColor: Theme.of(context).primaryColor,
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF667eea).withOpacity(0.4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white),
+              icon: const Icon(Icons.arrow_upward, size: 20),
               onPressed: _sendMessage,
+              color: Colors.white,
+              padding: EdgeInsets.zero,
             ),
           ),
         ],
