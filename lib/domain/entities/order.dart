@@ -1,5 +1,6 @@
 class Order {
-  final String id;
+  final String id; // orderNumber (ORD-20251127-155507-742)
+  final int? dbId; // DB의 실제 Long ID
   final String storeId;
   final String distributorId;
   final String distributorName;
@@ -15,6 +16,7 @@ class Order {
 
   Order({
     required this.id,
+    this.dbId,
     required this.storeId,
     required this.distributorId,
     required this.distributorName,

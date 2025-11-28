@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:fresh_flow/domain/entities/order.dart';
+import 'package:fresh_flow/presentation/providers/delivery_provider.dart';
+import 'package:fresh_flow/presentation/providers/order_provider.dart';
+import 'package:fresh_flow/presentation/widgets/ship_delivery_modal.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
+  final bool isDistributor;
 
   const OrderDetailPage({
     super.key,
     required this.order,
+    this.isDistributor = false,
   });
 
   @override
@@ -52,9 +58,157 @@ class OrderDetailPage extends StatelessWidget {
 
               // 결제 정보
               _buildPaymentCard(numberFormat),
+              
+              // 유통업자용 배송 관리 버튼
+              if (isDistributor && order.status == OrderStatus.confirmed)
+                _buildDistributorActions(context),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDistributorActions(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '배송 관리',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _showShipDeliveryModal(context),
+              icon: const Icon(Icons.local_shipping, color: Colors.white),
+              label: const Text(
+                '배송 시작',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showShipDeliveryModal(BuildContext context) {
+    // dbId가 없으면 에러 표시
+    if (order.dbId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('주문 ID를 찾을 수 없습니다'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ShipDeliveryModal(
+        orderId: order.id,
+        onShip: ({
+          required String deliveryType,
+          String? trackingNumber,
+          String? courierCompany,
+          String? driverName,
+          String? driverPhone,
+          String? vehicleNumber,
+          required DateTime estimatedDate,
+        }) async {
+          final deliveryProvider = context.read<DeliveryProvider>();
+
+          // 1. 배송 정보 생성 (dbId 사용)
+          final created =
+              await deliveryProvider.createDelivery(order.dbId.toString());
+          if (!created) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text(deliveryProvider.errorMessage ?? '배송 정보 생성 실패'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+            return;
+          }
+
+          // 2. 배송 시작 (택배 또는 직접) - dbId 사용
+          bool shipped = false;
+          if (deliveryType == 'COURIER') {
+            shipped = await deliveryProvider.shipDeliveryCourier(
+              orderId: order.dbId.toString(),
+              trackingNumber: trackingNumber!,
+              courierCompany: courierCompany!,
+              estimatedDeliveryDate: estimatedDate,
+            );
+          } else {
+            shipped = await deliveryProvider.shipDeliveryDirect(
+              orderId: order.dbId.toString(),
+              driverName: driverName!,
+              driverPhone: driverPhone!,
+              vehicleNumber: vehicleNumber!,
+              estimatedDeliveryDate: estimatedDate,
+            );
+          }
+
+          if (context.mounted) {
+            if (shipped) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('배송이 시작되었습니다'),
+                  backgroundColor: Color(0xFF10B981),
+                ),
+              );
+              // 주문 목록 새로고침
+              context.read<OrderProvider>().getDistributorOrders();
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(deliveryProvider.errorMessage ?? '배송 시작 실패'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        },
       ),
     );
   }

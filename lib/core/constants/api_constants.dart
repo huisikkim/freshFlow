@@ -45,6 +45,13 @@ class ApiConstants {
   // 주문 확정 엔드포인트 (orderNumber 사용 - 권장)
   static String orderConfirmEndpoint(String orderNumber) => '/api/catalog-orders/confirm/$orderNumber';
   
+  // 배송 관련 엔드포인트
+  static const String deliveriesStoreEndpoint = '/api/deliveries/store';
+  static String deliveryByOrderEndpoint(String orderId) => '/api/deliveries/order/$orderId';
+  static String createDeliveryEndpoint(String orderId) => '/api/deliveries/order/$orderId';
+  static String shipDeliveryEndpoint(String orderId) => '/api/deliveries/order/$orderId/ship';
+  static String completeDeliveryEndpoint(String orderId) => '/api/deliveries/order/$orderId/complete';
+  
   // 토스페이먼츠 클라이언트 키
   static const String tossPaymentsClientKey = 'test_ck_kYG57Eba3Gp9GBALzABLVpWDOxmA';
 }

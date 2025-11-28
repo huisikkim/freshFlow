@@ -126,7 +126,10 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => OrderDetailPage(order: order),
+            builder: (_) => OrderDetailPage(
+              order: order,
+              isDistributor: true,
+            ),
           ),
         );
       },
@@ -315,6 +318,43 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   ),
                 ],
               ),
+
+              // 주문확정 상태일 때 배송 시작 버튼 표시
+              if (order.status == OrderStatus.confirmed) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => OrderDetailPage(
+                            order: order,
+                            isDistributor: true,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.local_shipping, size: 18),
+                    label: const Text(
+                      '배송 시작하기',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10B981),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

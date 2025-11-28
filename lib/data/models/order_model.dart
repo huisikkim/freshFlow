@@ -3,6 +3,7 @@ import 'package:fresh_flow/domain/entities/order.dart';
 class OrderModel extends Order {
   OrderModel({
     required super.id,
+    super.dbId,
     required super.storeId,
     required super.distributorId,
     required super.distributorName,
@@ -19,10 +20,13 @@ class OrderModel extends Order {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-      id: json['orderNumber'] as String,  // orderNumber 필드 사용 (ORD-20251127-035844-153)
+      id: json['orderNumber'] as String, // orderNumber 필드 사용 (ORD-20251127-035844-153)
+      dbId: json['id'] as int?, // DB의 실제 Long ID
       storeId: json['storeId'] as String,
       distributorId: json['distributorId'] as String,
-      distributorName: json['distributorName'] as String? ?? json['distributorId'] as String,  // 없으면 distributorId 사용
+      distributorName: json['distributorName'] as String? ??
+          json['distributorId']
+              as String, // 없으면 distributorId 사용
       items: (json['items'] as List)
           .map((item) => OrderItemModel.fromJson(item))
           .toList(),
@@ -34,7 +38,8 @@ class OrderModel extends Order {
           ? DateTime.parse(json['desiredDeliveryDate'] as String)
           : null,
       status: _statusFromString(json['status'] as String),
-      createdAt: DateTime.parse(json['orderedAt'] as String),  // 서버는 'orderedAt' 사용
+      createdAt:
+          DateTime.parse(json['orderedAt'] as String), // 서버는 'orderedAt' 사용
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'] as String)
           : null,

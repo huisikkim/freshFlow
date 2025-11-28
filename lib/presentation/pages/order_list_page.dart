@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/order_provider.dart';
 import 'package:fresh_flow/presentation/pages/order_detail_page.dart';
+import 'package:fresh_flow/presentation/pages/store_delivery_list_page.dart';
 import 'package:fresh_flow/domain/entities/order.dart';
 import 'package:intl/intl.dart';
 
@@ -39,6 +40,19 @@ class _OrderListPageState extends State<OrderListPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Color(0xFF111827)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.local_shipping_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const StoreDeliveryListPage(),
+                ),
+              );
+            },
+            tooltip: '배송 조회',
+          ),
+        ],
       ),
       body: _buildBody(orderProvider, numberFormat),
     );
