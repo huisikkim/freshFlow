@@ -42,11 +42,41 @@ class _ChatListPageState extends State<ChatListPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(provider.error!),
+                  const Icon(
+                    Icons.chat_bubble_outline,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => provider.loadChatRooms(),
-                    child: const Text('다시 시도'),
+                  Text(
+                    '채팅 목록을 불러올 수 없습니다',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '서버 연결을 확인해주세요',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      provider.clearError();
+                      provider.loadChatRooms();
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('다시 시도'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -66,8 +66,11 @@ class ChatProvider with ChangeNotifier {
         notifyListeners();
       });
     } catch (e) {
-      _error = e.toString();
+      print('❌ WebSocket 에러: $e');
+      _error = '채팅 서버에 연결할 수 없습니다';
+      _isConnected = false;
       notifyListeners();
+      rethrow;
     }
   }
 
@@ -200,7 +203,7 @@ class ChatProvider with ChangeNotifier {
       print('WebSocket 연결 완료');
     } catch (e) {
       print('❌ WebSocket 연결 실패: $e');
-      _error = 'WebSocket 연결 실패: ${e.toString()}';
+      _error = '채팅 서버에 연결할 수 없습니다';
       notifyListeners();
       return;
     }

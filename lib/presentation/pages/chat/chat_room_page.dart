@@ -45,8 +45,53 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       print('채팅방 ID: ${widget.room.roomId}');
       print('==================\n');
       
-      chatProvider.loadMessages(widget.room.roomId, refresh: true);
+      // 메시지 로딩 (에러가 있어도 기존 메시지는 표시)
+      await chatProvider.loadMessages(widget.room.roomId, refresh: true);
+      
+      // WebSocket 연결 시도
       await chatProvider.enterRoom(widget.room.roomId, accessToken);
+
+      // WebSocket 연결 에러가 있으면 SnackBar 표시하고 즉시 에러 클리어
+      if (mounted && chatProvider.error != null) {
+        final errorMessage = chatProvider.error!;
+        chatProvider.clearError(); // 즉시 에러 클리어하여 화면에 표시되지 않도록
+        
+        if (errorMessage.contains('채팅 서버') || errorMessage.contains('WebSocket')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.wifi_off, color: Colors.white),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text('채팅 서버에 연결할 수 없습니다\n이전 메시지는 확인할 수 있습니다'),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: '재시도',
+                textColor: Colors.white,
+                onPressed: () async {
+                  await chatProvider.enterRoom(widget.room.roomId, accessToken);
+                  if (mounted && chatProvider.error == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('채팅 서버에 연결되었습니다'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  } else if (mounted && chatProvider.error != null) {
+                    chatProvider.clearError();
+                  }
+                },
+              ),
+            ),
+          );
+        }
+      }
 
       // 스크롤 리스너 (무한 스크롤)
       _scrollController.addListener(_onScroll);
@@ -216,18 +261,38 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (provider.error != null) {
+                // WebSocket 연결 에러는 화면에 표시하지 않음 (SnackBar로만 처리)
+                // 메시지가 없고 WebSocket 에러가 아닌 경우에만 에러 화면 표시
+                if (provider.error != null && 
+                    provider.messages.isEmpty && 
+                    !provider.error!.contains('채팅 서버') &&
+                    !provider.error!.contains('WebSocket')) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(provider.error!),
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '메시지를 불러올 수 없습니다',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[700],
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => provider.loadMessages(
-                            widget.room.roomId,
-                            refresh: true,
-                          ),
+                          onPressed: () {
+                            provider.clearError();
+                            provider.loadMessages(
+                              widget.room.roomId,
+                              refresh: true,
+                            );
+                          },
                           child: const Text('다시 시도'),
                         ),
                       ],
@@ -313,11 +378,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   Widget _buildMessageInput() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           left: 16,
           right: 16,
           top: 12,
-          bottom: 12 + MediaQuery.of(context).viewInsets.bottom,
+          bottom: 12,
         ),
         decoration: BoxDecoration(
           color: const Color(0xFFF8F9FA),
