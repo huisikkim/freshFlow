@@ -16,6 +16,8 @@ class OrderModel extends Order {
     required super.status,
     required super.createdAt,
     super.updatedAt,
+    super.hasStoreReview,
+    super.hasDistributorReview,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,8 @@ class OrderModel extends Order {
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'] as String)
           : null,
+      hasStoreReview: json['hasStoreReview'] as bool?,
+      hasDistributorReview: json['hasDistributorReview'] as bool?,
     );
   }
 

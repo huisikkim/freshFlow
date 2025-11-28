@@ -252,6 +252,11 @@ class OrderDetailPage extends StatelessWidget {
   }
 
   Widget _buildReviewButton(BuildContext context) {
+    // 서버 응답에서 리뷰 작성 여부 확인
+    final hasReviewed = isDistributor
+        ? (order.hasDistributorReview ?? false)
+        : (order.hasStoreReview ?? false);
+
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
@@ -278,57 +283,145 @@ class OrderDetailPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            '거래가 완료되었습니다. 상대방을 평가해주세요.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Color(0xFF6B7280),
+          if (hasReviewed) ...[
+            // 리뷰 작성 완료 상태
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    color: Color(0xFF10B981),
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '리뷰 등록 완료',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF10B981),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '소중한 리뷰 감사합니다!',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: const Color(0xFF10B981).withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _navigateToReviewPage(context),
-              icon: const Icon(Icons.star, color: Colors.white),
-              label: const Text(
-                '리뷰 작성하기',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+          ] else ...[
+            // 리뷰 작성 가능 상태
+            const Text(
+              '거래가 완료되었습니다. 상대방을 평가해주세요.',
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _navigateToReviewPage(context),
+                icon: const Icon(Icons.star, color: Colors.white),
+                label: const Text(
+                  '리뷰 작성하기',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFBBF24),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFBBF24),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
-  void _navigateToReviewPage(BuildContext context) {
+  Future<void> _navigateToReviewPage(BuildContext context) async {
+    final orderProvider = context.read<OrderProvider>();
+    
+    // 리뷰 작성 전 최신 주문 정보 확인
     if (isDistributor) {
-      // 유통업자 -> 가게사장님 평가
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CreateDistributorReviewPage(order: order),
-        ),
-      );
+      await orderProvider.getDistributorOrders();
     } else {
-      // 가게사장님 -> 유통업자 평가
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CreateStoreReviewPage(order: order),
-        ),
+      await orderProvider.getOrders();
+    }
+
+    // 최신 주문 정보에서 리뷰 작성 여부 재확인
+    if (context.mounted) {
+      final orders = orderProvider.orders;
+      
+      // 현재 주문의 최신 정보 찾기
+      final updatedOrder = orders.firstWhere(
+        (o) => o.id == order.id,
+        orElse: () => order,
       );
+      
+      final hasReviewed = isDistributor
+          ? (updatedOrder.hasDistributorReview ?? false)
+          : (updatedOrder.hasStoreReview ?? false);
+
+      if (hasReviewed) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('이미 리뷰를 작성한 주문입니다'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        Navigator.pop(context); // 상세 페이지 닫기
+        return;
+      }
+    }
+
+    if (!context.mounted) return;
+
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => isDistributor
+            ? CreateDistributorReviewPage(order: order)
+            : CreateStoreReviewPage(order: order),
+      ),
+    );
+
+    // 리뷰 작성 완료 후 주문 목록 새로고침
+    if (result == true && context.mounted) {
+      if (isDistributor) {
+        await orderProvider.getDistributorOrders();
+      } else {
+        await orderProvider.getOrders();
+      }
+      
+      // 현재 페이지 닫기
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 

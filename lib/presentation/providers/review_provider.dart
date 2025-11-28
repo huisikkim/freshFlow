@@ -50,7 +50,14 @@ class ReviewProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      final errorMessage = e.toString();
+      // 이미 리뷰를 작성한 경우 특별 처리
+      if (errorMessage.contains('이미 리뷰를 작성한') ||
+          errorMessage.contains('already reviewed')) {
+        _errorMessage = '이미 리뷰를 작성한 주문입니다';
+      } else {
+        _errorMessage = errorMessage;
+      }
       notifyListeners();
       return false;
     }
@@ -84,7 +91,14 @@ class ReviewProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      final errorMessage = e.toString();
+      // 이미 리뷰를 작성한 경우 특별 처리
+      if (errorMessage.contains('이미 리뷰를 작성한') ||
+          errorMessage.contains('already reviewed')) {
+        _errorMessage = '이미 리뷰를 작성한 주문입니다';
+      } else {
+        _errorMessage = errorMessage;
+      }
       notifyListeners();
       return false;
     }

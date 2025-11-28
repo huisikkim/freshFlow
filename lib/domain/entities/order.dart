@@ -13,6 +13,8 @@ class Order {
   final OrderStatus status;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final bool? hasStoreReview; // 가게사장님이 리뷰 작성했는지
+  final bool? hasDistributorReview; // 유통업자가 리뷰 작성했는지
 
   Order({
     required this.id,
@@ -29,6 +31,8 @@ class Order {
     required this.status,
     required this.createdAt,
     this.updatedAt,
+    this.hasStoreReview,
+    this.hasDistributorReview,
   });
 
   bool get canCancel {

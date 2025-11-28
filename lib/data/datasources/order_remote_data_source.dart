@@ -178,6 +178,12 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
       }
       final List<dynamic> jsonList = json.decode(response.body);
       print('✅ 주문 ${jsonList.length}개 조회 성공');
+      
+      // 각 주문의 리뷰 상태 로그 출력
+      for (var orderJson in jsonList) {
+        print('📦 주문 ${orderJson['orderNumber']}: hasStoreReview=${orderJson['hasStoreReview']}, hasDistributorReview=${orderJson['hasDistributorReview']}');
+      }
+      
       return jsonList.map((json) => OrderModel.fromJson(json)).toList();
     } else if (response.statusCode == 401) {
       print('❌ 인증 실패');
@@ -232,6 +238,12 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
       }
       final List<dynamic> jsonList = json.decode(response.body);
       print('✅ 주문 ${jsonList.length}개 조회 성공');
+      
+      // 각 주문의 리뷰 상태 로그 출력
+      for (var orderJson in jsonList) {
+        print('📦 주문 ${orderJson['orderNumber']}: hasStoreReview=${orderJson['hasStoreReview']}, hasDistributorReview=${orderJson['hasDistributorReview']}');
+      }
+      
       return jsonList.map((json) => OrderModel.fromJson(json)).toList();
     } else if (response.statusCode == 401) {
       print('❌ 인증 실패');

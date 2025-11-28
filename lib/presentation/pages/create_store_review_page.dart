@@ -340,12 +340,22 @@ class _CreateStoreReviewPageState extends State<CreateStoreReviewPage> {
         );
         Navigator.pop(context, true);
       } else {
+        final errorMessage = reviewProvider.errorMessage ?? '리뷰 작성 실패';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(reviewProvider.errorMessage ?? '리뷰 작성 실패'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
+        
+        // 이미 리뷰를 작성한 경우 페이지 닫고 목록 새로고침
+        if (errorMessage.contains('이미 리뷰를 작성한')) {
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) {
+            Navigator.pop(context, true); // true를 반환하여 목록 새로고침
+          }
+        }
       }
     }
   }
