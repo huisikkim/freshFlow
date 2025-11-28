@@ -49,44 +49,42 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
           ),
         ],
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF10B981).withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider(
-                    create: (_) => InjectionContainer.getCatalogProvider(),
-                    child: const ProductFormPage(),
-                  ),
-                ),
-              ).then((_) {
-                context.read<CatalogProvider>().loadMyProducts();
-              });
-            },
-            icon: const Icon(Icons.add, size: 24),
-            label: const Text(
-              '상품 등록',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 120),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF10B981).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            backgroundColor: const Color(0xFF10B981),
-            foregroundColor: Colors.white,
-            elevation: 0,
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                  create: (_) => InjectionContainer.getCatalogProvider(),
+                  child: const ProductFormPage(),
+                ),
+              ),
+            ).then((_) {
+              context.read<CatalogProvider>().loadMyProducts();
+            });
+          },
+          icon: const Icon(Icons.add, size: 24),
+          label: const Text(
+            '상품 등록',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          backgroundColor: const Color(0xFF10B981),
+          foregroundColor: Colors.white,
+          elevation: 0,
         ),
       ),
       body: Consumer<CatalogProvider>(
