@@ -378,11 +378,13 @@ class OrderDetailPage extends StatelessWidget {
     if (context.mounted) {
       final orders = orderProvider.orders;
       
-      // 현재 주문의 최신 정보 찾기
-      final updatedOrder = orders.firstWhere(
-        (o) => o.id == order.id,
-        orElse: () => order,
-      );
+      // 현재 주문의 최신 정보 찾기 (없으면 현재 주문 사용)
+      Order? updatedOrder;
+      try {
+        updatedOrder = orders.firstWhere((o) => o.id == order.id);
+      } catch (e) {
+        updatedOrder = order;
+      }
       
       final hasReviewed = isDistributor
           ? (updatedOrder.hasDistributorReview ?? false)
