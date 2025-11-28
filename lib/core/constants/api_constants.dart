@@ -3,12 +3,8 @@ class ApiConstants {
   static const bool isDevelopment = true; // 로컬 개발시 true, 배포시 false로 변경
   
   // 로컬 개발 URL
-  // - Android 에뮬레이터: 10.0.2.2
-  // - iOS 시뮬레이터: localhost
-  // - 실제 기기: Mac의 실제 IP 주소 (예: 192.168.45.80)
-  static const String localBaseUrl = 'http://192.168.45.80:8080'; // 실제 기기용
-  //static const String localBaseUrl = 'http://10.0.2.2:8080'; // Android 에뮬레이터용
-  //static const String localBaseUrl = 'http://localhost:8080'; // Android 에뮬레이터용
+  //static const String localBaseUrl = 'http://192.168.45.80:8080'; // 안드로이드
+  static const String localBaseUrl = 'http://localhost:8080'; // ios
   // 개발 URL
   static const String devBaseUrl = 'https://port-0-payflow-rm6l2llvxxefd7.sel5.cloudtype.app';
   
