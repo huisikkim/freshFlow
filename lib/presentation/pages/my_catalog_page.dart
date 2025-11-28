@@ -28,10 +28,6 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           '내 상품 관리',
           style: TextStyle(
@@ -43,6 +39,7 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
         foregroundColor: const Color(0xFF1F2937),
         elevation: 0,
         centerTitle: true,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_outlined),
@@ -52,41 +49,44 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
           ),
         ],
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF10B981).withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ChangeNotifierProvider(
-                  create: (_) => InjectionContainer.getCatalogProvider(),
-                  child: const ProductFormPage(),
-                ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 80),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF10B981).withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
-            ).then((_) {
-              context.read<CatalogProvider>().loadMyProducts();
-            });
-          },
-          icon: const Icon(Icons.add, size: 24),
-          label: const Text(
-            '상품 등록',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            ],
           ),
-          backgroundColor: const Color(0xFF10B981),
-          foregroundColor: Colors.white,
-          elevation: 0,
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ChangeNotifierProvider(
+                    create: (_) => InjectionContainer.getCatalogProvider(),
+                    child: const ProductFormPage(),
+                  ),
+                ),
+              ).then((_) {
+                context.read<CatalogProvider>().loadMyProducts();
+              });
+            },
+            icon: const Icon(Icons.add, size: 24),
+            label: const Text(
+              '상품 등록',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: const Color(0xFF10B981),
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
         ),
       ),
       body: Consumer<CatalogProvider>(
@@ -167,7 +167,7 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
             itemCount: provider.products.length,
             itemBuilder: (context, index) {
               return _buildProductCard(provider.products[index]);
