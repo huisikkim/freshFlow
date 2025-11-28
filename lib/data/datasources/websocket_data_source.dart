@@ -13,6 +13,15 @@ abstract class WebSocketDataSource {
     required String messageType,
     String? metadata,
   });
+  
+  // 타이핑 인디케이터
+  void subscribeToTyping(String roomId, Function(Map<String, dynamic>) onTyping);
+  void unsubscribeFromTyping(String roomId);
+  void sendTypingEvent({
+    required String roomId,
+    required bool isTyping,
+  });
+  
   Stream<bool> get connectionStateStream;
   bool get isConnected;
 }

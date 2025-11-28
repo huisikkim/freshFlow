@@ -12,6 +12,8 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
   StompClient? _stompClient;
   final Map<String, Function(ChatMessage)> _subscriptions = {};
   final Map<String, StompUnsubscribe> _unsubscribeFunctions = {};
+  final Map<String, Function(Map<String, dynamic>)> _typingSubscriptions = {};
+  final Map<String, StompUnsubscribe> _typingUnsubscribeFunctions = {};
   final StreamController<bool> _connectionStateController =
       StreamController<bool>.broadcast();
 
@@ -86,7 +88,7 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
   Future<void> disconnect() async {
     print('=== WebSocket 연결 해제 시작 ===');
     
-    // 모든 구독 해제
+    // 모든 메시지 구독 해제
     for (var roomId in _unsubscribeFunctions.keys.toList()) {
       try {
         _unsubscribeFunctions[roomId]?.call();
@@ -95,8 +97,19 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
       }
     }
     
+    // 모든 타이핑 구독 해제
+    for (var roomId in _typingUnsubscribeFunctions.keys.toList()) {
+      try {
+        _typingUnsubscribeFunctions[roomId]?.call();
+      } catch (e) {
+        print('타이핑 구독 해제 실패 ($roomId): $e');
+      }
+    }
+    
     _subscriptions.clear();
     _unsubscribeFunctions.clear();
+    _typingSubscriptions.clear();
+    _typingUnsubscribeFunctions.clear();
     
     // STOMP 클라이언트 비활성화
     if (_stompClient != null) {
@@ -175,5 +188,67 @@ class WebSocketDataSourceImpl implements WebSocketDataSource {
       destination: '/app/chat/$roomId',
       body: jsonEncode(messageBody),
     );
+  }
+
+  @override
+  void subscribeToTyping(String roomId, Function(Map<String, dynamic>) onTyping) {
+    if (!isConnected) {
+      throw Exception('WebSocket is not connected');
+    }
+
+    _typingSubscriptions[roomId] = onTyping;
+
+    final unsubscribe = _stompClient!.subscribe(
+      destination: '/topic/chat/$roomId/typing',
+      callback: (StompFrame frame) {
+        if (frame.body != null) {
+          try {
+            final json = jsonDecode(frame.body!);
+            final callback = _typingSubscriptions[roomId];
+            if (callback != null) {
+              callback(json);
+            }
+          } catch (e) {
+            print('타이핑 이벤트 파싱 에러: $e');
+          }
+        }
+      },
+    );
+
+    _typingUnsubscribeFunctions[roomId] = unsubscribe;
+    print('✅ 타이핑 이벤트 구독: /topic/chat/$roomId/typing');
+  }
+
+  @override
+  void unsubscribeFromTyping(String roomId) {
+    _typingSubscriptions.remove(roomId);
+    final unsubscribe = _typingUnsubscribeFunctions.remove(roomId);
+    if (unsubscribe != null) {
+      unsubscribe();
+      print('✅ 타이핑 이벤트 구독 해제: $roomId');
+    }
+  }
+
+  @override
+  void sendTypingEvent({
+    required String roomId,
+    required bool isTyping,
+  }) {
+    if (!isConnected) {
+      print('⚠️ WebSocket이 연결되지 않아 타이핑 이벤트를 전송할 수 없습니다');
+      return;
+    }
+
+    final eventBody = {
+      'roomId': roomId,
+      'isTyping': isTyping,
+    };
+
+    _stompClient!.send(
+      destination: '/app/chat/$roomId/typing',
+      body: jsonEncode(eventBody),
+    );
+
+    print('📤 타이핑 이벤트 전송: roomId=$roomId, isTyping=$isTyping');
   }
 }

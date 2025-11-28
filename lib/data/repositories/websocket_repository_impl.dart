@@ -46,6 +46,27 @@ class WebSocketRepositoryImpl implements WebSocketRepository {
   }
 
   @override
+  void subscribeToTyping(String roomId, Function(Map<String, dynamic>) onTyping) {
+    dataSource.subscribeToTyping(roomId, onTyping);
+  }
+
+  @override
+  void unsubscribeFromTyping(String roomId) {
+    dataSource.unsubscribeFromTyping(roomId);
+  }
+
+  @override
+  void sendTypingEvent({
+    required String roomId,
+    required bool isTyping,
+  }) {
+    dataSource.sendTypingEvent(
+      roomId: roomId,
+      isTyping: isTyping,
+    );
+  }
+
+  @override
   Stream<bool> get connectionStateStream => dataSource.connectionStateStream;
 
   @override

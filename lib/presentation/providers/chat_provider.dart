@@ -37,6 +37,10 @@ class ChatProvider with ChangeNotifier {
   bool _hasMoreMessages = true;
   bool _isConnected = false;
   String? _subscribedRoomId; // 현재 구독 중인 채팅방 ID
+  
+  // 타이핑 인디케이터 상태
+  bool _isOtherUserTyping = false;
+  String? _typingUserName;
 
   // Getters
   List<ChatRoom> get chatRooms => _chatRooms;
@@ -46,6 +50,8 @@ class ChatProvider with ChangeNotifier {
   String? get error => _error;
   bool get hasMoreMessages => _hasMoreMessages;
   bool get isConnected => _isConnected;
+  bool get isOtherUserTyping => _isOtherUserTyping;
+  String? get typingUserName => _typingUserName;
 
   /// WebSocket 연결
   Future<void> connectWebSocket(String accessToken) async {
@@ -200,7 +206,7 @@ class ChatProvider with ChangeNotifier {
     }
 
     if (_isConnected) {
-      // WebSocket 구독
+      // WebSocket 메시지 구독
       try {
         webSocketRepository.subscribe(roomId, (message) {
           // 중복 메시지 방지: 이미 존재하는 메시지인지 확인
@@ -215,22 +221,47 @@ class ChatProvider with ChangeNotifier {
         _error = 'WebSocket 구독 실패: ${e.toString()}';
         notifyListeners();
       }
+
+      // 타이핑 이벤트 구독
+      try {
+        webSocketRepository.subscribeToTyping(roomId, (typingEvent) {
+          _handleTypingEvent(typingEvent);
+        });
+        print('✅ 타이핑 이벤트 구독 완료: $roomId');
+      } catch (e) {
+        print('⚠️ 타이핑 이벤트 구독 실패: $e');
+      }
     }
 
     // 읽음 처리
     await markMessagesAsRead(roomId);
   }
 
+  /// 타이핑 이벤트 처리
+  void _handleTypingEvent(Map<String, dynamic> event) {
+    final isTyping = event['isTyping'] as bool? ?? false;
+    final userName = event['userName'] as String?;
+    
+    _isOtherUserTyping = isTyping;
+    _typingUserName = userName;
+    notifyListeners();
+    
+    print('📥 타이핑 이벤트 수신: isTyping=$isTyping, userName=$userName');
+  }
+
   /// 채팅방 퇴장 (구독 해제)
   void leaveRoom(String roomId) {
     if (_isConnected && _subscribedRoomId == roomId) {
       webSocketRepository.unsubscribe(roomId);
+      webSocketRepository.unsubscribeFromTyping(roomId);
       _subscribedRoomId = null;
     }
     _currentRoom = null;
     _messages = [];
     _currentPage = 0;
     _hasMoreMessages = true;
+    _isOtherUserTyping = false;
+    _typingUserName = null;
     notifyListeners();
   }
 
@@ -266,6 +297,25 @@ class ChatProvider with ChangeNotifier {
     );
   }
 
+  /// 타이핑 이벤트 전송
+  void sendTypingEvent({
+    required String roomId,
+    required bool isTyping,
+  }) {
+    if (!_isConnected) {
+      return;
+    }
+
+    try {
+      webSocketRepository.sendTypingEvent(
+        roomId: roomId,
+        isTyping: isTyping,
+      );
+    } catch (e) {
+      print('⚠️ 타이핑 이벤트 전송 실패: $e');
+    }
+  }
+
   /// 에러 초기화
   void clearError() {
     _error = null;
@@ -290,6 +340,8 @@ class ChatProvider with ChangeNotifier {
     _currentPage = 0;
     _hasMoreMessages = true;
     _subscribedRoomId = null;
+    _isOtherUserTyping = false;
+    _typingUserName = null;
     
     print('ChatProvider 초기화 완료');
     notifyListeners();

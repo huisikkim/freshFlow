@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../domain/entities/chat_room.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/chat/message_bubble.dart';
+import '../../widgets/chat/typing_indicator.dart';
 
 /// 채팅방 페이지
 /// Single Responsibility: 채팅방 UI만 담당
@@ -22,10 +24,14 @@ class ChatRoomPage extends StatefulWidget {
 class _ChatRoomPageState extends State<ChatRoomPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  Timer? _typingTimer;
+  bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
+    _messageController.addListener(_onTextChanged);
+    
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final chatProvider = context.read<ChatProvider>();
       final authProvider = context.read<AuthProvider>();
@@ -49,10 +55,61 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   void dispose() {
+    _typingTimer?.cancel();
+    
+    // 타이핑 중단 이벤트 전송
+    if (_isTyping) {
+      context.read<ChatProvider>().sendTypingEvent(
+        roomId: widget.room.roomId,
+        isTyping: false,
+      );
+    }
+    
     context.read<ChatProvider>().leaveRoom(widget.room.roomId);
+    _messageController.removeListener(_onTextChanged);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onTextChanged() {
+    final text = _messageController.text.trim();
+    final chatProvider = context.read<ChatProvider>();
+
+    if (text.isNotEmpty) {
+      // 타이핑 시작
+      if (!_isTyping) {
+        _isTyping = true;
+        chatProvider.sendTypingEvent(
+          roomId: widget.room.roomId,
+          isTyping: true,
+        );
+      }
+
+      // 기존 타이머 취소
+      _typingTimer?.cancel();
+
+      // 2초 후 타이핑 중단
+      _typingTimer = Timer(const Duration(seconds: 2), () {
+        if (_isTyping) {
+          _isTyping = false;
+          chatProvider.sendTypingEvent(
+            roomId: widget.room.roomId,
+            isTyping: false,
+          );
+        }
+      });
+    } else {
+      // 텍스트가 비어있으면 타이핑 중단
+      if (_isTyping) {
+        _isTyping = false;
+        _typingTimer?.cancel();
+        chatProvider.sendTypingEvent(
+          roomId: widget.room.roomId,
+          isTyping: false,
+        );
+      }
+    }
   }
 
   void _onScroll() {
@@ -184,54 +241,65 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   );
                 }
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  reverse: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  itemCount: provider.messages.length +
-                      (provider.hasMoreMessages ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == provider.messages.length) {
-                      // 로딩 인디케이터
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                        itemCount: provider.messages.length +
+                            (provider.hasMoreMessages ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == provider.messages.length) {
+                            // 로딩 인디케이터
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
 
-                    final message =
-                        provider.messages[provider.messages.length - 1 - index];
-                    
-                    // 현재 사용자 ID와 비교 (로그인한 사용자의 ID 사용)
-                    final authProvider = context.read<AuthProvider>();
-                    final currentUserId = authProvider.user?.userType == 'STORE_OWNER'
-                        ? authProvider.user?.storeId
-                        : authProvider.user?.distributorId;
-                    final isMe = message.senderId == currentUserId;
+                          final message =
+                              provider.messages[provider.messages.length - 1 - index];
+                          
+                          // 현재 사용자 ID와 비교 (로그인한 사용자의 ID 사용)
+                          final authProvider = context.read<AuthProvider>();
+                          final currentUserId = authProvider.user?.userType == 'STORE_OWNER'
+                              ? authProvider.user?.storeId
+                              : authProvider.user?.distributorId;
+                          final isMe = message.senderId == currentUserId;
 
-                    // 디버깅 로그
-                    print('=== 메시지 정렬 디버그 ===');
-                    print('메시지 ID: ${message.id}');
-                    print('메시지 내용: ${message.content}');
-                    print('발신자 ID (senderId): ${message.senderId}');
-                    print('발신자 타입 (senderType): ${message.senderType}');
-                    print('현재 사용자 타입: ${authProvider.user?.userType}');
-                    print('현재 로그인 사용자 username: ${authProvider.user?.username}');
-                    print('현재 로그인 사용자 storeId: ${authProvider.user?.storeId}');
-                    print('현재 로그인 사용자 distributorId: ${authProvider.user?.distributorId}');
-                    print('현재 사용자 ID (currentUserId): $currentUserId');
-                    print('채팅방 storeId: ${widget.room.storeId}');
-                    print('채팅방 distributorId: ${widget.room.distributorId}');
-                    print('isMe 판단 결과: $isMe (${message.senderId} == $currentUserId)');
-                    print('========================\n');
+                          // 디버깅 로그
+                          print('=== 메시지 정렬 디버그 ===');
+                          print('메시지 ID: ${message.id}');
+                          print('메시지 내용: ${message.content}');
+                          print('발신자 ID (senderId): ${message.senderId}');
+                          print('발신자 타입 (senderType): ${message.senderType}');
+                          print('현재 사용자 타입: ${authProvider.user?.userType}');
+                          print('현재 로그인 사용자 username: ${authProvider.user?.username}');
+                          print('현재 로그인 사용자 storeId: ${authProvider.user?.storeId}');
+                          print('현재 로그인 사용자 distributorId: ${authProvider.user?.distributorId}');
+                          print('현재 사용자 ID (currentUserId): $currentUserId');
+                          print('채팅방 storeId: ${widget.room.storeId}');
+                          print('채팅방 distributorId: ${widget.room.distributorId}');
+                          print('isMe 판단 결과: $isMe (${message.senderId} == $currentUserId)');
+                          print('========================\n');
 
-                    return MessageBubble(
-                      message: message,
-                      isMe: isMe,
-                    );
-                  },
+                          return MessageBubble(
+                            message: message,
+                            isMe: isMe,
+                          );
+                        },
+                      ),
+                    ),
+                    // 타이핑 인디케이터
+                    if (provider.isOtherUserTyping)
+                      TypingIndicator(
+                        userName: provider.typingUserName,
+                      ),
+                  ],
                 );
               },
             ),
@@ -362,6 +430,16 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     if (text.isEmpty) return;
 
     final chatProvider = context.read<ChatProvider>();
+    
+    // 메시지 전송 시 타이핑 중단
+    if (_isTyping) {
+      _isTyping = false;
+      _typingTimer?.cancel();
+      chatProvider.sendTypingEvent(
+        roomId: widget.room.roomId,
+        isTyping: false,
+      );
+    }
     
     await chatProvider.sendTextMessage(
       roomId: widget.room.roomId,

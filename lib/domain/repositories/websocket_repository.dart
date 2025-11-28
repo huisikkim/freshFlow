@@ -23,6 +23,18 @@ abstract class WebSocketRepository {
     String? metadata,
   });
 
+  /// 타이핑 이벤트 구독
+  void subscribeToTyping(String roomId, Function(Map<String, dynamic>) onTyping);
+
+  /// 타이핑 이벤트 구독 해제
+  void unsubscribeFromTyping(String roomId);
+
+  /// 타이핑 이벤트 전송
+  void sendTypingEvent({
+    required String roomId,
+    required bool isTyping,
+  });
+
   /// 연결 상태 스트림
   Stream<bool> get connectionStateStream;
 
