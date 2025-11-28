@@ -26,10 +26,35 @@ class _ChatListPageState extends State<ChatListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF8F7FA),
       appBar: AppBar(
-        title: const Text('채팅'),
+        backgroundColor: isDark 
+            ? const Color(0xFF2C2C2E).withOpacity(0.8) 
+            : Colors.white.withOpacity(0.8),
         elevation: 0,
+        centerTitle: true,
+        title: Text(
+          '채팅',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: isDark ? const Color(0xFFF9FAFB) : const Color(0xFF111827),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+            ),
+            onPressed: () {
+              // 검색 기능 구현 예정
+            },
+          ),
+        ],
       ),
       body: Consumer<ChatProvider>(
         builder: (context, provider, child) {
@@ -42,17 +67,17 @@ class _ChatListPageState extends State<ChatListPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.chat_bubble_outline,
                     size: 64,
-                    color: Colors.grey,
+                    color: isDark ? const Color(0xFF9CA3AF) : Colors.grey,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     '채팅 목록을 불러올 수 없습니다',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[700],
+                      color: isDark ? const Color(0xFF9CA3AF) : Colors.grey[700],
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -60,7 +85,7 @@ class _ChatListPageState extends State<ChatListPage> {
                     '서버 연결을 확인해주세요',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[500],
+                      color: isDark ? const Color(0xFF6B7280) : Colors.grey[500],
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -72,9 +97,14 @@ class _ChatListPageState extends State<ChatListPage> {
                     icon: const Icon(Icons.refresh),
                     label: const Text('다시 시도'),
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFEF4444),
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
@@ -84,21 +114,41 @@ class _ChatListPageState extends State<ChatListPage> {
           }
 
           if (provider.chatRooms.isEmpty) {
-            return const Center(
-              child: Text('아직 대화가 없습니다'),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.chat_bubble_outline,
+                    size: 64,
+                    color: isDark ? const Color(0xFF9CA3AF) : Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '아직 대화가 없습니다',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark ? const Color(0xFF9CA3AF) : Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
           return RefreshIndicator(
             onRefresh: () => provider.loadChatRooms(),
-            child: ListView.separated(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               itemCount: provider.chatRooms.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final room = provider.chatRooms[index];
-                return _ChatRoomTile(
-                  room: room,
-                  onTap: () => _navigateToChatRoom(context, room),
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _ChatRoomTile(
+                    room: room,
+                    onTap: () => _navigateToChatRoom(context, room),
+                  ),
                 );
               },
             ),
@@ -138,50 +188,204 @@ class _ChatRoomTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final userType = authProvider.user?.userType;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // userType에 따라 표시할 이름 결정
     final displayName = userType == 'STORE_OWNER'
         ? room.distributorName
         : room.storeName;
 
-    return ListTile(
-      onTap: onTap,
-      leading: CircleAvatar(
-        child: Text(displayName[0]),
-      ),
-      title: Text(
-        displayName,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      subtitle: room.lastMessageAt != null
-          ? Text(
-              _formatDateTime(room.lastMessageAt!),
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
+    // 마지막 메시지 시간 포맷
+    final timeText = room.lastMessageAt != null 
+        ? _formatDateTime(room.lastMessageAt!) 
+        : '';
+
+    // 읽지 않은 메시지가 있는지 확인
+    final hasUnread = room.unreadCount > 0;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-            )
-          : null,
-      trailing: room.unreadCount > 0
-          ? Container(
-              padding: const EdgeInsets.all(6),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 프로필 아바타
+              Stack(
+                children: [
+                  _buildAvatar(displayName, isDark),
+                  // 온라인 상태 표시 (임의로 첫 번째 채팅방만 온라인으로 표시)
+                  if (room.unreadCount > 0)
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981), // green-500
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              child: Text(
-                room.unreadCount.toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              // 채팅 정보
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 이름과 시간
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            displayName,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: isDark 
+                                  ? const Color(0xFFF9FAFB) 
+                                  : const Color(0xFF111827),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (timeText.isNotEmpty)
+                          Text(
+                            timeText,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark 
+                                  ? const Color(0xFF9CA3AF) 
+                                  : const Color(0xFF6B7280),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    // 마지막 메시지와 읽지 않은 개수
+                    Row(
+                      children: [
+                        // 읽음 표시 아이콘 (읽지 않은 메시지가 없을 때만)
+                        if (!hasUnread && room.lastMessageAt != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: Icon(
+                              Icons.done_all,
+                              size: 16,
+                              color: isDark 
+                                  ? const Color(0xFF9CA3AF) 
+                                  : const Color(0xFF6B7280),
+                            ),
+                          ),
+                        Expanded(
+                          child: Text(
+                            _getLastMessagePreview(),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark 
+                                  ? const Color(0xFF9CA3AF) 
+                                  : const Color(0xFF6B7280),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        // 읽지 않은 메시지 배지
+                        if (hasUnread)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEF4444), // red-500
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              room.unreadCount > 99 ? '99+' : room.unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            )
-          : null,
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  Widget _buildAvatar(String displayName, bool isDark) {
+    // 이름의 첫 글자로 색상 결정
+    final colors = [
+      const Color(0xFF8B5CF6), // purple
+      const Color(0xFF3B82F6), // blue
+      const Color(0xFF10B981), // green
+      const Color(0xFFF59E0B), // amber
+      const Color(0xFFEF4444), // red
+      const Color(0xFF06B6D4), // cyan
+    ];
+    
+    final colorIndex = displayName.codeUnitAt(0) % colors.length;
+    final avatarColor = colors[colorIndex];
+
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: avatarColor.withOpacity(isDark ? 0.3 : 0.15),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          displayName[0],
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: avatarColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getLastMessagePreview() {
+    // 실제로는 room에서 마지막 메시지를 가져와야 하지만,
+    // 현재 ChatRoom 엔티티에 lastMessage 필드가 없으므로 임시 텍스트 사용
+    if (room.lastMessageAt == null) {
+      return '대화를 시작해보세요';
+    }
+    return '메시지를 확인하세요';
   }
 
   String _formatDateTime(DateTime dateTime) {

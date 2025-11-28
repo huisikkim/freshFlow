@@ -3,8 +3,8 @@ class ApiConstants {
   static const bool isDevelopment = true; // 로컬 개발시 true, 배포시 false로 변경
   
   // 로컬 개발 URL
-  //static const String localBaseUrl = 'http://192.168.45.80:8080'; // 안드로이드
-  static const String localBaseUrl = 'http://localhost:8080'; // ios
+  static const String localBaseUrl = 'http://192.168.45.80:8080'; // 안드로이드
+  //static const String localBaseUrl = 'http://localhost:8080'; // ios
   // 개발 URL
   static const String devBaseUrl = 'https://port-0-payflow-rm6l2llvxxefd7.sel5.cloudtype.app';
   
