@@ -289,14 +289,16 @@ class OrderDetailPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF14C873).withOpacity(isDark ? 0.2 : 0.1),
+                color: isDark 
+                    ? const Color(0xFF6366F1).withOpacity(0.15)
+                    : const Color(0xFF6366F1).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.check_circle,
-                    color: Color(0xFF14C873),
+                    color: isDark ? const Color(0xFF818CF8) : const Color(0xFF6366F1),
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -304,12 +306,12 @@ class OrderDetailPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '리뷰 등록 완료',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF14C873),
+                            color: isDark ? const Color(0xFF818CF8) : const Color(0xFF6366F1),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -317,7 +319,9 @@ class OrderDetailPage extends StatelessWidget {
                           '소중한 리뷰 감사합니다!',
                           style: TextStyle(
                             fontSize: 14,
-                            color: const Color(0xFF14C873).withOpacity(0.8),
+                            color: isDark 
+                                ? const Color(0xFFA5B4FC).withOpacity(0.9)
+                                : const Color(0xFF6366F1).withOpacity(0.7),
                           ),
                         ),
                       ],
