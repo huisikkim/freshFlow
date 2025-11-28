@@ -234,7 +234,17 @@ class ChatProvider with ChangeNotifier {
     }
 
     // 읽음 처리
-    await markMessagesAsRead(roomId);
+    final result = await markMessagesAsRead(roomId);
+    result.fold(
+      (failure) {
+        print('⚠️ 읽음 처리 실패: ${failure.message}');
+      },
+      (_) {
+        // 읽음 처리 성공 시 채팅방 목록의 unreadCount 업데이트
+        _updateUnreadCount(roomId, 0);
+        print('✅ 읽음 처리 완료 및 unreadCount 업데이트: $roomId');
+      },
+    );
   }
 
   /// 타이핑 이벤트 처리
@@ -313,6 +323,26 @@ class ChatProvider with ChangeNotifier {
       );
     } catch (e) {
       print('⚠️ 타이핑 이벤트 전송 실패: $e');
+    }
+  }
+
+  /// 채팅방의 읽지 않은 메시지 수 업데이트
+  void _updateUnreadCount(String roomId, int count) {
+    final index = _chatRooms.indexWhere((room) => room.roomId == roomId);
+    if (index != -1) {
+      final room = _chatRooms[index];
+      _chatRooms[index] = ChatRoom(
+        id: room.id,
+        roomId: room.roomId,
+        storeId: room.storeId,
+        distributorId: room.distributorId,
+        storeName: room.storeName,
+        distributorName: room.distributorName,
+        isActive: room.isActive,
+        lastMessageAt: room.lastMessageAt,
+        unreadCount: count,
+      );
+      notifyListeners();
     }
   }
 

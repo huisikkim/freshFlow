@@ -78,13 +78,18 @@ class _ChatListPageState extends State<ChatListPage> {
     );
   }
 
-  void _navigateToChatRoom(BuildContext context, ChatRoom room) {
-    Navigator.push(
+  void _navigateToChatRoom(BuildContext context, ChatRoom room) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChatRoomPage(room: room),
       ),
     );
+    
+    // 채팅방에서 돌아왔을 때 목록 새로고침 (읽음 상태 반영)
+    if (mounted) {
+      context.read<ChatProvider>().loadChatRooms();
+    }
   }
 }
 
