@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/order_provider.dart';
+import 'package:fresh_flow/presentation/providers/delivery_provider.dart';
 import 'package:fresh_flow/presentation/pages/order_detail_page.dart';
 import 'package:fresh_flow/domain/entities/order.dart';
 import 'package:intl/intl.dart';
@@ -355,11 +356,100 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   ),
                 ),
               ],
+
+              // 배송중 상태일 때 배송 완료 버튼 표시
+              if (order.status == OrderStatus.shipped) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _completeDelivery(context, order),
+                    icon: const Icon(Icons.check_circle, size: 18),
+                    label: const Text(
+                      '배송 완료',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF8B5CF6),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _completeDelivery(BuildContext context, Order order) async {
+    // dbId가 없으면 에러 표시
+    if (order.dbId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('주문 ID를 찾을 수 없습니다'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // 확인 다이얼로그
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('배송 완료'),
+        content: const Text('배송을 완료 처리하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B5CF6),
+            ),
+            child: const Text('완료'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final deliveryProvider = context.read<DeliveryProvider>();
+    final completed =
+        await deliveryProvider.completeDelivery(order.dbId.toString());
+
+    if (context.mounted) {
+      if (completed) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('배송이 완료되었습니다'),
+            backgroundColor: Color(0xFF8B5CF6),
+          ),
+        );
+        // 주문 목록 새로고침
+        context.read<OrderProvider>().getDistributorOrders();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(deliveryProvider.errorMessage ?? '배송 완료 처리 실패'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Color _getStatusColor(OrderStatus status) {
@@ -379,3 +469,4 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
     }
   }
 }
+

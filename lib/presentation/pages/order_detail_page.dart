@@ -62,6 +62,10 @@ class OrderDetailPage extends StatelessWidget {
               // 유통업자용 배송 관리 버튼
               if (isDistributor && order.status == OrderStatus.confirmed)
                 _buildDistributorActions(context),
+              
+              // 유통업자용 배송 완료 버튼 (배송중 상태일 때)
+              if (isDistributor && order.status == OrderStatus.shipped)
+                _buildDeliveryCompleteButton(context),
             ],
           ),
         ),
@@ -122,6 +126,123 @@ class OrderDetailPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildDeliveryCompleteButton(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '배송 관리',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _completeDelivery(context),
+              icon: const Icon(Icons.check_circle, color: Colors.white),
+              label: const Text(
+                '배송 완료',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8B5CF6),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _completeDelivery(BuildContext context) async {
+    // dbId가 없으면 에러 표시
+    if (order.dbId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('주문 ID를 찾을 수 없습니다'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // 확인 다이얼로그
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('배송 완료'),
+        content: const Text('배송을 완료 처리하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B5CF6),
+            ),
+            child: const Text('완료'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final deliveryProvider = context.read<DeliveryProvider>();
+    final completed =
+        await deliveryProvider.completeDelivery(order.dbId.toString());
+
+    if (context.mounted) {
+      if (completed) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('배송이 완료되었습니다'),
+            backgroundColor: Color(0xFF8B5CF6),
+          ),
+        );
+        // 주문 목록 새로고침
+        context.read<OrderProvider>().getDistributorOrders();
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(deliveryProvider.errorMessage ?? '배송 완료 처리 실패'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showShipDeliveryModal(BuildContext context) {
