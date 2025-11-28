@@ -52,6 +52,11 @@ class ApiConstants {
   static String shipDeliveryEndpoint(String orderId) => '/api/deliveries/order/$orderId/ship';
   static String completeDeliveryEndpoint(String orderId) => '/api/deliveries/order/$orderId/complete';
   
+  // 리뷰 관련 엔드포인트
+  static const String createStoreReviewEndpoint = '/api/reviews/store';
+  static const String createDistributorReviewEndpoint = '/api/reviews/distributor';
+  static const String reviewStatisticsEndpoint = '/api/reviews/statistics';
+  
   // 토스페이먼츠 클라이언트 키
   static const String tossPaymentsClientKey = 'test_ck_kYG57Eba3Gp9GBALzABLVpWDOxmA';
 }

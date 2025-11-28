@@ -17,11 +17,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => InjectionContainer.getAuthProvider()),
-        ChangeNotifierProvider(create: (_) => InjectionContainer.getCartProvider()),
-        ChangeNotifierProvider(create: (_) => InjectionContainer.getOrderProvider()),
-        ChangeNotifierProvider(create: (_) => InjectionContainer.getChatProvider()),
-        ChangeNotifierProvider(create: (_) => InjectionContainer.getDeliveryProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getAuthProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getCartProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getOrderProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getChatProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getDeliveryProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getReviewProvider()),
       ],
       child: MaterialApp(
         title: 'Fresh Flow',

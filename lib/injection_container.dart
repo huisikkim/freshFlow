@@ -63,6 +63,8 @@ import 'package:fresh_flow/domain/usecases/send_message.dart';
 import 'package:fresh_flow/presentation/providers/chat_provider.dart';
 import 'package:fresh_flow/data/datasources/delivery_remote_datasource.dart';
 import 'package:fresh_flow/presentation/providers/delivery_provider.dart';
+import 'package:fresh_flow/data/datasources/review_remote_datasource.dart';
+import 'package:fresh_flow/presentation/providers/review_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -137,6 +139,7 @@ class InjectionContainer {
   static late MarkMessagesAsRead _markMessagesAsRead;
   static late SendMessage _sendMessage;
   static late DeliveryRemoteDataSource _deliveryRemoteDataSource;
+  static late ReviewRemoteDataSource _reviewRemoteDataSource;
 
   static Future<void> init() async {
     // External
@@ -161,6 +164,7 @@ class InjectionContainer {
     );
     _webSocketDataSource = WebSocketDataSourceImpl();
     _deliveryRemoteDataSource = DeliveryRemoteDataSourceImpl(_httpClient);
+    _reviewRemoteDataSource = ReviewRemoteDataSourceImpl(_httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -368,6 +372,13 @@ class InjectionContainer {
   static DeliveryProvider getDeliveryProvider() {
     return DeliveryProvider(
       remoteDataSource: _deliveryRemoteDataSource,
+      authRepository: _authRepository,
+    );
+  }
+
+  static ReviewProvider getReviewProvider() {
+    return ReviewProvider(
+      remoteDataSource: _reviewRemoteDataSource,
       authRepository: _authRepository,
     );
   }

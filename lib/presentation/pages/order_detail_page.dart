@@ -4,6 +4,8 @@ import 'package:fresh_flow/domain/entities/order.dart';
 import 'package:fresh_flow/presentation/providers/delivery_provider.dart';
 import 'package:fresh_flow/presentation/providers/order_provider.dart';
 import 'package:fresh_flow/presentation/widgets/ship_delivery_modal.dart';
+import 'package:fresh_flow/presentation/pages/create_store_review_page.dart';
+import 'package:fresh_flow/presentation/pages/create_distributor_review_page.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetailPage extends StatelessWidget {
@@ -66,6 +68,10 @@ class OrderDetailPage extends StatelessWidget {
               // 유통업자용 배송 완료 버튼 (배송중 상태일 때)
               if (isDistributor && order.status == OrderStatus.shipped)
                 _buildDeliveryCompleteButton(context),
+
+              // 리뷰 작성 버튼 (배송완료 상태일 때)
+              if (order.status == OrderStatus.delivered)
+                _buildReviewButton(context),
             ],
           ),
         ),
@@ -242,6 +248,87 @@ class OrderDetailPage extends StatelessWidget {
           ),
         );
       }
+    }
+  }
+
+  Widget _buildReviewButton(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '거래 평가',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            '거래가 완료되었습니다. 상대방을 평가해주세요.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF6B7280),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _navigateToReviewPage(context),
+              icon: const Icon(Icons.star, color: Colors.white),
+              label: const Text(
+                '리뷰 작성하기',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFBBF24),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToReviewPage(BuildContext context) {
+    if (isDistributor) {
+      // 유통업자 -> 가게사장님 평가
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CreateDistributorReviewPage(order: order),
+        ),
+      );
+    } else {
+      // 가게사장님 -> 유통업자 평가
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CreateStoreReviewPage(order: order),
+        ),
+      );
     }
   }
 
