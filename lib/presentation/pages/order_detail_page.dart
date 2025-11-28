@@ -21,20 +21,25 @@ class OrderDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final numberFormat = NumberFormat('#,###');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF7F8FA),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           '주문 상세',
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF7F8FA),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF111827)),
+        iconTheme: IconThemeData(
+          color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
+        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -43,35 +48,34 @@ class OrderDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 주문 상태
-              _buildStatusCard(),
+              _buildStatusCard(isDark),
               const SizedBox(height: 16),
 
               // 주문 정보
-              _buildInfoCard(numberFormat),
+              _buildInfoCard(numberFormat, isDark),
               const SizedBox(height: 16),
 
               // 주문 상품
-              _buildProductsCard(numberFormat),
+              _buildProductsCard(numberFormat, isDark),
               const SizedBox(height: 16),
 
               // 배송 정보
-              _buildDeliveryCard(),
+              _buildDeliveryCard(isDark),
               const SizedBox(height: 16),
 
-              // 결제 정보
-              _buildPaymentCard(numberFormat),
-              
               // 유통업자용 배송 관리 버튼
               if (isDistributor && order.status == OrderStatus.confirmed)
-                _buildDistributorActions(context),
+                _buildDistributorActions(context, isDark),
               
               // 유통업자용 배송 완료 버튼 (배송중 상태일 때)
               if (isDistributor && order.status == OrderStatus.shipped)
-                _buildDeliveryCompleteButton(context),
+                _buildDeliveryCompleteButton(context, isDark),
 
               // 리뷰 작성 버튼 (배송완료 상태일 때)
               if (order.status == OrderStatus.delivered)
-                _buildReviewButton(context),
+                _buildReviewButton(context, isDark),
+              
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -79,30 +83,29 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDistributorActions(BuildContext context) {
+  Widget _buildDistributorActions(BuildContext context, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '배송 관리',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
           ),
           const SizedBox(height: 16),
@@ -120,10 +123,10 @@ class OrderDetailPage extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: const Color(0xFF14C873),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 elevation: 0,
               ),
@@ -134,30 +137,29 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDeliveryCompleteButton(BuildContext context) {
+  Widget _buildDeliveryCompleteButton(BuildContext context, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '배송 관리',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
           ),
           const SizedBox(height: 16),
@@ -175,10 +177,10 @@ class OrderDetailPage extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8B5CF6),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: const Color(0xFF14C873),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 elevation: 0,
               ),
@@ -251,35 +253,34 @@ class OrderDetailPage extends StatelessWidget {
     }
   }
 
-  Widget _buildReviewButton(BuildContext context) {
+  Widget _buildReviewButton(BuildContext context, bool isDark) {
     // 서버 응답에서 리뷰 작성 여부 확인
     final hasReviewed = isDistributor
         ? (order.hasDistributorReview ?? false)
         : (order.hasStoreReview ?? false);
 
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '거래 평가',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
           ),
           const SizedBox(height: 12),
@@ -288,14 +289,14 @@ class OrderDetailPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFF14C873).withOpacity(isDark ? 0.2 : 0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   const Icon(
                     Icons.check_circle,
-                    color: Color(0xFF10B981),
+                    color: Color(0xFF14C873),
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -307,8 +308,8 @@ class OrderDetailPage extends StatelessWidget {
                           '리뷰 등록 완료',
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF10B981),
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF14C873),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -316,7 +317,7 @@ class OrderDetailPage extends StatelessWidget {
                           '소중한 리뷰 감사합니다!',
                           style: TextStyle(
                             fontSize: 14,
-                            color: const Color(0xFF10B981).withOpacity(0.8),
+                            color: const Color(0xFF14C873).withOpacity(0.8),
                           ),
                         ),
                       ],
@@ -327,11 +328,11 @@ class OrderDetailPage extends StatelessWidget {
             ),
           ] else ...[
             // 리뷰 작성 가능 상태
-            const Text(
+            Text(
               '거래가 완료되었습니다. 상대방을 평가해주세요.',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF6B7280),
+                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
               ),
             ),
             const SizedBox(height: 16),
@@ -349,10 +350,10 @@ class OrderDetailPage extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFBBF24),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: const Color(0xFF14C873),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   elevation: 0,
                 ),
@@ -516,21 +517,21 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusCard() {
+  Widget _buildStatusCard(bool isDark) {
     final statusColor = _getStatusColor(order.status);
-    final statusBgColor = statusColor.withOpacity(0.1);
+    final statusBgColor = statusColor.withOpacity(isDark ? 0.2 : 0.1);
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -539,7 +540,8 @@ class OrderDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
               color: statusBgColor,
               shape: BoxShape.circle,
@@ -547,25 +549,25 @@ class OrderDetailPage extends StatelessWidget {
             child: Icon(
               _getStatusIcon(order.status),
               color: statusColor,
-              size: 32,
+              size: 48,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             order.status.displayName,
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
               color: statusColor,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             DateFormat('yyyy년 MM월 dd일 HH:mm').format(order.createdAt),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF6B7280),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
             textAlign: TextAlign.center,
           ),
@@ -574,151 +576,156 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(NumberFormat numberFormat) {
+  Widget _buildInfoCard(NumberFormat numberFormat, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '주문 정보',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
           ),
+          const SizedBox(height: 20),
+          _buildInfoRow('주문번호', order.id, isDark),
           const SizedBox(height: 16),
-          _buildInfoRow('주문번호', order.id),
-          const SizedBox(height: 12),
-          _buildInfoRow('유통업체', order.distributorName),
-          const SizedBox(height: 12),
-          _buildInfoRow('주문일시', DateFormat('yyyy.MM.dd HH:mm').format(order.createdAt)),
+          _buildInfoRow('유통업체', order.distributorName, isDark),
+          const SizedBox(height: 16),
+          _buildInfoRow('주문일시', DateFormat('yyyy.MM.dd HH:mm').format(order.createdAt), isDark),
         ],
       ),
     );
   }
 
-  Widget _buildProductsCard(NumberFormat numberFormat) {
+  Widget _buildProductsCard(NumberFormat numberFormat, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '주문 상품',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
           ),
-          const SizedBox(height: 16),
-          ...order.items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.productName,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF111827),
-                            ),
+          const SizedBox(height: 20),
+          ...order.items.asMap().entries.map((entry) {
+            final item = entry.value;
+            final isLast = entry.key == order.items.length - 1;
+            return Padding(
+              padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.productName,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${numberFormat.format(item.unitPrice)}원/${item.unit} × ${item.quantity}${item.unit}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF6B7280),
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${numberFormat.format(item.unitPrice)}원/${item.unit} × ${item.quantity}${item.unit}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '${numberFormat.format(item.subtotal)}원',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF111827),
-                      ),
+                  ),
+                  Text(
+                    '${numberFormat.format(item.subtotal)}원',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildDeliveryCard() {
+  Widget _buildDeliveryCard(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '배송 정보',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
           ),
+          const SizedBox(height: 20),
+          _buildInfoRow('배송 주소', order.deliveryAddress, isDark),
           const SizedBox(height: 16),
-          _buildInfoRow('배송 주소', order.deliveryAddress),
-          const SizedBox(height: 12),
-          _buildInfoRow('연락처', order.deliveryPhone),
+          _buildInfoRow('연락처', order.deliveryPhone, isDark),
           if (order.desiredDeliveryDate != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             _buildInfoRow(
               '희망 배송일',
               DateFormat('yyyy년 MM월 dd일').format(order.desiredDeliveryDate!),
+              isDark,
             ),
           ],
           if (order.deliveryRequest != null && order.deliveryRequest!.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _buildInfoRow('배송 요청사항', order.deliveryRequest!),
+            const SizedBox(height: 16),
+            _buildInfoRow('배송 요청사항', order.deliveryRequest!, isDark),
           ],
         ],
       ),
@@ -819,27 +826,28 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF6B7280),
-            ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
           ),
         ),
+        const SizedBox(width: 16),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF111827),
+              fontWeight: FontWeight.w500,
+              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
             ),
+            textAlign: TextAlign.right,
           ),
         ),
       ],
