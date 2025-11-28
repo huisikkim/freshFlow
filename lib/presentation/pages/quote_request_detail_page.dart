@@ -23,7 +23,7 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.white.withOpacity(0.95),
         elevation: 0,
@@ -71,10 +71,11 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
 
   Widget _buildStatusCard() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -84,9 +85,11 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
               color: _getStatusColor(widget.quoteRequest.status),
               borderRadius: BorderRadius.circular(20),
@@ -95,23 +98,24 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
               _getStatusText(widget.quoteRequest.status),
               style: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
                 letterSpacing: -0.2,
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             widget.isDistributor
                 ? widget.quoteRequest.storeName
                 : widget.quoteRequest.distributorName,
             style: const TextStyle(
               fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1A1A),
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
               letterSpacing: -0.5,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -123,7 +127,7 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -138,9 +142,9 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
           const Text(
             '요청 정보',
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1A1A),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
               letterSpacing: -0.3,
             ),
           ),
@@ -151,26 +155,26 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
             widget.quoteRequest.requestedProducts,
           ),
           if (widget.quoteRequest.message != null) ...[
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildInfoRow(
               Icons.chat_bubble_outline,
               '추가 요청사항',
               widget.quoteRequest.message!,
             ),
           ],
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           _buildInfoRow(
-            Icons.schedule_outlined,
+            Icons.schedule,
             '요청 시간',
             _formatDateTime(widget.quoteRequest.requestedAt),
           ),
           if (widget.quoteRequest.estimatedAmount != null) ...[
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildInfoRow(
               Icons.attach_money,
               '예상 금액',
               '${_formatNumber(widget.quoteRequest.estimatedAmount!)}원',
-              valueColor: const Color(0xFF06D6A0),
+              valueColor: const Color(0xFF10B981),
             ),
           ],
         ],
@@ -257,55 +261,72 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: _openChat,
-        icon: const Icon(Icons.chat_bubble_outline, size: 20),
+        icon: const Icon(Icons.chat, size: 20),
         label: Text(
           widget.isDistributor ? '매장과 채팅하기' : '유통업체와 채팅하기',
           style: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.bold,
             letterSpacing: -0.3,
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4f46e5),
+          backgroundColor: const Color(0xFF4F46E5),
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
+          shadowColor: const Color(0xFF4F46E5).withOpacity(0.3),
         ),
       ),
     );
   }
 
   Widget _buildDistributorActions() {
-    return Column(
+    return Row(
       children: [
-        ElevatedButton.icon(
-          onPressed: () => _showRespondDialog(true),
-          icon: const Icon(Icons.check_circle),
-          label: const Text('수락하기'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF06D6A0),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => _showRespondDialog(true),
+            icon: const Icon(Icons.check_circle, size: 18),
+            label: const Text(
+              '수락하기',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF10B981),
+              side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () => _showRespondDialog(false),
-          icon: const Icon(Icons.cancel),
-          label: const Text('거절하기'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.red,
-            side: const BorderSide(color: Colors.red),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        const SizedBox(width: 12),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => _showRespondDialog(false),
+            icon: const Icon(Icons.cancel, size: 18),
+            label: const Text(
+              '거절하기',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFFEF4444),
+              side: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -567,7 +588,7 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 24, color: const Color(0xFF6B7280)),
+        Icon(icon, size: 20, color: const Color(0xFF9CA3AF)),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -576,17 +597,17 @@ class _QuoteRequestDetailPageState extends State<QuoteRequestDetailPage> {
               Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   color: Color(0xFF6B7280),
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 15,
-                  color: valueColor ?? const Color(0xFF1A1A1A),
+                  fontSize: 14,
+                  color: valueColor ?? const Color(0xFF111827),
                   fontWeight: FontWeight.w500,
                   height: 1.4,
                 ),
