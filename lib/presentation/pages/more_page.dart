@@ -7,6 +7,7 @@ import 'package:fresh_flow/presentation/pages/login_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_recommendations_page.dart';
+import 'package:fresh_flow/presentation/pages/quote_request_list_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class MorePage extends StatelessWidget {
@@ -147,6 +148,23 @@ class MorePage extends StatelessWidget {
                   },
                 ),
               ] else ...[
+                _buildMenuItem(
+                  context: context,
+                  title: '견적 요청 확인',
+                  icon: Icons.inbox_outlined,
+                  color: const Color(0xFF3B82F6),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ChangeNotifierProvider(
+                          create: (_) => InjectionContainer.getQuoteRequestProvider(),
+                          child: const QuoteRequestListPage(isDistributor: true),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
                 _buildMenuItem(
                   context: context,
                   title: '업체 정보 관리',
