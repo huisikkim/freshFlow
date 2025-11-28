@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/providers/chat_provider.dart';
-import 'package:fresh_flow/presentation/pages/home_page.dart';
+import 'package:fresh_flow/presentation/pages/main_layout.dart';
 import 'package:fresh_flow/presentation/pages/signup_page.dart';
 import 'package:fresh_flow/presentation/pages/debug_connection_page.dart';
 
@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                     
                     if (context.mounted) {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const HomePage()),
+                        MaterialPageRoute(builder: (_) => const MainLayout()),
                       );
                     }
                   });
