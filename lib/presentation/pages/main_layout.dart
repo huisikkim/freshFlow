@@ -109,6 +109,10 @@ class _MainLayoutState extends State<MainLayout> {
         create: (_) => InjectionContainer.getCatalogProvider(),
         child: const MyCatalogPage(),
       ),
+      ChangeNotifierProvider(
+        create: (_) => InjectionContainer.getQuoteRequestProvider(),
+        child: const QuoteRequestListPage(isDistributor: true),
+      ),
       const MorePage(),
     ];
   }
@@ -190,10 +194,17 @@ class _MainLayoutState extends State<MainLayout> {
         isStoreOwner: isStoreOwner,
       ),
       _buildNavButton(
+        icon: Icons.inbox_outlined,
+        activeIcon: Icons.inbox,
+        label: '견적',
+        index: 4,
+        isStoreOwner: isStoreOwner,
+      ),
+      _buildNavButton(
         icon: Icons.menu,
         activeIcon: Icons.menu,
         label: '더보기',
-        index: 4,
+        index: 5,
         isStoreOwner: isStoreOwner,
       ),
     ];
