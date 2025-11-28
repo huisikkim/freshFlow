@@ -64,7 +64,8 @@ class OrderDetailPage extends StatelessWidget {
     final statusBgColor = statusColor.withOpacity(0.1);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -77,6 +78,8 @@ class OrderDetailPage extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(16),
@@ -98,6 +101,7 @@ class OrderDetailPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: statusColor,
             ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
@@ -106,6 +110,7 @@ class OrderDetailPage extends StatelessWidget {
               fontSize: 14,
               color: Color(0xFF6B7280),
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
