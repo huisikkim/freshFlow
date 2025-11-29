@@ -33,6 +33,8 @@ class MyApp extends StatelessWidget {
             create: (_) => InjectionContainer.getGroupBuyingProvider()),
         ChangeNotifierProvider(
             create: (_) => InjectionContainer.getDistributorGroupBuyingProvider()),
+        ChangeNotifierProvider(
+            create: (_) => InjectionContainer.getSettlementProvider()),
       ],
       child: MaterialApp(
         title: 'Fresh Flow',

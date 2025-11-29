@@ -77,6 +77,8 @@ import 'package:fresh_flow/domain/usecases/create_room.dart';
 import 'package:fresh_flow/domain/usecases/get_distributor_rooms.dart';
 import 'package:fresh_flow/domain/usecases/open_room.dart';
 import 'package:fresh_flow/presentation/providers/distributor_group_buying_provider.dart';
+import 'package:fresh_flow/data/datasources/settlement_remote_datasource.dart';
+import 'package:fresh_flow/presentation/providers/settlement_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -161,6 +163,7 @@ class InjectionContainer {
   static late CreateRoom _createRoom;
   static late GetDistributorRooms _getDistributorRooms;
   static late OpenRoom _openRoom;
+  static late SettlementRemoteDataSource _settlementRemoteDataSource;
 
   static Future<void> init() async {
     // External
@@ -187,6 +190,7 @@ class InjectionContainer {
     _deliveryRemoteDataSource = DeliveryRemoteDataSourceImpl(_httpClient);
     _reviewRemoteDataSource = ReviewRemoteDataSourceImpl(_httpClient);
     _groupBuyingRemoteDataSource = GroupBuyingRemoteDataSourceImpl(client: _httpClient);
+    _settlementRemoteDataSource = SettlementRemoteDataSourceImpl(_httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -430,5 +434,9 @@ class InjectionContainer {
       getDistributorRooms: _getDistributorRooms,
       openRoom: _openRoom,
     );
+  }
+
+  static SettlementProvider getSettlementProvider() {
+    return SettlementProvider(_settlementRemoteDataSource, _authRepository);
   }
 }

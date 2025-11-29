@@ -10,6 +10,8 @@ import 'package:fresh_flow/presentation/pages/distributor_recommendations_page.d
 import 'package:fresh_flow/presentation/pages/group_buying_list_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_group_buying_page.dart';
 import 'package:fresh_flow/presentation/pages/group_buying_my_participations_page.dart';
+import 'package:fresh_flow/presentation/pages/store_settlement_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_settlement_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class MorePage extends StatelessWidget {
@@ -169,6 +171,41 @@ class MorePage extends StatelessWidget {
                   },
                 ),
               ],
+
+              const SizedBox(height: 32),
+
+              // 정산 섹션
+              const Text(
+                '정산',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF111827),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              _buildMenuItem(
+                context: context,
+                title: '정산 관리',
+                icon: Icons.account_balance_wallet_outlined,
+                color: const Color(0xFF06B6D4),
+                onTap: () {
+                  if (isStoreOwner) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const StoreSettlementPage(),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const DistributorSettlementPage(),
+                      ),
+                    );
+                  }
+                },
+              ),
 
               const SizedBox(height: 32),
 
