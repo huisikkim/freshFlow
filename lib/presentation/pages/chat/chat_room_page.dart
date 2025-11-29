@@ -180,75 +180,74 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: const Color(0xFF1C1C1E),
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.95),
+        backgroundColor: const Color(0xFF2C2C2E),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 22),
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
-          color: const Color(0xFF1A1A1A),
+          color: const Color(0xFFE5E5E7),
         ),
-        title: Column(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Consumer<ChatProvider>(
-                  builder: (context, provider, child) {
-                    return Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: provider.isConnected 
-                            ? const Color(0xFF10B981) 
-                            : Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  displayName,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
-                    letterSpacing: -0.3,
-                  ),
-                ),
-              ],
-            ),
             Consumer<ChatProvider>(
               builder: (context, provider, child) {
-                return Text(
-                  provider.isConnected ? '온라인' : '오프라인',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                return Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
                     color: provider.isConnected 
                         ? const Color(0xFF10B981) 
-                        : Colors.grey,
+                        : const Color(0xFF6B7280),
+                    shape: BoxShape.circle,
                   ),
                 );
               },
             ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFE5E5E7),
+                  ),
+                ),
+                Consumer<ChatProvider>(
+                  builder: (context, provider, child) {
+                    return Text(
+                      provider.isConnected ? '온라인' : '오프라인',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: provider.isConnected 
+                            ? const Color(0xFF10B981) 
+                            : const Color(0xFF98989D),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ],
         ),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert, size: 24),
             onPressed: () {},
-            color: const Color(0xFF1A1A1A),
+            color: const Color(0xFFE5E5E7),
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
             height: 1,
-            color: Colors.grey.withOpacity(0.1),
+            color: const Color(0xFF3A3A3C),
           ),
         ),
       ),
@@ -378,17 +377,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   Widget _buildMessageInput() {
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 12,
-          bottom: 12,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA),
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Color(0xFF2C2C2E),
           border: Border(
             top: BorderSide(
-              color: Colors.grey.withOpacity(0.1),
+              color: Color(0xFF3A3A3C),
               width: 1,
             ),
           ),
@@ -396,33 +390,30 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            IconButton(
-              icon: const Icon(Icons.add_circle_outline, size: 26),
-              onPressed: () {},
-              color: const Color(0xFF6B7280),
-              padding: const EdgeInsets.all(8),
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFF3A3A3C),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.add, size: 18),
+                onPressed: () {},
+                color: const Color(0xFFE5E5E7),
+                padding: EdgeInsets.zero,
+              ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Expanded(
               child: Container(
                 constraints: const BoxConstraints(
-                  minHeight: 44,
+                  minHeight: 40,
                   maxHeight: 120,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: Colors.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
+                  color: const Color(0xFF3A3A3C),
+                  borderRadius: BorderRadius.circular(9999),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -433,18 +424,18 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         decoration: const InputDecoration(
                           hintText: '메시지를 입력하세요',
                           hintStyle: TextStyle(
-                            color: Color(0xFF6B7280),
+                            color: Color(0xFF98989D),
                             fontSize: 15,
                           ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
+                            horizontal: 16,
+                            vertical: 10,
                           ),
                         ),
                         style: const TextStyle(
                           fontSize: 15,
-                          color: Color(0xFF1A1A1A),
+                          color: Color(0xFFE5E5E7),
                         ),
                         maxLines: null,
                         minLines: 1,
@@ -453,35 +444,31 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.sentiment_satisfied_outlined, size: 22),
+                      icon: const Icon(Icons.sentiment_satisfied, size: 20),
                       onPressed: () {},
-                      color: const Color(0xFF6B7280),
+                      color: const Color(0xFF98989D),
                       padding: const EdgeInsets.all(8),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xFF007AFF),
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFFD4AF37),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF007AFF).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
-              child: IconButton(
-                icon: const Icon(Icons.send_rounded, size: 20),
-                onPressed: _sendMessage,
-                color: Colors.white,
-                padding: EdgeInsets.zero,
+              child: Transform.rotate(
+                angle: -0.785398, // -45 degrees in radians
+                child: IconButton(
+                  icon: const Icon(Icons.send, size: 18),
+                  onPressed: _sendMessage,
+                  color: Colors.black,
+                  padding: EdgeInsets.zero,
+                ),
               ),
             ),
           ],

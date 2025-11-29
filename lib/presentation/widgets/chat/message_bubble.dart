@@ -46,29 +46,22 @@ class MessageBubble extends StatelessWidget {
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
+                horizontal: 12,
+                vertical: 10,
               ),
               decoration: BoxDecoration(
-                color: isMe ? const Color(0xFF007AFF) : const Color(0xFFE5E5EA),
+                color: isMe ? const Color(0xFFD4AF37) : const Color(0xFF3A3A3C),
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: Radius.circular(isMe ? 20 : 6),
-                  bottomRight: Radius.circular(isMe ? 6 : 20),
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isMe ? 16 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 16),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Text(
                 message.content,
                 style: TextStyle(
-                  color: isMe ? Colors.white : const Color(0xFF1A1A1A),
+                  color: isMe ? Colors.black : const Color(0xFFE5E5E7),
                   fontSize: 15,
                   height: 1.4,
                 ),
@@ -94,13 +87,13 @@ class MessageBubble extends StatelessWidget {
             vertical: 8,
           ),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.1),
+            color: const Color(0xFF3A3A3C).withOpacity(0.5),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             message.content,
             style: const TextStyle(
-              color: Color(0xFF6B7280),
+              color: Color(0xFF98989D),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -127,12 +120,12 @@ class MessageBubble extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: isMe 
-                    ? const Color(0xFF667eea).withOpacity(0.1)
-                    : const Color(0xFFE5E5EA),
+                    ? const Color(0xFFD4AF37).withOpacity(0.2)
+                    : const Color(0xFF3A3A3C),
                 border: Border.all(
                   color: isMe 
-                      ? const Color(0xFF667eea).withOpacity(0.3)
-                      : Colors.grey.withOpacity(0.2),
+                      ? const Color(0xFFD4AF37).withOpacity(0.5)
+                      : const Color(0xFF4A4A4C),
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.only(
@@ -141,13 +134,6 @@ class MessageBubble extends StatelessWidget {
                   bottomLeft: Radius.circular(isMe ? 16 : 4),
                   bottomRight: Radius.circular(isMe ? 4 : 16),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,8 +144,8 @@ class MessageBubble extends StatelessWidget {
                         _getIconForMessageType(),
                         size: 18,
                         color: isMe 
-                            ? const Color(0xFF667eea)
-                            : const Color(0xFF6B7280),
+                            ? const Color(0xFFD4AF37)
+                            : const Color(0xFF98989D),
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -168,8 +154,8 @@ class MessageBubble extends StatelessWidget {
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: isMe 
-                              ? const Color(0xFF667eea)
-                              : const Color(0xFF6B7280),
+                              ? const Color(0xFFD4AF37)
+                              : const Color(0xFF98989D),
                         ),
                       ),
                     ],
@@ -179,7 +165,7 @@ class MessageBubble extends StatelessWidget {
                     message.content,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF1A1A1A),
+                      color: Color(0xFFE5E5E7),
                       height: 1.4,
                     ),
                   ),
@@ -200,9 +186,8 @@ class MessageBubble extends StatelessWidget {
     return Text(
       DateFormat('HH:mm').format(message.createdAt),
       style: const TextStyle(
-        fontSize: 11,
-        color: Color(0xFF6B7280),
-        fontWeight: FontWeight.w500,
+        fontSize: 12,
+        color: Color(0xFF98989D),
       ),
     );
   }
