@@ -40,9 +40,31 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       appBar: AppBar(
-        title: const Text('공동구매 상세'),
+        backgroundColor: isDark 
+            ? const Color(0xFF121212).withOpacity(0.8)
+            : Colors.white.withOpacity(0.8),
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: isDark ? const Color(0xFFF5F5F5) : const Color(0xFF111827),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          '공동구매 상세',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: isDark ? const Color(0xFFF5F5F5) : const Color(0xFF111827),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Consumer<GroupBuyingProvider>(
         builder: (context, provider, child) {
@@ -73,17 +95,27 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
             return const Center(child: Text('방 정보를 불러올 수 없습니다'));
           }
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(room),
-                _buildPriceInfo(room),
-                _buildProgressInfo(room),
-                _buildDetailInfo(room),
-                _buildJoinForm(context, room),
-              ],
-            ),
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 100),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(room),
+                    _buildPriceInfo(room),
+                    _buildProgressInfo(room),
+                    _buildDetailInfo(room),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: _buildJoinButton(context, room),
+              ),
+            ],
           );
         },
       ),
@@ -91,40 +123,56 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
   }
 
   Widget _buildHeader(GroupBuyingRoom room) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      color: Colors.grey[100],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Padding(
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (room.featured)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.circular(4),
+                color: isDark 
+                    ? const Color(0xFFEA580C).withOpacity(0.5)
+                    : const Color(0xFFFED7AA),
+                borderRadius: BorderRadius.circular(6),
               ),
-              child: const Text(
+              child: Text(
                 '추천',
-                style: TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(
+                  color: isDark ? const Color(0xFFFB923C) : const Color(0xFFEA580C),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          const SizedBox(height: 8),
+          SizedBox(height: room.featured ? 8 : 0),
           Text(
             room.roomTitle,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDark ? const Color(0xFFFAFAFA) : const Color(0xFF111827),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             room.productName,
-            style: const TextStyle(fontSize: 18),
+            style: TextStyle(
+              fontSize: 16,
+              color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+            ),
           ),
           if (room.category != null) ...[
             const SizedBox(height: 4),
             Text(
               '카테고리: ${room.category}',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+              ),
             ),
           ],
         ],
@@ -133,60 +181,80 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
   }
 
   Widget _buildPriceInfo(GroupBuyingRoom room) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '가격 정보',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '정가: ${currencyFormat.format(room.originalPrice)}원',
-                style: const TextStyle(
+                '정가',
+                style: TextStyle(
+                  color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                ),
+              ),
+              Text(
+                '${currencyFormat.format(room.originalPrice)}원',
+                style: TextStyle(
                   decoration: TextDecoration.lineThrough,
-                  color: Colors.grey,
-                  fontSize: 16,
+                  color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                '할인가: ${currencyFormat.format(room.discountedPrice)}원',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+                '할인가',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? const Color(0xFFE5E7EB) : const Color(0xFF1F2937),
                 ),
               ),
-              const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  '${room.discountRate.toStringAsFixed(0)}% 할인',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    '${currencyFormat.format(room.discountedPrice)}원',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2563EB),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${room.discountRate.toStringAsFixed(0)}%',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFEF4444),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            '개당 ${currencyFormat.format(room.savingsPerUnit)}원 절약',
-            style: const TextStyle(fontSize: 16, color: Colors.green),
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '개당 ${currencyFormat.format(room.savingsPerUnit)}원 절약',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isDark ? const Color(0xFF22C55E) : const Color(0xFF16A34A),
+              ),
+            ),
           ),
         ],
       ),
@@ -194,21 +262,35 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
   }
 
   Widget _buildProgressInfo(GroupBuyingRoom room) {
-    return Padding(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1C1C1C) : const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '진행 현황',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? const Color(0xFFE5E7EB) : const Color(0xFF1F2937),
+            ),
           ),
           const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: room.achievementRate / 100,
-            backgroundColor: Colors.grey[300],
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-            minHeight: 10,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: room.achievementRate / 100,
+              backgroundColor: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF22C55E)),
+              minHeight: 10,
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -216,26 +298,37 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
             children: [
               Text(
                 '달성률: ${room.achievementRate.toStringAsFixed(1)}%',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+                ),
               ),
               Text(
                 '${room.currentQuantity}/${room.targetQuantity}개',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildInfoChip(
-                Icons.people,
-                '${room.currentParticipants}명 참여',
+              Expanded(
+                child: _buildInfoChip(
+                  Icons.group_outlined,
+                  '${room.currentParticipants}명 참여',
+                ),
               ),
+              const SizedBox(width: 16),
               if (room.remainingMinutes != null)
-                _buildInfoChip(
-                  Icons.access_time,
-                  _formatRemainingTime(room.remainingMinutes!),
+                Expanded(
+                  child: _buildInfoChip(
+                    Icons.schedule_outlined,
+                    _formatRemainingTime(room.remainingMinutes!),
+                  ),
                 ),
             ],
           ),
@@ -245,50 +338,85 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
   }
 
   Widget _buildDetailInfo(GroupBuyingRoom room) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '상세 정보',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? const Color(0xFFE5E7EB) : const Color(0xFF1F2937),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _buildInfoRow('유통업자', room.distributorName),
+          const SizedBox(height: 12),
           _buildInfoRow('지역', room.region),
+          const SizedBox(height: 12),
           _buildInfoRow('최소 주문', '${room.minOrderPerStore}개'),
-          if (room.maxOrderPerStore != null)
+          const SizedBox(height: 12),
+          if (room.maxOrderPerStore != null) ...[
             _buildInfoRow('최대 주문', '${room.maxOrderPerStore}개'),
+            const SizedBox(height: 12),
+          ],
           _buildInfoRow('최소 참여자', '${room.minParticipants}명'),
+          const SizedBox(height: 12),
           if (room.deliveryFeePerStore != null)
             _buildInfoRow(
               '배송비',
               '${currencyFormat.format(room.deliveryFeePerStore)}원',
             ),
           if (room.description != null) ...[
-            const SizedBox(height: 12),
-            const Text(
+            const SizedBox(height: 24),
+            Text(
               '설명',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isDark ? const Color(0xFFE5E7EB) : const Color(0xFF1F2937),
+              ),
             ),
             const SizedBox(height: 8),
-            Text(room.description!),
+            Text(
+              room.description!,
+              style: TextStyle(
+                color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+              ),
+            ),
           ],
           if (room.specialNote != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.amber[50],
+                color: isDark 
+                    ? const Color(0xFFFBBF24).withOpacity(0.1)
+                    : const Color(0xFFFEF3C7),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.amber),
+                border: Border.all(
+                  color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFF59E0B),
+                ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: Colors.amber),
+                  Icon(
+                    Icons.info_outline,
+                    color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFF59E0B),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(room.specialNote!)),
+                  Expanded(
+                    child: Text(
+                      room.specialNote!,
+                      style: TextStyle(
+                        color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -298,120 +426,233 @@ class _GroupBuyingDetailPageState extends State<GroupBuyingDetailPage> {
     );
   }
 
-  Widget _buildJoinForm(BuildContext context, GroupBuyingRoom room) {
+  Widget _buildJoinButton(BuildContext context, GroupBuyingRoom room) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, -3),
+        color: isDark 
+            ? const Color(0xFF121212).withOpacity(0.8)
+            : Colors.white.withOpacity(0.8),
+        border: Border(
+          top: BorderSide(
+            color: isDark ? const Color(0xFF1F2937) : const Color(0xFFE5E7EB),
+            width: 1,
           ),
-        ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '참여하기',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _quantityController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: '수량',
-              hintText: '${room.minOrderPerStore} ~ ${room.maxOrderPerStore ?? "제한없음"}',
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _addressController,
-            decoration: const InputDecoration(
-              labelText: '배송 주소 (선택)',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _phoneController,
-            keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(
-              labelText: '연락처 (선택)',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _requestController,
-            decoration: const InputDecoration(
-              labelText: '배송 요청사항 (선택)',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () => _handleJoin(context, room),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: () => _showJoinDialog(context, room),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2563EB),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                '참여하기',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            child: const Text(
+              '공동구매 참여하기',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  void _showJoinDialog(BuildContext context, GroupBuyingRoom room) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1F2937) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '공동구매 참여',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? const Color(0xFFF5F5F5) : const Color(0xFF111827),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _quantityController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: '수량',
+                  hintText: '${room.minOrderPerStore} ~ ${room.maxOrderPerStore ?? "제한없음"}',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF111827) : const Color(0xFFF9FAFB),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _addressController,
+                decoration: InputDecoration(
+                  labelText: '배송 주소 (선택)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF111827) : const Color(0xFFF9FAFB),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: '연락처 (선택)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF111827) : const Color(0xFFF9FAFB),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _requestController,
+                decoration: InputDecoration(
+                  labelText: '배송 요청사항 (선택)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF111827) : const Color(0xFFF9FAFB),
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _handleJoin(context, room);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2563EB),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    '참여하기',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              label,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: isDark ? const Color(0xFFE5E7EB) : const Color(0xFF1F2937),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildInfoChip(IconData icon, String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: isDark ? const Color(0xFF1F2937) : Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16),
-          const SizedBox(width: 4),
-          Text(text),
+          Icon(
+            icon,
+            size: 18,
+            color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+            ),
+          ),
         ],
       ),
     );
