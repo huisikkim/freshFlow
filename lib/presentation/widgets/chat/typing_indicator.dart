@@ -40,10 +40,10 @@ class _TypingIndicatorState extends State<TypingIndicator>
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(20),
+              color: const Color(0xFF3A3A3C),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -52,8 +52,8 @@ class _TypingIndicatorState extends State<TypingIndicator>
                   widget.userName != null
                       ? '${widget.userName}님이 입력 중'
                       : '입력 중',
-                  style: TextStyle(
-                    color: Colors.grey[600],
+                  style: const TextStyle(
+                    color: Color(0xFF98989D),
                     fontSize: 13,
                     fontStyle: FontStyle.italic,
                   ),
@@ -86,7 +86,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: Colors.grey[600]!.withOpacity(opacity.clamp(0.3, 1.0)),
+                  color: const Color(0xFFD4AF37).withOpacity(opacity.clamp(0.3, 1.0)),
                   shape: BoxShape.circle,
                 ),
               );
