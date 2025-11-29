@@ -7,6 +7,9 @@ import 'package:fresh_flow/presentation/pages/login_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_registration_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_recommendations_page.dart';
+import 'package:fresh_flow/presentation/pages/group_buying_list_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_group_buying_page.dart';
+import 'package:fresh_flow/presentation/pages/group_buying_my_participations_page.dart';
 import 'package:fresh_flow/injection_container.dart';
 
 class MorePage extends StatelessWidget {
@@ -98,6 +101,74 @@ class MorePage extends StatelessWidget {
                   ],
                 ),
               ),
+
+              const SizedBox(height: 32),
+
+              // 공동구매 섹션
+              const Text(
+                '공동구매',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF111827),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              if (isStoreOwner) ...[
+                _buildMenuItem(
+                  context: context,
+                  title: '공동구매 둘러보기',
+                  icon: Icons.shopping_bag_outlined,
+                  color: const Color(0xFF10B981),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const GroupBuyingListPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+                _buildMenuItem(
+                  context: context,
+                  title: '내 참여 내역',
+                  icon: Icons.receipt_long_outlined,
+                  color: const Color(0xFF3B82F6),
+                  onTap: () {
+                    if (user?.storeId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('가게 정보를 찾을 수 없습니다')),
+                      );
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => GroupBuyingMyParticipationsPage(
+                          storeId: user!.storeId!,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ] else ...[
+                _buildMenuItem(
+                  context: context,
+                  title: '공동구매 방 관리',
+                  icon: Icons.group_work_outlined,
+                  color: const Color(0xFF10B981),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => DistributorGroupBuyingPage(
+                          distributorId: user?.distributorId ?? 'DIST001',
+                          distributorName: user?.businessName ?? '유통업체',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
 
               const SizedBox(height: 32),
 

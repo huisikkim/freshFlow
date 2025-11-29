@@ -65,6 +65,18 @@ import 'package:fresh_flow/data/datasources/delivery_remote_datasource.dart';
 import 'package:fresh_flow/presentation/providers/delivery_provider.dart';
 import 'package:fresh_flow/data/datasources/review_remote_datasource.dart';
 import 'package:fresh_flow/presentation/providers/review_provider.dart';
+import 'package:fresh_flow/data/datasources/group_buying_remote_data_source.dart';
+import 'package:fresh_flow/data/repositories/group_buying_repository_impl.dart';
+import 'package:fresh_flow/domain/repositories/group_buying_repository.dart';
+import 'package:fresh_flow/domain/usecases/get_open_rooms.dart';
+import 'package:fresh_flow/domain/usecases/get_room_detail.dart';
+import 'package:fresh_flow/domain/usecases/join_room.dart';
+import 'package:fresh_flow/domain/usecases/get_store_participations.dart';
+import 'package:fresh_flow/presentation/providers/group_buying_provider.dart';
+import 'package:fresh_flow/domain/usecases/create_room.dart';
+import 'package:fresh_flow/domain/usecases/get_distributor_rooms.dart';
+import 'package:fresh_flow/domain/usecases/open_room.dart';
+import 'package:fresh_flow/presentation/providers/distributor_group_buying_provider.dart';
 
 class InjectionContainer {
   static late SharedPreferences _sharedPreferences;
@@ -140,6 +152,15 @@ class InjectionContainer {
   static late SendMessage _sendMessage;
   static late DeliveryRemoteDataSource _deliveryRemoteDataSource;
   static late ReviewRemoteDataSource _reviewRemoteDataSource;
+  static late GroupBuyingRemoteDataSource _groupBuyingRemoteDataSource;
+  static late GroupBuyingRepository _groupBuyingRepository;
+  static late GetOpenRooms _getOpenRooms;
+  static late GetRoomDetail _getRoomDetail;
+  static late JoinRoom _joinRoom;
+  static late GetStoreParticipations _getStoreParticipations;
+  static late CreateRoom _createRoom;
+  static late GetDistributorRooms _getDistributorRooms;
+  static late OpenRoom _openRoom;
 
   static Future<void> init() async {
     // External
@@ -165,6 +186,7 @@ class InjectionContainer {
     _webSocketDataSource = WebSocketDataSourceImpl();
     _deliveryRemoteDataSource = DeliveryRemoteDataSourceImpl(_httpClient);
     _reviewRemoteDataSource = ReviewRemoteDataSourceImpl(_httpClient);
+    _groupBuyingRemoteDataSource = GroupBuyingRemoteDataSourceImpl(client: _httpClient);
 
     // Repository
     _authRepository = AuthRepositoryImpl(
@@ -209,6 +231,9 @@ class InjectionContainer {
     );
     _webSocketRepository = WebSocketRepositoryImpl(
       dataSource: _webSocketDataSource,
+    );
+    _groupBuyingRepository = GroupBuyingRepositoryImpl(
+      remoteDataSource: _groupBuyingRemoteDataSource,
     );
 
     // Use cases
@@ -270,6 +295,13 @@ class InjectionContainer {
     _getMessages = GetMessages(_chatRepository);
     _markMessagesAsRead = MarkMessagesAsRead(_chatRepository);
     _sendMessage = SendMessage(_chatRepository);
+    _getOpenRooms = GetOpenRooms(_groupBuyingRepository);
+    _getRoomDetail = GetRoomDetail(_groupBuyingRepository);
+    _joinRoom = JoinRoom(_groupBuyingRepository);
+    _getStoreParticipations = GetStoreParticipations(_groupBuyingRepository);
+    _createRoom = CreateRoom(_groupBuyingRepository);
+    _getDistributorRooms = GetDistributorRooms(_groupBuyingRepository);
+    _openRoom = OpenRoom(_groupBuyingRepository);
   }
 
   static AuthProvider getAuthProvider() {
@@ -380,6 +412,23 @@ class InjectionContainer {
     return ReviewProvider(
       remoteDataSource: _reviewRemoteDataSource,
       authRepository: _authRepository,
+    );
+  }
+
+  static GroupBuyingProvider getGroupBuyingProvider() {
+    return GroupBuyingProvider(
+      getOpenRooms: _getOpenRooms,
+      getRoomDetail: _getRoomDetail,
+      joinRoom: _joinRoom,
+      getStoreParticipations: _getStoreParticipations,
+    );
+  }
+
+  static DistributorGroupBuyingProvider getDistributorGroupBuyingProvider() {
+    return DistributorGroupBuyingProvider(
+      createRoom: _createRoom,
+      getDistributorRooms: _getDistributorRooms,
+      openRoom: _openRoom,
     );
   }
 }

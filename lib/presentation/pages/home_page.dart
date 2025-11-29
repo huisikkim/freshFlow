@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
+import 'package:fresh_flow/presentation/pages/group_buying_list_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_group_buying_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -122,6 +124,101 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // 공동구매 배너
+              InkWell(
+                onTap: () {
+                  if (isStoreOwner) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GroupBuyingListPage(),
+                      ),
+                    );
+                  } else if (isDistributor) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DistributorGroupBuyingPage(
+                          distributorId: user?.distributorId ?? 'DIST001',
+                          distributorName: user?.businessName ?? '유통업체',
+                        ),
+                      ),
+                    );
+                  }
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF10B981),
+                        Color(0xFF059669),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF10B981).withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.shopping_bag,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isStoreOwner ? '🔥 공동구매 특가!' : '📦 공동구매 방 관리',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              isStoreOwner
+                                  ? '함께 구매하고 더 저렴하게!'
+                                  : '공동구매 방을 만들고 관리하세요',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
