@@ -38,40 +38,33 @@ class _MainLayoutState extends State<MainLayout> {
       extendBody: true,
       bottomNavigationBar: SafeArea(
         child: Container(
-          margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-          height: 80,
+          margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(9999),
+            border: Border.all(
+              color: const Color(0xFF374151),
+              width: 1,
+            ),
           ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.85),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.black.withOpacity(0.05),
-                  width: 1,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(9999),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1F2937).withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(9999),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: isStoreOwner
-                    ? _buildStoreOwnerNavButtons()
-                    : _buildDistributorNavButtons(),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: isStoreOwner
+                      ? _buildStoreOwnerNavButtons()
+                      : _buildDistributorNavButtons(),
+                ),
               ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -221,7 +214,7 @@ class _MainLayoutState extends State<MainLayout> {
   }) {
     final isActive = _currentIndex == index;
     final color = isActive
-        ? (isStoreOwner ? const Color(0xFFEF4444) : const Color(0xFF10B981))
+        ? const Color(0xFFD4AF37)
         : const Color(0xFF9CA3AF);
 
     return Expanded(
@@ -243,11 +236,11 @@ class _MainLayoutState extends State<MainLayout> {
                 size: 24,
                 color: color,
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   color: color,
                   height: 1.0,

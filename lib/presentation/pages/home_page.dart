@@ -15,91 +15,83 @@ class HomePage extends StatelessWidget {
     final isDistributor = user?.userType == 'DISTRIBUTOR';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: Text(
           isStoreOwner ? '가게 관리' : '유통업체 관리',
           style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFE5E7EB),
           ),
         ),
-        backgroundColor: const Color(0xFFF3F4F6),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
         automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 사용자 정보 헤더
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isStoreOwner
-                          ? const Color(0xFFFEE2E2)
-                          : const Color(0xFFD1FAE5),
-                      borderRadius: BorderRadius.circular(12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4AF37).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        isStoreOwner ? Icons.storefront : Icons.local_shipping,
+                        color: const Color(0xFFD4AF37),
+                        size: 32,
+                      ),
                     ),
-                    child: Icon(
-                      isStoreOwner ? Icons.store : Icons.local_shipping,
-                      color: isStoreOwner
-                          ? const Color(0xFFEF4444)
-                          : const Color(0xFF10B981),
-                      size: 32,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.businessName ?? '',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF111827),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user?.businessName ?? '',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFF9FAFB),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          isStoreOwner ? '가게 사장님' : '유통업체',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF6B7280),
+                          const SizedBox(height: 4),
+                          Text(
+                            isStoreOwner ? '가게 사장님' : '유통업체',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF9CA3AF),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
               // 환영 메시지
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: isStoreOwner
-                        ? [
-                            const Color(0xFFEF4444).withOpacity(0.1),
-                            const Color(0xFFFB923C).withOpacity(0.1),
-                          ]
-                        : [
-                            const Color(0xFF10B981).withOpacity(0.1),
-                            const Color(0xFF06D6A0).withOpacity(0.1),
-                          ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: const Color(0xFFD4AF37).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -108,26 +100,26 @@ class HomePage extends StatelessWidget {
                     Text(
                       '안녕하세요, ${user?.businessName ?? ''}님! 👋',
                       style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF111827),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFF9FAFB),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       isStoreOwner
                           ? '오늘도 신선한 식자재로 맛있는 요리를 준비하세요!'
                           : '오늘도 최고의 식자재를 공급해주세요!',
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF6B7280),
+                        color: Color(0xFFD1D5DB),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
               // 공동구매 배너
               InkWell(
@@ -153,24 +145,10 @@ class HomePage extends StatelessWidget {
                 },
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF10B981),
-                        Color(0xFF059669),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: const Color(0xFFD4AF37),
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF10B981).withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Row(
                     children: [
@@ -183,7 +161,7 @@ class HomePage extends StatelessWidget {
                         child: const Icon(
                           Icons.shopping_bag,
                           color: Colors.white,
-                          size: 32,
+                          size: 28,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -194,19 +172,19 @@ class HomePage extends StatelessWidget {
                             Text(
                               isStoreOwner ? '🔥 공동구매 특가!' : '📦 공동구매 방 관리',
                               style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               isStoreOwner
                                   ? '함께 구매하고 더 저렴하게!'
                                   : '공동구매 방을 만들고 관리하세요',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -215,7 +193,7 @@ class HomePage extends StatelessWidget {
                       const Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.white,
-                        size: 20,
+                        size: 18,
                       ),
                     ],
                   ),
@@ -228,24 +206,17 @@ class HomePage extends StatelessWidget {
               const Text(
                 '빠른 접근',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFF9FAFB),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
+                  color: const Color(0xFF1F2937).withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   children: [
@@ -253,16 +224,16 @@ class HomePage extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.touch_app,
-                          size: 20,
-                          color: Color(0xFF6B7280),
+                          size: 18,
+                          color: Color(0xFFD4AF37),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '하단 메뉴를 통해 주요 기능에 빠르게 접근하세요',
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF6B7280),
+                              color: Color(0xFF9CA3AF),
                             ),
                           ),
                         ),
@@ -273,26 +244,22 @@ class HomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _buildQuickAccessIcon(
-                          icon: Icons.receipt_long_outlined,
+                          icon: Icons.receipt_long,
                           label: '주문',
-                          color: const Color(0xFF10B981),
                         ),
                         _buildQuickAccessIcon(
-                          icon: Icons.chat_bubble_outline,
+                          icon: Icons.chat_bubble,
                           label: '채팅',
-                          color: const Color(0xFF4A90E2),
                         ),
                         _buildQuickAccessIcon(
                           icon: isStoreOwner
-                              ? Icons.request_quote_outlined
-                              : Icons.inventory_2_outlined,
+                              ? Icons.request_quote
+                              : Icons.inventory_2,
                           label: isStoreOwner ? '견적' : '상품',
-                          color: const Color(0xFF8B5CF6),
                         ),
                         _buildQuickAccessIcon(
-                          icon: Icons.menu,
+                          icon: Icons.more_horiz,
                           label: '더보기',
-                          color: const Color(0xFF6B7280),
                         ),
                       ],
                     ),
@@ -311,29 +278,28 @@ class HomePage extends StatelessWidget {
   Widget _buildQuickAccessIcon({
     required IconData icon,
     required String label,
-    required Color color,
   }) {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: const Color(0xFFD4AF37).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(
             icon,
-            color: color,
-            size: 24,
+            color: const Color(0xFFD4AF37),
+            size: 28,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           label,
           style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF6B7280),
+            fontSize: 14,
+            color: Color(0xFFD1D5DB),
           ),
         ),
       ],
