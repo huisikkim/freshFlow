@@ -24,55 +24,45 @@ class MorePage extends StatelessWidget {
     final isStoreOwner = user?.userType == 'STORE_OWNER';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: const Text(
           '더보기',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFE5E7EB),
           ),
         ),
-        backgroundColor: const Color(0xFFF3F4F6),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
         automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 사용자 정보 카드
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
                 ),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isStoreOwner
-                            ? const Color(0xFFFEE2E2)
-                            : const Color(0xFFD1FAE5),
-                        borderRadius: BorderRadius.circular(12),
+                        color: const Color(0xFFD4AF37).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Icon(
-                        isStoreOwner ? Icons.store : Icons.local_shipping,
-                        color: isStoreOwner
-                            ? const Color(0xFFEF4444)
-                            : const Color(0xFF10B981),
+                        isStoreOwner ? Icons.storefront : Icons.local_shipping,
+                        color: const Color(0xFFD4AF37),
                         size: 32,
                       ),
                     ),
@@ -85,8 +75,8 @@ class MorePage extends StatelessWidget {
                             user?.businessName ?? '',
                             style: const TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF111827),
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFF9FAFB),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -94,7 +84,7 @@ class MorePage extends StatelessWidget {
                             isStoreOwner ? '가게 사장님' : '유통업체',
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF6B7280),
+                              color: Color(0xFF9CA3AF),
                             ),
                           ),
                         ],
@@ -111,8 +101,8 @@ class MorePage extends StatelessWidget {
                 '공동구매',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFF9FAFB),
                 ),
               ),
               const SizedBox(height: 12),
@@ -179,8 +169,8 @@ class MorePage extends StatelessWidget {
                 '정산',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFF9FAFB),
                 ),
               ),
               const SizedBox(height: 12),
@@ -214,8 +204,8 @@ class MorePage extends StatelessWidget {
                 '설정',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFF9FAFB),
                 ),
               ),
               const SizedBox(height: 12),
@@ -280,7 +270,7 @@ class MorePage extends StatelessWidget {
                 context: context,
                 title: '로그아웃',
                 icon: Icons.logout_outlined,
-                color: const Color(0xFFEF4444),
+                color: const Color(0xFFD4AF37),
                 onTap: () => _showLogoutDialog(context, authProvider),
               ),
             ],
@@ -303,22 +293,15 @@ class MorePage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF1F2937).withOpacity(0.5),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -334,7 +317,7 @@ class MorePage extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF111827),
+                  color: Color(0xFFF9FAFB),
                 ),
               ),
             ),
@@ -352,156 +335,96 @@ class MorePage extends StatelessWidget {
   Future<void> _showLogoutDialog(BuildContext context, AuthProvider authProvider) async {
     final confirm = await showDialog<bool>(
       context: context,
-      barrierColor: const Color(0xFF0F172A).withOpacity(0.1),
+      barrierColor: Colors.black.withOpacity(0.7),
       builder: (context) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Dialog(
           backgroundColor: Colors.transparent,
           elevation: 0,
           insetPadding: const EdgeInsets.symmetric(horizontal: 24),
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 340),
-            child: Stack(
-              clipBehavior: Clip.none,
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1F2937),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFBEB),
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 50,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 20),
-                      ),
-                    ],
+                    color: const Color(0xFF374151),
+                    shape: BoxShape.circle,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.wb_twilight,
-                          size: 50,
-                          color: Color(0xFFFB923C),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        '로그아웃',
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E293B),
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        '오늘 하루도 수고 많으셨습니다.\n잠시 쉬어가시겠어요?',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF475569),
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Container(
-                        width: double.infinity,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(28),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFFB923C).withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFB923C),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28),
-                            ),
-                          ),
-                          child: const Text(
-                            '로그아웃',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE2E8F0),
-                            foregroundColor: const Color(0xFF475569),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28),
-                            ),
-                          ),
-                          child: const Text(
-                            '취소',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: const Icon(
+                    Icons.wb_sunny,
+                    size: 40,
+                    color: Color(0xFFBFA470),
                   ),
                 ),
-                Positioned(
-                  top: -64,
-                  right: -64,
-                  child: Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFED7AA).withOpacity(0.5),
-                      shape: BoxShape.circle,
+                const SizedBox(height: 24),
+                const Text(
+                  '로그아웃',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFF9FAFB),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '오늘 하루도 수고 많으셨습니다.\n잠시 쉬어가시겠어요?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF9CA3AF),
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFBFA470),
+                      foregroundColor: const Color(0xFF1C1C1E),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                    ),
+                    child: const Text(
+                      '로그아웃',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: -80,
-                  left: -48,
-                  child: Container(
-                    width: 192,
-                    height: 192,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFA5F3FC).withOpacity(0.5),
-                      shape: BoxShape.circle,
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFFBFA470),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                    ),
+                    child: const Text(
+                      '취소',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
