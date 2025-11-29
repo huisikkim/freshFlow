@@ -40,17 +40,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFF),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const DebugConnectionPage(),
-            ),
-          );
-        },
-        backgroundColor: Colors.grey[700],
-        child: const Icon(Icons.bug_report),
-      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
