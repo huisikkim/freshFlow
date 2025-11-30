@@ -87,20 +87,20 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: Text(
           _isEditMode ? '매장 정보 수정' : '매장 등록',
           style: const TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1F2937),
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF1F2937)),
+        iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
       ),
       body: SafeArea(
         child: Consumer<StoreProvider>(
@@ -112,7 +112,7 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('매장 정보가 수정되었습니다'),
-                      backgroundColor: Color(0xFF10B981),
+                      backgroundColor: Color(0xFFD4AF37),
                     ),
                   );
                   Navigator.of(context).pop();
@@ -215,15 +215,14 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                 ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF111827),
+                    border: Border(
+                      top: BorderSide(
+                        color: Color(0xFF374151),
+                        width: 1,
                       ),
-                    ],
+                    ),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -247,15 +246,14 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                               ? null
                               : _handleSubmit,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFF97066),
-                            foregroundColor: Colors.white,
-                            disabledBackgroundColor: const Color(0xFFF97066).withOpacity(0.6),
+                            backgroundColor: const Color(0xFFD4AF37),
+                            foregroundColor: const Color(0xFF1F2937),
+                            disabledBackgroundColor: const Color(0xFFD4AF37).withOpacity(0.6),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
-                            shadowColor: const Color(0xFFF97066).withOpacity(0.3),
                           ),
                           child: storeProvider.state == StoreState.loading
                               ? const SizedBox(
@@ -263,14 +261,14 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1F2937)),
                                   ),
                                 )
                               : Text(
                                   _isEditMode ? '매장 정보 수정' : '매장 등록',
                                   style: const TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                         ),
@@ -304,7 +302,7 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
+              color: Color(0xFFE5E7EB),
             ),
           ),
         ),
@@ -314,19 +312,19 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
           keyboardType: keyboardType,
           style: const TextStyle(
             fontSize: 15,
-            color: Color(0xFF1F2937),
+            color: Color(0xFFF9FAFB),
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(
-              color: Color(0xFF9CA3AF),
+              color: Color(0xFF6B7280),
               fontSize: 15,
             ),
             prefixIcon: Padding(
               padding: const EdgeInsets.only(left: 16, right: 12),
               child: Icon(
                 icon,
-                color: const Color(0xFF9CA3AF),
+                color: const Color(0xFFD4AF37),
                 size: 22,
               ),
             ),
@@ -334,19 +332,25 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
               minWidth: 50,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFF1F2937),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                color: const Color(0xFFD4AF37).withOpacity(0.3),
+                width: 1,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                color: const Color(0xFFD4AF37).withOpacity(0.3),
+                width: 1,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFFF97066),
+                color: Color(0xFFD4AF37),
                 width: 2,
               ),
             ),
