@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../core/constants/api_constants.dart';
 import '../models/group_buying_room_model.dart';
 import '../models/group_buying_participant_model.dart';
 import '../models/group_buying_statistics_model.dart';
@@ -25,11 +26,11 @@ abstract class GroupBuyingRemoteDataSource {
 
 class GroupBuyingRemoteDataSourceImpl implements GroupBuyingRemoteDataSource {
   final http.Client client;
-  final String baseUrl;
+  
+  String get baseUrl => '${ApiConstants.baseUrl}/api/group-buying';
 
   GroupBuyingRemoteDataSourceImpl({
     required this.client,
-    this.baseUrl = 'http://localhost:8080/api/group-buying',
   });
 
   @override
