@@ -38,6 +38,37 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
   String _deliveryFeeType = 'SHARED';
   bool _featured = false;
 
+  InputDecoration _buildInputDecoration(String label, String hint, {int? maxLines}) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Color(0xFF9CA3AF)),
+      hintText: hint,
+      hintStyle: const TextStyle(color: Color(0xFF6B7280)),
+      border: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xFF374151)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xFF374151)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xFFD4AF37), width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Colors.red),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Colors.red, width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      filled: true,
+      fillColor: const Color(0xFF1F2937),
+    );
+  }
+
   @override
   void dispose() {
     _roomTitleController.dispose();
@@ -60,8 +91,20 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        title: const Text('공동구매 방 만들기'),
+        title: const Text(
+          '공동구매 방 만들기',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
+          ),
+        ),
+        backgroundColor: const Color(0xFF111827),
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
       ),
       body: Form(
         key: _formKey,
@@ -70,16 +113,17 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
           children: [
             const Text(
               '기본 정보',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _roomTitleController,
-              decoration: const InputDecoration(
-                labelText: '방 제목 *',
-                hintText: '예: 🔥 김치 대박 세일! 20% 할인',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('방 제목 *', '예: 🔥 김치 대박 세일! 20% 할인'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '방 제목을 입력하세요';
@@ -90,11 +134,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _productIdController,
-              decoration: const InputDecoration(
-                labelText: '상품 ID *',
-                hintText: '예: 1',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('상품 ID *', '예: 1'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -109,16 +150,17 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 24),
             const Text(
               '가격 및 할인',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _discountRateController,
-              decoration: const InputDecoration(
-                labelText: '할인율 (%) *',
-                hintText: '예: 20',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('할인율 (%) *', '예: 20'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -134,16 +176,17 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 24),
             const Text(
               '재고 및 목표',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _availableStockController,
-              decoration: const InputDecoration(
-                labelText: '준비한 재고 *',
-                hintText: '예: 500',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('준비한 재고 *', '예: 500'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -158,11 +201,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _targetQuantityController,
-              decoration: const InputDecoration(
-                labelText: '목표 수량 *',
-                hintText: '예: 300',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('목표 수량 *', '예: 300'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -177,7 +217,11 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 24),
             const Text(
               '주문 제한',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -185,11 +229,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _minOrderPerStoreController,
-                    decoration: const InputDecoration(
-                      labelText: '최소 주문 *',
-                      hintText: '예: 10',
-                      border: OutlineInputBorder(),
-                    ),
+                    style: const TextStyle(color: Color(0xFFF9FAFB)),
+                    decoration: _buildInputDecoration('최소 주문 *', '예: 10'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -206,11 +247,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _maxOrderPerStoreController,
-                    decoration: const InputDecoration(
-                      labelText: '최대 주문',
-                      hintText: '예: 100',
-                      border: OutlineInputBorder(),
-                    ),
+                    style: const TextStyle(color: Color(0xFFF9FAFB)),
+                    decoration: _buildInputDecoration('최대 주문', '예: 100'),
                     keyboardType: TextInputType.number,
                   ),
                 ),
@@ -222,11 +260,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _minParticipantsController,
-                    decoration: const InputDecoration(
-                      labelText: '최소 참여자 *',
-                      hintText: '예: 5',
-                      border: OutlineInputBorder(),
-                    ),
+                    style: const TextStyle(color: Color(0xFFF9FAFB)),
+                    decoration: _buildInputDecoration('최소 참여자 *', '예: 5'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -243,11 +278,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _maxParticipantsController,
-                    decoration: const InputDecoration(
-                      labelText: '최대 참여자',
-                      hintText: '예: 20',
-                      border: OutlineInputBorder(),
-                    ),
+                    style: const TextStyle(color: Color(0xFFF9FAFB)),
+                    decoration: _buildInputDecoration('최대 참여자', '예: 20'),
                     keyboardType: TextInputType.number,
                   ),
                 ),
@@ -256,16 +288,17 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 24),
             const Text(
               '배송 정보',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _regionController,
-              decoration: const InputDecoration(
-                labelText: '대상 지역 *',
-                hintText: '예: 서울 강남구,서초구',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('대상 지역 *', '예: 서울 강남구,서초구'),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '대상 지역을 입력하세요';
@@ -276,11 +309,8 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _deliveryFeeController,
-              decoration: const InputDecoration(
-                labelText: '배송비 *',
-                hintText: '예: 50000',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('배송비 *', '예: 50000'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -295,10 +325,9 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _deliveryFeeType,
-              decoration: const InputDecoration(
-                labelText: '배송비 타입 *',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              dropdownColor: const Color(0xFF1F2937),
+              decoration: _buildInputDecoration('배송비 타입 *', ''),
               items: const [
                 DropdownMenuItem(value: 'FREE', child: Text('무료 배송')),
                 DropdownMenuItem(value: 'FIXED', child: Text('고정 배송비')),
@@ -313,16 +342,17 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 24),
             const Text(
               '기간 설정',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _durationHoursController,
-              decoration: const InputDecoration(
-                labelText: '진행 시간 (시간) *',
-                hintText: '예: 24',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('진행 시간 (시간) *', '예: 24'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -337,38 +367,52 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
             const SizedBox(height: 24),
             const Text(
               '추가 정보',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFFF9FAFB),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: '설명',
-                hintText: '신선한 김치를 특가로 제공합니다!',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('설명', '신선한 김치를 특가로 제공합니다!'),
               maxLines: 3,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _specialNoteController,
-              decoration: const InputDecoration(
-                labelText: '특이사항',
-                hintText: '당일 배송 보장',
-                border: OutlineInputBorder(),
-              ),
+              style: const TextStyle(color: Color(0xFFF9FAFB)),
+              decoration: _buildInputDecoration('특이사항', '당일 배송 보장'),
               maxLines: 2,
             ),
             const SizedBox(height: 16),
-            SwitchListTile(
-              title: const Text('추천 방으로 설정'),
-              subtitle: const Text('메인 페이지에 추천으로 표시됩니다'),
-              value: _featured,
-              onChanged: (value) {
-                setState(() {
-                  _featured = value;
-                });
-              },
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF1F2937),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF374151),
+                ),
+              ),
+              child: SwitchListTile(
+                title: const Text(
+                  '추천 방으로 설정',
+                  style: TextStyle(color: Color(0xFFF9FAFB)),
+                ),
+                subtitle: const Text(
+                  '메인 페이지에 추천으로 표시됩니다',
+                  style: TextStyle(color: Color(0xFF9CA3AF)),
+                ),
+                value: _featured,
+                activeColor: const Color(0xFFD4AF37),
+                onChanged: (value) {
+                  setState(() {
+                    _featured = value;
+                  });
+                },
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -376,12 +420,18 @@ class _CreateGroupBuyingRoomPageState extends State<CreateGroupBuyingRoomPage> {
               child: ElevatedButton(
                 onPressed: _createRoom,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: const Color(0xFFD4AF37),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: const Text(
                   '공동구매 방 만들기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
