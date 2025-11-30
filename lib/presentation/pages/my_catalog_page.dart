@@ -320,11 +320,12 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF34D399),
-                      side: const BorderSide(color: Color(0xFF34D399)),
+                      foregroundColor: const Color(0xFFE5E7EB),
+                      backgroundColor: const Color(0xFF374151),
+                      side: BorderSide.none,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
@@ -354,11 +355,14 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFF87171),
-                      side: const BorderSide(color: Color(0xFFF87171)),
+                      foregroundColor: product.isAvailable 
+                          ? const Color(0xFFEF4444) 
+                          : const Color(0xFF10B981),
+                      backgroundColor: const Color(0xFF374151),
+                      side: BorderSide.none,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
@@ -392,11 +396,12 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF60A5FA),
-                      side: const BorderSide(color: Color(0xFF60A5FA)),
+                      foregroundColor: const Color(0xFFE5E7EB),
+                      backgroundColor: const Color(0xFF374151),
+                      side: BorderSide.none,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
@@ -423,11 +428,12 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF9333EA),
-                      side: const BorderSide(color: Color(0xFF9333EA)),
+                      foregroundColor: const Color(0xFFE5E7EB),
+                      backgroundColor: const Color(0xFF374151),
+                      side: BorderSide.none,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
