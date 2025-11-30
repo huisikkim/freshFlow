@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:fresh_flow/presentation/providers/auth_provider.dart';
 import 'package:fresh_flow/presentation/pages/group_buying_list_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_group_buying_page.dart';
+import 'package:fresh_flow/presentation/pages/store_settlement_page.dart';
+import 'package:fresh_flow/presentation/pages/distributor_settlement_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -202,7 +204,7 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 32),
 
-              // 빠른 접근 안내
+              // 빠른 접근
               const Text(
                 '빠른 접근',
                 style: TextStyle(
@@ -212,58 +214,84 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1F2937).withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.touch_app,
-                          size: 18,
+              
+              // 정산 바로가기
+              InkWell(
+                onTap: () {
+                  if (isStoreOwner) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const StoreSettlementPage(),
+                      ),
+                    );
+                  } else if (isDistributor) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DistributorSettlementPage(),
+                      ),
+                    );
+                  }
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1F2937).withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFFD4AF37).withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD4AF37).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.account_balance_wallet,
                           color: Color(0xFFD4AF37),
+                          size: 28,
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '하단 메뉴를 통해 주요 기능에 빠르게 접근하세요',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF9CA3AF),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '💰 정산 관리',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFF9FAFB),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            Text(
+                              isStoreOwner
+                                  ? '주문 내역과 정산 현황을 확인하세요'
+                                  : '판매 내역과 정산 현황을 확인하세요',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF9CA3AF),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildQuickAccessIcon(
-                          icon: Icons.receipt_long,
-                          label: '주문',
-                        ),
-                        _buildQuickAccessIcon(
-                          icon: Icons.chat_bubble,
-                          label: '채팅',
-                        ),
-                        _buildQuickAccessIcon(
-                          icon: isStoreOwner
-                              ? Icons.request_quote
-                              : Icons.inventory_2,
-                          label: isStoreOwner ? '견적' : '상품',
-                        ),
-                        _buildQuickAccessIcon(
-                          icon: Icons.more_horiz,
-                          label: '더보기',
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Color(0xFFD4AF37),
+                        size: 18,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -275,34 +303,4 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAccessIcon({
-    required IconData icon,
-    required String label,
-  }) {
-    return Column(
-      children: [
-        Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD4AF37).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Icon(
-            icon,
-            color: const Color(0xFFD4AF37),
-            size: 28,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFFD1D5DB),
-          ),
-        ),
-      ],
-    );
-  }
 }
