@@ -510,29 +510,12 @@ class _DistributorRecommendationsPageState
                         color: Color(0xFF374151),
                         width: 1,
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.call, size: 16),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            recommendation.phoneNumber,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: const Icon(Icons.call, size: 18),
                   ),
                 ),
               ],

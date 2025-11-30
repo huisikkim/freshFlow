@@ -42,20 +42,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final numberFormat = NumberFormat('#,###');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF9FAFB),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF1F2937)),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFD4AF37)),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           '상품 상세 정보',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
           ),
         ),
         centerTitle: true,
@@ -65,7 +65,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           if (provider.state == CatalogState.loading) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF10B981),
+                color: Color(0xFFD4AF37),
               ),
             );
           }
@@ -77,7 +77,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 children: [
                   Text(
                     provider.errorMessage ?? '오류가 발생했습니다',
-                    style: const TextStyle(color: Color(0xFF6B7280)),
+                    style: const TextStyle(color: Color(0xFF9CA3AF)),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -85,7 +85,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       provider.loadProductDetailWithDelivery(widget.productId);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: const Color(0xFF1F2937),
                     ),
                     child: const Text('다시 시도'),
                   ),
@@ -99,7 +100,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             return const Center(
               child: Text(
                 '상품 정보를 찾을 수 없습니다',
-                style: TextStyle(color: Color(0xFF6B7280)),
+                style: TextStyle(color: Color(0xFF9CA3AF)),
               ),
             );
           }
@@ -121,21 +122,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: const Color(0xFFE5E7EB),
+                                  color: const Color(0xFF1F2937),
                                   child: const Icon(
                                     Icons.image,
                                     size: 80,
-                                    color: Color(0xFF9CA3AF),
+                                    color: Color(0xFF4B5563),
                                   ),
                                 );
                               },
                             )
                           : Container(
-                              color: const Color(0xFFE5E7EB),
+                              color: const Color(0xFF1F2937),
                               child: const Icon(
                                 Icons.image,
                                 size: 80,
-                                color: Color(0xFF9CA3AF),
+                                color: Color(0xFF4B5563),
                               ),
                             ),
                     ),
@@ -152,8 +153,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         product.productName,
                         style: const TextStyle(
                           fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF111827),
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFF9FAFB),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -164,7 +165,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           product.distributorName!,
                           style: const TextStyle(
                             fontSize: 16,
-                            color: Color(0xFF6B7280),
+                            color: Color(0xFF9CA3AF),
                           ),
                         ),
                       const SizedBox(height: 24),
@@ -218,14 +219,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       const SizedBox(height: 16),
 
                       // 상품 설명
-                      Text(
+                      const Text(
                         '상품 설명',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFF9FAFB),
+                        ),
                       ),
                       const SizedBox(height: 8),
-                      Text(product.description),
+                      Text(
+                        product.description,
+                        style: const TextStyle(
+                          color: Color(0xFFD1D5DB),
+                        ),
+                      ),
                       const SizedBox(height: 16),
 
                       // 배송 정보
@@ -248,15 +256,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           
           return Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
+            decoration: const BoxDecoration(
+              color: Color(0xFF111827),
+              border: Border(
+                top: BorderSide(
+                  color: Color(0xFF374151),
+                  width: 1,
                 ),
-              ],
+              ),
             ),
             child: SafeArea(
               child: SizedBox(
@@ -266,14 +273,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ? () => _showAddToCartDialog(context, product)
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: const Color(0xFFE5E7EB),
-                    disabledForegroundColor: const Color(0xFF9CA3AF),
+                    backgroundColor: const Color(0xFFD4AF37),
+                    foregroundColor: const Color(0xFF1F2937),
+                    disabledBackgroundColor: const Color(0xFF374151),
+                    disabledForegroundColor: const Color(0xFF6B7280),
                     elevation: 0,
-                    shadowColor: const Color(0xFF10B981).withOpacity(0.3),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: Row(
@@ -285,7 +291,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         product.isAvailable ? '장바구니 담기' : '품절',
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
@@ -306,10 +312,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
+          backgroundColor: const Color(0xFF1F2937),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: const Color(0xFFD4AF37).withOpacity(0.2),
+              width: 1,
+            ),
           ),
-          title: const Text('장바구니에 담기'),
+          title: const Text(
+            '장바구니에 담기',
+            style: TextStyle(
+              color: Color(0xFFF9FAFB),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -317,15 +334,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 product.productName,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFE5E7EB),
                 ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.remove_circle_outline),
+                    icon: const Icon(
+                      Icons.remove_circle_outline,
+                      color: Color(0xFFD4AF37),
+                    ),
                     onPressed: quantity > product.minOrderQuantity
                         ? () => setState(() => quantity--)
                         : null,
@@ -336,19 +358,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
+                      color: const Color(0xFF111827),
+                      border: Border.all(
+                        color: const Color(0xFFD4AF37).withOpacity(0.3),
+                      ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '$quantity ${product.unit}',
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFF9FAFB),
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
+                    icon: const Icon(
+                      Icons.add_circle_outline,
+                      color: Color(0xFFD4AF37),
+                    ),
                     onPressed: quantity < product.maxOrderQuantity
                         ? () => setState(() => quantity++)
                         : null,
@@ -358,9 +387,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               const SizedBox(height: 8),
               Text(
                 '최소 ${product.minOrderQuantity} ~ 최대 ${product.maxOrderQuantity} ${product.unit}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: Color(0xFF9CA3AF),
                 ),
               ),
             ],
@@ -368,6 +397,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF9CA3AF),
+              ),
               child: const Text('취소'),
             ),
             ElevatedButton(
@@ -376,9 +408,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 _addToCart(context, product, quantity);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
+                backgroundColor: const Color(0xFFD4AF37),
+                foregroundColor: const Color(0xFF1F2937),
               ),
-              child: const Text('담기'),
+              child: const Text(
+                '담기',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         ),
@@ -489,15 +525,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1F2937),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,8 +539,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             title,
             style: const TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF111827),
+              fontWeight: FontWeight.w700,
+              color: Color(0xFFF9FAFB),
             ),
           ),
           const SizedBox(height: 16),
@@ -527,7 +560,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF6B7280),
+              color: Color(0xFF9CA3AF),
               fontSize: 15,
             ),
           ),
@@ -536,7 +569,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: Text(
               value,
               style: TextStyle(
-                color: valueColor ?? const Color(0xFF1F2937),
+                color: valueColor ?? const Color(0xFFE5E7EB),
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
               ),
@@ -549,34 +582,42 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildDeliveryInfo(BuildContext context, DeliveryInfo deliveryInfo) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '배송 정보',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 12),
-            _buildInfoRow('배송 유형', deliveryInfo.deliveryType),
-            _buildInfoRow('배송비', deliveryInfo.deliveryFeeInfo),
-            _buildInfoRow('예상 배송', deliveryInfo.estimatedDeliveryInfo),
-            _buildInfoRow('배송 지역', deliveryInfo.deliveryRegions),
-            _buildInfoRow('배송 요일', deliveryInfo.deliveryDays),
-            _buildInfoRow('배송 시간', deliveryInfo.deliveryTimeSlots),
-            _buildInfoRow('포장 유형', deliveryInfo.packagingType),
-            if (deliveryInfo.isFragile)
-              _buildInfoRow('주의사항', '파손 주의', valueColor: Colors.orange),
-            if (deliveryInfo.requiresRefrigeration)
-              _buildInfoRow('보관방법', '냉장 보관 필요', valueColor: Colors.blue),
-            if (deliveryInfo.specialInstructions != null)
-              _buildInfoRow('특별 지시사항', deliveryInfo.specialInstructions!),
-          ],
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
+          width: 1,
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '배송 정보',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFFF9FAFB),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildInfoRow('배송 유형', deliveryInfo.deliveryType),
+          _buildInfoRow('배송비', deliveryInfo.deliveryFeeInfo),
+          _buildInfoRow('예상 배송', deliveryInfo.estimatedDeliveryInfo),
+          _buildInfoRow('배송 지역', deliveryInfo.deliveryRegions),
+          _buildInfoRow('배송 요일', deliveryInfo.deliveryDays),
+          _buildInfoRow('배송 시간', deliveryInfo.deliveryTimeSlots),
+          _buildInfoRow('포장 유형', deliveryInfo.packagingType),
+          if (deliveryInfo.isFragile)
+            _buildInfoRow('주의사항', '파손 주의', valueColor: Colors.orange),
+          if (deliveryInfo.requiresRefrigeration)
+            _buildInfoRow('보관방법', '냉장 보관 필요', valueColor: const Color(0xFF3B82F6)),
+          if (deliveryInfo.specialInstructions != null)
+            _buildInfoRow('특별 지시사항', deliveryInfo.specialInstructions!),
+        ],
       ),
     );
   }

@@ -59,7 +59,7 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFF111827),
       appBar: _buildAppBar(),
       body: Column(
         children: [
@@ -78,23 +78,23 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
         widget.distributorName,
         style: const TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF18181B),
+          fontWeight: FontWeight.w700,
+          color: Color(0xFFF9FAFB),
         ),
       ),
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFF111827),
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new, size: 20),
         onPressed: () => Navigator.pop(context),
-        color: const Color(0xFF18181B),
+        color: const Color(0xFFD4AF37),
       ),
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh, size: 24),
           onPressed: _loadProducts,
           tooltip: '새로고침',
-          color: const Color(0xFF18181B),
+          color: const Color(0xFFD4AF37),
         ),
       ],
     );
@@ -104,16 +104,17 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      color: const Color(0xFFF8FAFC),
+      color: const Color(0xFF111827),
       child: TextField(
         controller: _searchController,
+        style: const TextStyle(color: Color(0xFFF9FAFB)),
         decoration: InputDecoration(
           hintText: '상품 검색...',
-          hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
-          prefixIcon: const Icon(Icons.search, color: Color(0xFFA1A1AA)),
+          hintStyle: const TextStyle(color: Color(0xFF6B7280)),
+          prefixIcon: const Icon(Icons.search, color: Color(0xFFD4AF37)),
           suffixIcon: _searchKeyword.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: Color(0xFFA1A1AA)),
+                  icon: const Icon(Icons.clear, color: Color(0xFF9CA3AF)),
                   onPressed: () {
                     _searchController.clear();
                     setState(() => _searchKeyword = '');
@@ -123,18 +124,22 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
               : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+            borderSide: BorderSide(
+              color: const Color(0xFFD4AF37).withOpacity(0.3),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+            borderSide: BorderSide(
+              color: const Color(0xFFD4AF37).withOpacity(0.3),
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF10B981)),
+            borderSide: const BorderSide(color: Color(0xFFD4AF37), width: 2),
           ),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: const Color(0xFF1F2937),
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
         onChanged: (value) {
@@ -150,7 +155,11 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
     return Consumer<CatalogProvider>(
       builder: (context, provider, child) {
         if (provider.state == CatalogState.loading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFFD4AF37),
+            ),
+          );
         }
 
         if (provider.state == CatalogState.error) {
@@ -172,12 +181,19 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const Icon(Icons.error_outline, size: 64, color: Color(0xFFEF4444)),
           const SizedBox(height: 16),
-          Text(errorMessage ?? '오류가 발생했습니다'),
+          Text(
+            errorMessage ?? '오류가 발생했습니다',
+            style: const TextStyle(color: Color(0xFF9CA3AF)),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadProducts,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFD4AF37),
+              foregroundColor: const Color(0xFF1F2937),
+            ),
             child: const Text('다시 시도'),
           ),
         ],
@@ -191,14 +207,14 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey[400]),
+          const Icon(Icons.inventory_2_outlined, size: 80, color: Color(0xFF4B5563)),
           const SizedBox(height: 16),
           Text(
             _searchKeyword.isEmpty ? '등록된 상품이 없습니다' : '검색 결과가 없습니다',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF9CA3AF),
             ),
           ),
           if (_searchKeyword.isNotEmpty) ...[
@@ -209,6 +225,9 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
                 setState(() => _searchKeyword = '');
                 _loadProducts();
               },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFD4AF37),
+              ),
               child: const Text('전체 상품 보기'),
             ),
           ],
@@ -251,55 +270,42 @@ class _DistributorCatalogPageState extends State<DistributorCatalogPage> {
 
   /// Single Responsibility: 장바구니 버튼 UI만 담당
   Widget _buildCartButton() {
-    return Container(
-      margin: const EdgeInsets.only(right: 8, bottom: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF10B981).withOpacity(0.4),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider(
+              create: (_) => InjectionContainer.getCartProvider(),
+              child: CartPage(
+                distributorId: widget.distributorId,
+                distributorName: widget.distributorName,
+              ),
+            ),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFD4AF37),
+        foregroundColor: const Color(0xFF1F2937),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 0,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.shopping_cart, size: 20),
+          SizedBox(width: 8),
+          Text(
+            '장바구니',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
-      ),
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ChangeNotifierProvider(
-                create: (_) => InjectionContainer.getCartProvider(),
-                child: CartPage(
-                  distributorId: widget.distributorId,
-                  distributorName: widget.distributorName,
-                ),
-              ),
-            ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF10B981),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 0,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.shopping_cart, size: 20),
-            SizedBox(width: 8),
-            Text(
-              '장바구니',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -326,15 +332,12 @@ class ProductCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF1F2937),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          border: Border.all(
+            color: const Color(0xFFD4AF37).withOpacity(0.2),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,9 +368,9 @@ class ProductCard extends StatelessWidget {
       flex: 3,
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        decoration: const BoxDecoration(
+          color: Color(0xFF111827),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
         ),
         child: product.imageUrl != null
             ? ClipRRect(
@@ -378,13 +381,13 @@ class ProductCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
-                      child: Icon(Icons.image, size: 48, color: Colors.grey),
+                      child: Icon(Icons.image, size: 48, color: Color(0xFF4B5563)),
                     );
                   },
                 ),
               )
             : const Center(
-                child: Icon(Icons.image, size: 48, color: Colors.grey),
+                child: Icon(Icons.image, size: 48, color: Color(0xFF4B5563)),
               ),
       ),
     );
@@ -395,8 +398,8 @@ class ProductCard extends StatelessWidget {
       product.productName,
       style: const TextStyle(
         fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Color(0xFF27272A),
+        fontWeight: FontWeight.w600,
+        color: Color(0xFFF9FAFB),
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
@@ -411,7 +414,7 @@ class ProductCard extends StatelessWidget {
         '품절',
         style: TextStyle(
           fontSize: 15,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
           color: Color(0xFFEF4444),
         ),
       );
@@ -421,8 +424,8 @@ class ProductCard extends StatelessWidget {
       '${numberFormat.format(product.unitPrice)}원/${product.unit}',
       style: const TextStyle(
         fontSize: 15,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF10B981),
+        fontWeight: FontWeight.w700,
+        color: Color(0xFFD4AF37),
       ),
     );
   }
@@ -433,17 +436,23 @@ class ProductCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isAvailable
-            ? const Color(0xFFD1FAE5)
-            : const Color(0xFFFEE2E2),
-        borderRadius: BorderRadius.circular(12),
+            ? const Color(0xFF10B981).withOpacity(0.2)
+            : const Color(0xFFEF4444).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isAvailable
+              ? const Color(0xFF10B981)
+              : const Color(0xFFEF4444),
+          width: 1,
+        ),
       ),
       child: Text(
         isAvailable ? '재고 있음' : '재고 없음',
         style: TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: isAvailable
-              ? const Color(0xFF059669)
+              ? const Color(0xFF10B981)
               : const Color(0xFFEF4444),
         ),
       ),
