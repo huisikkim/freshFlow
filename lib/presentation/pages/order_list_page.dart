@@ -26,23 +26,22 @@ class _OrderListPageState extends State<OrderListPage> {
   Widget build(BuildContext context) {
     final orderProvider = context.watch<OrderProvider>();
     final numberFormat = NumberFormat('#,###');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF020617) : const Color(0xFFF1F5F9),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           '주문 내역',
           style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w900,
-            color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
           ),
         ),
-        backgroundColor: isDark ? const Color(0xFF020617) : const Color(0xFFF1F5F9),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
+        iconTheme: const IconThemeData(
+          color: Color(0xFFD4AF37),
         ),
         actions: [
           IconButton(
@@ -58,13 +57,17 @@ class _OrderListPageState extends State<OrderListPage> {
           ),
         ],
       ),
-      body: _buildBody(orderProvider, numberFormat, isDark),
+      body: _buildBody(orderProvider, numberFormat),
     );
   }
 
-  Widget _buildBody(OrderProvider provider, NumberFormat numberFormat, bool isDark) {
+  Widget _buildBody(OrderProvider provider, NumberFormat numberFormat) {
     if (provider.state == OrderState.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFFD4AF37),
+        ),
+      );
     }
 
     if (provider.state == OrderState.error) {
@@ -80,20 +83,20 @@ class _OrderListPageState extends State<OrderListPage> {
             const SizedBox(height: 16),
             Text(
               provider.errorMessage ?? '주문 내역을 불러올 수 없습니다',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: Color(0xFF9CA3AF),
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => provider.getOrders(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
-                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFFD4AF37),
+                foregroundColor: const Color(0xFF1F2937),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: const Text('다시 시도'),
@@ -107,18 +110,18 @@ class _OrderListPageState extends State<OrderListPage> {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Icon(
               Icons.shopping_bag_outlined,
               size: 64,
-              color: isDark ? const Color(0xFF475569) : const Color(0xFF94A3B8),
+              color: Color(0xFF4B5563),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               '주문 내역이 없습니다',
               style: TextStyle(
                 fontSize: 16,
-                color: isDark ? const Color(0xFF64748B) : const Color(0xFF475569),
+                color: Color(0xFF6B7280),
               ),
             ),
           ],
@@ -130,35 +133,33 @@ class _OrderListPageState extends State<OrderListPage> {
       onRefresh: () async {
         await provider.getOrders();
       },
+      color: const Color(0xFFD4AF37),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.orders.length,
         itemBuilder: (context, index) {
           final order = provider.orders[index];
-          return _buildOrderCard(order, numberFormat, isDark);
+          return _buildOrderCard(order, numberFormat);
         },
       ),
     );
   }
 
-  Widget _buildOrderCard(Order order, NumberFormat numberFormat, bool isDark) {
+  Widget _buildOrderCard(Order order, NumberFormat numberFormat) {
     final statusColor = _getStatusColor(order.status);
     final statusIcon = _getStatusIcon(order.status);
     final isDelivered = order.status == OrderStatus.delivered;
     final isCancelled = order.status == OrderStatus.cancelled;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,9 +173,9 @@ class _OrderListPageState extends State<OrderListPage> {
                 ),
               );
             },
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -188,52 +189,57 @@ class _OrderListPageState extends State<OrderListPage> {
                           children: [
                             Text(
                               order.distributorName,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFF9FAFB),
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              DateFormat('yyyy.MM.dd at HH:mm').format(order.createdAt),
-                              style: TextStyle(
+                              DateFormat('yyyy.MM.dd HH:mm').format(order.createdAt),
+                              style: const TextStyle(
                                 fontSize: 12,
-                                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                                color: Color(0xFF9CA3AF),
                               ),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Row(
-                        children: [
-                          Icon(
-                            statusIcon,
-                            color: statusColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            order.status.displayName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: statusColor.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              statusIcon,
                               color: statusColor,
+                              size: 16,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              order.status.displayName,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: statusColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   // 상품 요약과 금액
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isDark 
-                          ? const Color(0xFF334155).withOpacity(0.5) 
-                          : const Color(0xFFF8FAFC),
+                      color: const Color(0xFF111827),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -244,19 +250,19 @@ class _OrderListPageState extends State<OrderListPage> {
                             order.items.length == 1
                                 ? order.items.first.productName
                                 : '${order.items.first.productName} 외 ${order.items.length - 1}건',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569),
+                              color: Color(0xFFD1D5DB),
                             ),
                           ),
                         ),
                         Text(
                           '${numberFormat.format(order.totalAmount)}원',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFFD4AF37),
                           ),
                         ),
                       ],
@@ -277,38 +283,44 @@ class _OrderListPageState extends State<OrderListPage> {
                   ),
                 );
               },
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(isDark ? 0.2 : 0.1),
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                  color: const Color(0xFFD4AF37).withOpacity(0.1),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                  border: Border(
+                    top: BorderSide(
+                      color: const Color(0xFFD4AF37).withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: const [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.rate_review,
-                          color: Color(0xFF10B981),
-                          size: 20,
+                          color: Color(0xFFD4AF37),
+                          size: 18,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Text(
                           '리뷰를 남겨주세요',
                           style: TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF10B981).withOpacity(0.9),
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFD4AF37),
                           ),
                         ),
                       ],
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right,
-                      color: Color(0xFF10B981),
-                      size: 20,
+                      color: Color(0xFFD4AF37),
+                      size: 18,
                     ),
                   ],
                 ),
@@ -318,19 +330,23 @@ class _OrderListPageState extends State<OrderListPage> {
           // 주문대기 상태 안내
           if (order.status == OrderStatus.pending)
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isDark 
-                    ? const Color(0xFF0F172A).withOpacity(0.5) 
-                    : const Color(0xFFF1F5F9),
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                color: const Color(0xFF111827),
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                border: Border(
+                  top: BorderSide(
+                    color: const Color(0xFFD4AF37).withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
               ),
-              child: Text(
+              child: const Text(
                 '배송이 시작되면 진행 상태를 확인할 수 있습니다.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: Color(0xFF9CA3AF),
                 ),
               ),
             ),
@@ -344,22 +360,26 @@ class _OrderListPageState extends State<OrderListPage> {
                   const SnackBar(content: Text('다시 주문하기 기능은 준비 중입니다')),
                 );
               },
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark 
-                      ? const Color(0xFF0F172A).withOpacity(0.5) 
-                      : const Color(0xFFF1F5F9),
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                  color: const Color(0xFF111827),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                  border: Border(
+                    top: BorderSide(
+                      color: const Color(0xFFD4AF37).withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     '다시 주문하기',
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ),

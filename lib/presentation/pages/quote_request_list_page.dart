@@ -45,24 +45,27 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: Text(
           widget.isDistributor ? '받은 견적 요청' : '내 견적 요청',
           style: const TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
           ),
         ),
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
         centerTitle: true,
         automaticallyImplyLeading: false,
+        iconTheme: const IconThemeData(
+          color: Color(0xFFD4AF37),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, size: 24),
-            color: const Color(0xFF6B7280),
+            color: const Color(0xFFD4AF37),
             onPressed: _loadQuoteRequests,
           ),
         ],
@@ -76,7 +79,7 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                 if (provider.state == QuoteRequestState.loading) {
                   return const Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFFFF6F61),
+                      color: Color(0xFFD4AF37),
                     ),
                   );
                 }
@@ -91,20 +94,23 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                           const Icon(
                             Icons.error_outline,
                             size: 64,
-                            color: Colors.red,
+                            color: Color(0xFFEF4444),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             provider.errorMessage ?? '조회 실패',
-                            style: const TextStyle(fontSize: 16),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF9CA3AF),
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
                           ElevatedButton(
                             onPressed: _loadQuoteRequests,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFF6F61),
-                              foregroundColor: Colors.white,
+                              backgroundColor: const Color(0xFFD4AF37),
+                              foregroundColor: const Color(0xFF1F2937),
                             ),
                             child: const Text('다시 시도'),
                           ),
@@ -125,7 +131,7 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                         const Icon(
                           Icons.inbox_outlined,
                           size: 80,
-                          color: Color(0xFFA9B4C2),
+                          color: Color(0xFF4B5563),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -134,8 +140,8 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                               : '${_getStatusText(_selectedStatus)} 견적이 없습니다',
                           style: const TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF3D405B),
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF9CA3AF),
                           ),
                         ),
                       ],
@@ -163,8 +169,8 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
 
   Widget _buildStatusFilter() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      color: const Color(0xFFF8FAFC),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      color: const Color(0xFF111827),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -197,9 +203,15 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFFFCE8E7)
-              : const Color(0xFFF1F5F9),
+              ? const Color(0xFFD4AF37)
+              : const Color(0xFF1F2937),
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFD4AF37)
+                : const Color(0xFFD4AF37).withOpacity(0.3),
+            width: 1,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -209,18 +221,18 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                 padding: EdgeInsets.only(right: 6),
                 child: Icon(
                   Icons.check,
-                  size: 18,
-                  color: Color(0xFFD04038),
+                  size: 16,
+                  color: Color(0xFF1F2937),
                 ),
               ),
             Text(
               label,
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected
-                    ? const Color(0xFFD04038)
-                    : const Color(0xFF64748B),
+                    ? const Color(0xFF1F2937)
+                    : const Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -233,15 +245,12 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F5FA),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: InkWell(
         onTap: () {
@@ -264,7 +273,7 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
             ),
           ).then((_) => _loadQuoteRequests());
         },
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -281,8 +290,8 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                           : request.distributorName,
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF111827),
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFF9FAFB),
                       ),
                     ),
                   ),
@@ -290,17 +299,21 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 4,
+                      vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(request.status),
-                      borderRadius: BorderRadius.circular(20),
+                      color: _getStatusColor(request.status).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: _getStatusColor(request.status),
+                        width: 1,
+                      ),
                     ),
                     child: Text(
                       _getStatusText(request.status),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                      style: TextStyle(
+                        color: _getStatusColor(request.status),
+                        fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),
                     ),
@@ -312,8 +325,8 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                 children: [
                   const Icon(
                     Icons.inventory_2_outlined,
-                    size: 20,
-                    color: Color(0xFF6B7280),
+                    size: 18,
+                    color: Color(0xFFD4AF37),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -321,7 +334,7 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                       request.requestedProducts,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF6B7280),
+                        color: Color(0xFFD1D5DB),
                       ),
                     ),
                   ),
@@ -334,8 +347,8 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                   children: [
                     const Icon(
                       Icons.chat_bubble_outline,
-                      size: 20,
-                      color: Color(0xFF6B7280),
+                      size: 18,
+                      color: Color(0xFFD4AF37),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -343,7 +356,7 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                         request.message!,
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF6B7280),
+                          color: Color(0xFF9CA3AF),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -357,15 +370,15 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                 children: [
                   const Icon(
                     Icons.schedule,
-                    size: 20,
-                    color: Color(0xFF6B7280),
+                    size: 18,
+                    color: Color(0xFF9CA3AF),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     _formatDateTime(request.requestedAt),
                     style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF6B7280),
+                      fontSize: 12,
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
@@ -378,7 +391,7 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    color: const Color(0xFF111827),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -388,15 +401,15 @@ class _QuoteRequestListPageState extends State<QuoteRequestListPage> {
                         '예상 금액: ',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF6B7280),
+                          color: Color(0xFF9CA3AF),
                         ),
                       ),
                       Text(
                         '${_formatNumber(request.estimatedAmount!)}원',
                         style: const TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF10B981),
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFD4AF37),
                         ),
                       ),
                     ],
