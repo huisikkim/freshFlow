@@ -8,6 +8,7 @@ import 'package:fresh_flow/presentation/pages/distributor_comparison_page.dart';
 import 'package:fresh_flow/presentation/pages/distributor_catalog_page.dart';
 import 'package:fresh_flow/presentation/pages/store_registration_page.dart';
 import 'package:fresh_flow/injection_container.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DistributorRecommendationsPage extends StatefulWidget {
   const DistributorRecommendationsPage({super.key});
@@ -25,6 +26,36 @@ class _DistributorRecommendationsPageState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MatchingProvider>().loadRecommendations();
     });
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('전화를 걸 수 없습니다'),
+              backgroundColor: Color(0xFFEF4444),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('전화 연결 실패: $e'),
+            backgroundColor: const Color(0xFFEF4444),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -471,7 +502,7 @@ class _DistributorRecommendationsPageState
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      // TODO: 전화 걸기
+                      _makePhoneCall(recommendation.phoneNumber);
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF9CA3AF),
