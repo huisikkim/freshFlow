@@ -28,18 +28,20 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
     final numberFormat = NumberFormat('#,###');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: const Text(
           '받은 주문',
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFE5E7EB),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF111827)),
+        iconTheme: const IconThemeData(color: Color(0xFFE5E7EB)),
+        centerTitle: true,
       ),
       body: _buildBody(orderProvider, numberFormat),
     );
@@ -47,7 +49,11 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
 
   Widget _buildBody(OrderProvider provider, NumberFormat numberFormat) {
     if (provider.state == OrderState.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
+        ),
+      );
     }
 
     if (provider.state == OrderState.error) {
@@ -65,14 +71,19 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
               provider.errorMessage ?? '주문 내역을 불러올 수 없습니다',
               style: const TextStyle(
                 fontSize: 16,
-                color: Color(0xFF6B7280),
+                color: Color(0xFF9CA3AF),
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => provider.getDistributorOrders(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
+                backgroundColor: const Color(0xFFD4AF37),
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('다시 시도'),
             ),
@@ -89,14 +100,14 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
             Icon(
               Icons.inbox_outlined,
               size: 64,
-              color: Colors.grey[400],
+              color: const Color(0xFF9CA3AF).withOpacity(0.5),
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               '받은 주문이 없습니다',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -138,15 +149,12 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: const Color(0xFF1F2937),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFF374151).withOpacity(0.3),
+            width: 1,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -175,7 +183,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                             const Icon(
                               Icons.storefront,
                               size: 18,
-                              color: Color(0xFF6B7280),
+                              color: Color(0xFFD4AF37),
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -184,7 +192,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF111827),
+                                  color: Color(0xFFE5E7EB),
                                 ),
                               ),
                             ),
@@ -215,7 +223,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                 ],
               ),
 
-              const Divider(height: 32, color: Color(0xFFE5E7EB)),
+              Divider(height: 32, color: const Color(0xFF374151).withOpacity(0.5)),
 
               // 상품 목록
               ...order.items.take(2).map((item) => Padding(
@@ -228,7 +236,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                             item.productName,
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF374151),
+                              color: Color(0xFFD1D5DB),
                             ),
                           ),
                         ),
@@ -236,7 +244,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                           '${item.quantity}${item.unit}',
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Color(0xFF6B7280),
+                            color: Color(0xFF9CA3AF),
                           ),
                         ),
                       ],
@@ -254,7 +262,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   ),
                 ),
 
-              const Divider(height: 32, color: Color(0xFFE5E7EB)),
+              Divider(height: 32, color: const Color(0xFF374151).withOpacity(0.5)),
 
               // 배송 정보
               Row(
@@ -263,7 +271,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   const Icon(
                     Icons.location_on_outlined,
                     size: 18,
-                    color: Color(0xFF6B7280),
+                    color: Color(0xFF9CA3AF),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -271,7 +279,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                       order.deliveryAddress,
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Color(0xFF6B7280),
+                        color: Color(0xFF9CA3AF),
                       ),
                     ),
                   ),
@@ -283,14 +291,14 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                   const Icon(
                     Icons.phone_outlined,
                     size: 18,
-                    color: Color(0xFF6B7280),
+                    color: Color(0xFF9CA3AF),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     order.deliveryPhone,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF6B7280),
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
@@ -314,7 +322,7 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF10B981),
+                      color: Color(0xFFD4AF37),
                     ),
                   ),
                 ],
@@ -345,11 +353,11 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       elevation: 0,
                     ),
@@ -373,11 +381,11 @@ class _DistributorOrderListPageState extends State<DistributorOrderListPage> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF8B5CF6),
+                      backgroundColor: const Color(0xFF10B981),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       elevation: 0,
                     ),
