@@ -633,8 +633,13 @@ class _DistributorRecommendationsPageState
       barrierDismissible: true,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setState) => Dialog(
+          backgroundColor: const Color(0xFF1F2937),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: const Color(0xFFD4AF37).withOpacity(0.2),
+              width: 1,
+            ),
           ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 400),
@@ -647,8 +652,8 @@ class _DistributorRecommendationsPageState
                   '${recommendation.distributorName}에 견적 요청',
                   style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFF9FAFB),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -666,7 +671,7 @@ class _DistributorRecommendationsPageState
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF374151),
+                            color: Color(0xFFE5E7EB),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -685,7 +690,7 @@ class _DistributorRecommendationsPageState
                                   }
                                 });
                               },
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(12),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -693,13 +698,13 @@ class _DistributorRecommendationsPageState
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? const Color(0xFF373737)
-                                      : const Color(0xFFF3F4F6),
-                                  borderRadius: BorderRadius.circular(20),
+                                      ? const Color(0xFFD4AF37)
+                                      : const Color(0xFF111827),
+                                  borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: isSelected
-                                        ? const Color(0xFF373737)
-                                        : const Color(0xFFE5E7EB),
+                                        ? const Color(0xFFD4AF37)
+                                        : const Color(0xFF374151),
                                     width: 1,
                                   ),
                                 ),
@@ -707,10 +712,10 @@ class _DistributorRecommendationsPageState
                                   product.trim(),
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                     color: isSelected
-                                        ? Colors.white
-                                        : const Color(0xFF6B7280),
+                                        ? const Color(0xFF1F2937)
+                                        : const Color(0xFF9CA3AF),
                                   ),
                                 ),
                               ),
@@ -725,7 +730,7 @@ class _DistributorRecommendationsPageState
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF374151),
+                            color: Color(0xFFE5E7EB),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -734,32 +739,32 @@ class _DistributorRecommendationsPageState
                           maxLines: 4,
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Color(0xFF1F2937),
+                            color: Color(0xFFF9FAFB),
                           ),
                           decoration: InputDecoration(
                             hintText: '예: 매주 월요일 오전 배송 가능한지 확인 부탁드립니다.',
                             hintStyle: const TextStyle(
-                              color: Color(0xFF9CA3AF),
+                              color: Color(0xFF6B7280),
                               fontSize: 14,
                             ),
                             filled: true,
-                            fillColor: const Color(0xFFF3F4F6),
+                            fillColor: const Color(0xFF111827),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFE5E7EB),
+                              borderSide: BorderSide(
+                                color: const Color(0xFFD4AF37).withOpacity(0.3),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFE5E7EB),
+                              borderSide: BorderSide(
+                                color: const Color(0xFFD4AF37).withOpacity(0.3),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
-                                color: Color(0xFF373737),
+                                color: Color(0xFFD4AF37),
                                 width: 2,
                               ),
                             ),
@@ -779,10 +784,10 @@ class _DistributorRecommendationsPageState
                       child: TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF373737),
+                          foregroundColor: const Color(0xFF9CA3AF),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
@@ -819,7 +824,7 @@ class _DistributorRecommendationsPageState
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('견적 요청이 전송되었습니다'),
-                                        backgroundColor: Color(0xFF10B981),
+                                        backgroundColor: Color(0xFFD4AF37),
                                         behavior: SnackBarBehavior.floating,
                                       ),
                                     );
@@ -837,14 +842,14 @@ class _DistributorRecommendationsPageState
                                 }
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF373737),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: const Color(0xFFE5E7EB),
-                          disabledForegroundColor: const Color(0xFF9CA3AF),
+                          backgroundColor: const Color(0xFFD4AF37),
+                          foregroundColor: const Color(0xFF1F2937),
+                          disabledBackgroundColor: const Color(0xFF374151),
+                          disabledForegroundColor: const Color(0xFF6B7280),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
