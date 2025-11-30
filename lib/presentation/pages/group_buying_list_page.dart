@@ -28,32 +28,30 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        backgroundColor: isDark 
-            ? const Color(0xFF111827).withOpacity(0.8)
-            : const Color(0xFFF8FAFC).withOpacity(0.8),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
-        title: Text(
+        title: const Text(
           '공동구매',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
           ),
         ),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new,
-            color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+            color: Color(0xFFD4AF37),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.refresh,
-              color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+              color: Color(0xFFD4AF37),
             ),
             onPressed: () {
               context.read<GroupBuyingProvider>().fetchOpenRooms();
@@ -64,7 +62,11 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
       body: Consumer<GroupBuyingProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFFD4AF37),
+              ),
+            );
           }
 
           if (provider.errorMessage != null) {
@@ -72,12 +74,19 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(provider.errorMessage!),
+                  Text(
+                    provider.errorMessage!,
+                    style: const TextStyle(color: Color(0xFF9CA3AF)),
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       provider.fetchOpenRooms();
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: const Color(0xFF1F2937),
+                    ),
                     child: const Text('다시 시도'),
                   ),
                 ],
@@ -87,7 +96,10 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
 
           if (provider.openRooms.isEmpty) {
             return const Center(
-              child: Text('진행 중인 공동구매가 없습니다'),
+              child: Text(
+                '진행 중인 공동구매가 없습니다',
+                style: TextStyle(color: Color(0xFF9CA3AF)),
+              ),
             );
           }
 
@@ -108,24 +120,15 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
   }
 
   Widget _buildRoomCard(BuildContext context, GroupBuyingRoom room) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1F2937) : Colors.white,
+        color: const Color(0xFF1F2937),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? const Color(0xFF374151) : const Color(0xFFE2E8F0),
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -168,10 +171,10 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                                 const SizedBox(height: 4),
                                 Text(
                                   room.roomTitle,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF1E293B),
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFFF9FAFB),
                                   ),
                                 ),
                               ],
@@ -215,19 +218,19 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                           const SizedBox(width: 8),
                           Text(
                             '${currencyFormat.format(room.originalPrice)}원',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               decoration: TextDecoration.lineThrough,
-                              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+                              color: Color(0xFF6B7280),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
                             '${currencyFormat.format(room.discountedPrice)}원',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? const Color(0xFFFAFAFA) : const Color(0xFF0F172A),
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFD4AF37),
                             ),
                           ),
                         ],
@@ -238,10 +241,8 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                 // 하단 섹션 - 진행 상황
                 Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isDark 
-                        ? const Color(0xFF1F2937).withOpacity(0.5)
-                        : const Color(0xFFF8FAFC),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF111827),
                   ),
                   child: Column(
                     children: [
@@ -261,9 +262,9 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                               ),
                               Text(
                                 '${room.currentQuantity}/${room.targetQuantity}개',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
-                                  color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF475569),
+                                  color: Color(0xFF9CA3AF),
                                 ),
                               ),
                             ],
@@ -274,9 +275,7 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                             child: LinearProgressIndicator(
                               value: room.achievementRate / 100,
                               minHeight: 10,
-                              backgroundColor: isDark 
-                                  ? const Color(0xFF374151)
-                                  : const Color(0xFFE2E8F0),
+                              backgroundColor: const Color(0xFF374151),
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 Color(0xFF22C55E),
                               ),
@@ -286,11 +285,9 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                       ),
                       const SizedBox(height: 12),
                       // 구분선
-                      Divider(
+                      const Divider(
                         height: 1,
-                        color: isDark 
-                            ? const Color(0xFF374151)
-                            : const Color(0xFFE2E8F0),
+                        color: Color(0xFF374151),
                       ),
                       const SizedBox(height: 12),
                       // 참여자 및 시간 정보
@@ -299,21 +296,17 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                         children: [
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.people_outline,
                                 size: 18,
-                                color: isDark 
-                                    ? const Color(0xFF9CA3AF)
-                                    : const Color(0xFF64748B),
+                                color: Color(0xFF9CA3AF),
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 '${room.currentParticipants}명 참여',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
-                                  color: isDark 
-                                      ? const Color(0xFF9CA3AF)
-                                      : const Color(0xFF64748B),
+                                  color: Color(0xFF9CA3AF),
                                 ),
                               ),
                             ],
@@ -321,21 +314,17 @@ class _GroupBuyingListPageState extends State<GroupBuyingListPage> {
                           if (room.remainingMinutes != null)
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.schedule_outlined,
                                   size: 18,
-                                  color: isDark 
-                                      ? const Color(0xFF9CA3AF)
-                                      : const Color(0xFF64748B),
+                                  color: Color(0xFF9CA3AF),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   _formatRemainingTime(room.remainingMinutes!),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 14,
-                                    color: isDark 
-                                        ? const Color(0xFF9CA3AF)
-                                        : const Color(0xFF64748B),
+                                    color: Color(0xFF9CA3AF),
                                   ),
                                 ),
                               ],
