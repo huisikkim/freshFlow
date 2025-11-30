@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:fresh_flow/domain/entities/distributor.dart';
 import 'package:fresh_flow/domain/usecases/register_distributor_usecase.dart';
+import 'package:fresh_flow/domain/usecases/get_distributor_info_usecase.dart';
 
 enum DistributorState { initial, loading, success, error }
 
 class DistributorProvider extends ChangeNotifier {
   final RegisterDistributorUseCase registerDistributorUseCase;
+  final GetDistributorInfoUseCase getDistributorInfoUseCase;
 
   DistributorState _state = DistributorState.initial;
   Distributor? _distributor;
@@ -15,7 +17,10 @@ class DistributorProvider extends ChangeNotifier {
   Distributor? get distributor => _distributor;
   String? get errorMessage => _errorMessage;
 
-  DistributorProvider({required this.registerDistributorUseCase});
+  DistributorProvider({
+    required this.registerDistributorUseCase,
+    required this.getDistributorInfoUseCase,
+  });
 
   Future<void> registerDistributor({
     required String distributorName,
@@ -51,6 +56,23 @@ class DistributorProvider extends ChangeNotifier {
         address: address,
       );
       _state = DistributorState.success;
+      notifyListeners();
+    } catch (e) {
+      _state = DistributorState.error;
+      _errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadDistributorInfo() async {
+    _state = DistributorState.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _distributor = await getDistributorInfoUseCase.execute();
+      // 조회는 성공 상태로 변경하지 않음 (initial로 유지)
+      _state = DistributorState.initial;
       notifyListeners();
     } catch (e) {
       _state = DistributorState.error;

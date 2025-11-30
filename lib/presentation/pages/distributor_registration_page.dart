@@ -25,6 +25,39 @@ class _DistributorRegistrationPageState
   final _emailController = TextEditingController();
   final _addressController = TextEditingController();
   bool _deliveryAvailable = true;
+  bool _isEditMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDistributorInfo();
+    });
+  }
+
+  Future<void> _loadDistributorInfo() async {
+    final distributorProvider = context.read<DistributorProvider>();
+    await distributorProvider.loadDistributorInfo();
+    
+    if (distributorProvider.distributor != null) {
+      final distributor = distributorProvider.distributor!;
+      setState(() {
+        _isEditMode = true;
+        _distributorNameController.text = distributor.distributorName;
+        _supplyProductsController.text = distributor.supplyProducts;
+        _serviceRegionsController.text = distributor.serviceRegions;
+        _deliveryInfoController.text = distributor.deliveryInfo;
+        _descriptionController.text = distributor.description;
+        _certificationsController.text = distributor.certifications;
+        _minOrderAmountController.text = distributor.minOrderAmount.toString();
+        _operatingHoursController.text = distributor.operatingHours;
+        _phoneNumberController.text = distributor.phoneNumber;
+        _emailController.text = distributor.email;
+        _addressController.text = distributor.address;
+        _deliveryAvailable = distributor.deliveryAvailable;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -67,9 +100,9 @@ class _DistributorRegistrationPageState
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text(
-          '유통업자 정보 등록',
-          style: TextStyle(
+        title: Text(
+          _isEditMode ? '유통업체 정보 수정' : '유통업자 정보 등록',
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Color(0xFFE1E2E2),
@@ -85,13 +118,17 @@ class _DistributorRegistrationPageState
           builder: (context, distributorProvider, child) {
             if (distributorProvider.state == DistributorState.success) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pop(true);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('유통업자 정보가 성공적으로 등록되었습니다'),
+                  SnackBar(
+                    content: Text(
+                      _isEditMode 
+                        ? '유통업체 정보가 수정되었습니다' 
+                        : '유통업자 정보가 성공적으로 등록되었습니다'
+                    ),
                     backgroundColor: Colors.green,
                   ),
                 );
+                Navigator.of(context).pop(true);
               });
             }
 
@@ -267,9 +304,9 @@ class _DistributorRegistrationPageState
                                         Colors.white),
                                   ),
                                 )
-                              : const Text(
-                                  '유통업자 정보 등록',
-                                  style: TextStyle(
+                              : Text(
+                                  _isEditMode ? '유통업체 정보 수정' : '유통업자 정보 등록',
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.5,

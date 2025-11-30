@@ -48,4 +48,14 @@ class DistributorRepositoryImpl implements DistributorRepository {
       address: address,
     );
   }
+
+  @override
+  Future<Distributor?> getDistributorInfo() async {
+    final user = await authRepository.getCurrentUser();
+    if (user == null) {
+      throw Exception('로그인이 필요합니다');
+    }
+
+    return await remoteDataSource.getDistributorInfo(token: user.accessToken);
+  }
 }

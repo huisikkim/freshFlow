@@ -15,4 +15,6 @@ abstract class DistributorRepository {
     required String email,
     required String address,
   });
+  
+  Future<Distributor?> getDistributorInfo();
 }

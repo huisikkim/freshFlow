@@ -33,6 +33,7 @@ import 'package:fresh_flow/domain/usecases/signup_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_store_usecase.dart';
 import 'package:fresh_flow/domain/usecases/get_store_info_usecase.dart';
 import 'package:fresh_flow/domain/usecases/register_distributor_usecase.dart';
+import 'package:fresh_flow/domain/usecases/get_distributor_info_usecase.dart';
 import 'package:fresh_flow/domain/usecases/get_recommendations_usecase.dart';
 import 'package:fresh_flow/domain/usecases/quote_request_usecases.dart';
 import 'package:fresh_flow/domain/usecases/comparison_usecases.dart';
@@ -100,6 +101,7 @@ class InjectionContainer {
   static late RegisterStoreUseCase _registerStoreUseCase;
   static late GetStoreInfoUseCase _getStoreInfoUseCase;
   static late RegisterDistributorUseCase _registerDistributorUseCase;
+  static late GetDistributorInfoUseCase _getDistributorInfoUseCase;
   static late GetRecommendationsUseCase _getRecommendationsUseCase;
   static late CreateQuoteRequestUseCase _createQuoteRequestUseCase;
   static late GetStoreQuoteRequestsUseCase _getStoreQuoteRequestsUseCase;
@@ -249,6 +251,7 @@ class InjectionContainer {
     _getStoreInfoUseCase = GetStoreInfoUseCase(_storeRepository);
     _registerDistributorUseCase =
         RegisterDistributorUseCase(_distributorRepository);
+    _getDistributorInfoUseCase = GetDistributorInfoUseCase(_distributorRepository);
     _getRecommendationsUseCase = GetRecommendationsUseCase(_matchingRepository);
     _createQuoteRequestUseCase =
         CreateQuoteRequestUseCase(_quoteRequestRepository);
@@ -329,6 +332,7 @@ class InjectionContainer {
   static DistributorProvider getDistributorProvider() {
     return DistributorProvider(
       registerDistributorUseCase: _registerDistributorUseCase,
+      getDistributorInfoUseCase: _getDistributorInfoUseCase,
     );
   }
 

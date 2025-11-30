@@ -19,6 +19,8 @@ abstract class DistributorRemoteDataSource {
     required String email,
     required String address,
   });
+  
+  Future<DistributorModel?> getDistributorInfo({required String token});
 }
 
 class DistributorRemoteDataSourceImpl implements DistributorRemoteDataSource {
@@ -68,6 +70,25 @@ class DistributorRemoteDataSourceImpl implements DistributorRemoteDataSource {
       return DistributorModel.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('유통업자 정보 등록에 실패했습니다: ${response.body}');
+    }
+  }
+
+  @override
+  Future<DistributorModel?> getDistributorInfo({required String token}) async {
+    final response = await client.get(
+      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.distributorInfoEndpoint}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return DistributorModel.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 404) {
+      return null; // 유통업체 정보가 없는 경우
+    } else {
+      throw Exception('유통업체 정보 조회에 실패했습니다: ${response.body}');
     }
   }
 }
