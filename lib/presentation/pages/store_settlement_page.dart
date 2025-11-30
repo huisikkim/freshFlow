@@ -131,32 +131,26 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: _SettlementColors.divider, width: 1),
-              ),
+          child: TabBar(
+            controller: _tabController,
+            indicatorColor: _SettlementColors.primary,
+            indicatorWeight: 2,
+            dividerColor: Colors.transparent,
+            labelColor: _SettlementColors.primary,
+            unselectedLabelColor: _SettlementColors.textSecondary,
+            labelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: _SettlementColors.primary,
-              indicatorWeight: 2,
-              labelColor: _SettlementColors.primary,
-              unselectedLabelColor: _SettlementColors.textSecondary,
-              labelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-              tabs: const [
-                Tab(text: '대시보드'),
-                Tab(text: '일일 정산'),
-                Tab(text: '개별 정산'),
-              ],
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
+            tabs: const [
+              Tab(text: '대시보드'),
+              Tab(text: '일일 정산'),
+              Tab(text: '개별 정산'),
+            ],
           ),
         ),
       ),
