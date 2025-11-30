@@ -32,11 +32,25 @@ class _GroupBuyingMyParticipationsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        title: const Text('내 참여 내역'),
+        backgroundColor: const Color(0xFF111827),
+        elevation: 0,
+        title: const Text(
+          '내 참여 내역',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
+          ),
+        ),
+        iconTheme: const IconThemeData(
+          color: Color(0xFFD4AF37),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+            color: const Color(0xFFD4AF37),
             onPressed: () {
               context
                   .read<GroupBuyingProvider>()
@@ -48,7 +62,11 @@ class _GroupBuyingMyParticipationsPageState
       body: Consumer<GroupBuyingProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFFD4AF37),
+              ),
+            );
           }
 
           if (provider.errorMessage != null) {
@@ -56,12 +74,19 @@ class _GroupBuyingMyParticipationsPageState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(provider.errorMessage!),
+                  Text(
+                    provider.errorMessage!,
+                    style: const TextStyle(color: Color(0xFF9CA3AF)),
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       provider.fetchMyParticipations(widget.storeId);
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: const Color(0xFF1F2937),
+                    ),
                     child: const Text('다시 시도'),
                   ),
                 ],
@@ -71,7 +96,10 @@ class _GroupBuyingMyParticipationsPageState
 
           if (provider.myParticipations.isEmpty) {
             return const Center(
-              child: Text('참여한 공동구매가 없습니다'),
+              child: Text(
+                '참여한 공동구매가 없습니다',
+                style: TextStyle(color: Color(0xFF9CA3AF)),
+              ),
             );
           }
 
@@ -92,8 +120,16 @@ class _GroupBuyingMyParticipationsPageState
   }
 
   Widget _buildParticipationCard(GroupBuyingParticipant participation) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
+          width: 1,
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -102,13 +138,17 @@ class _GroupBuyingMyParticipationsPageState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  participation.storeName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    participation.storeName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFF9FAFB),
+                    ),
                   ),
                 ),
+                const SizedBox(width: 12),
                 _buildStatusChip(participation.status),
               ],
             ),
@@ -126,7 +166,7 @@ class _GroupBuyingMyParticipationsPageState
               '배송비',
               '${currencyFormat.format(participation.deliveryFee)}원',
             ),
-            const Divider(),
+            const Divider(color: Color(0xFF374151)),
             _buildInfoRow(
               '총 금액',
               '${currencyFormat.format(participation.totalAmount)}원',
@@ -140,16 +180,19 @@ class _GroupBuyingMyParticipationsPageState
             const SizedBox(height: 8),
             Text(
               '참여일: ${DateFormat('yyyy-MM-dd HH:mm').format(participation.joinedAt)}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: Color(0xFF9CA3AF),
               ),
             ),
             if (participation.deliveryAddress != null) ...[
               const SizedBox(height: 8),
               Text(
                 '배송지: ${participation.deliveryAddress}',
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFFD1D5DB),
+                ),
               ),
             ],
           ],
@@ -169,16 +212,16 @@ class _GroupBuyingMyParticipationsPageState
             label,
             style: TextStyle(
               fontSize: isTotal ? 16 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: isSavings ? Colors.green : null,
+              fontWeight: isTotal ? FontWeight.w700 : FontWeight.normal,
+              color: isSavings ? const Color(0xFF22C55E) : const Color(0xFF9CA3AF),
             ),
           ),
           Text(
             value,
             style: TextStyle(
               fontSize: isTotal ? 18 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              color: isSavings ? Colors.green : null,
+              fontWeight: isTotal ? FontWeight.w700 : FontWeight.w600,
+              color: isSavings ? const Color(0xFF22C55E) : (isTotal ? const Color(0xFFD4AF37) : const Color(0xFFE5E7EB)),
             ),
           ),
         ],
@@ -192,23 +235,23 @@ class _GroupBuyingMyParticipationsPageState
 
     switch (status) {
       case ParticipantStatus.joined:
-        color = Colors.blue;
+        color = const Color(0xFF3B82F6);
         text = '참여중';
         break;
       case ParticipantStatus.confirmed:
-        color = Colors.green;
+        color = const Color(0xFF22C55E);
         text = '확정';
         break;
       case ParticipantStatus.orderCreated:
-        color = Colors.orange;
+        color = const Color(0xFFF59E0B);
         text = '주문생성';
         break;
       case ParticipantStatus.delivered:
-        color = Colors.purple;
+        color = const Color(0xFF8B5CF6);
         text = '배송완료';
         break;
       case ParticipantStatus.cancelled:
-        color = Colors.red;
+        color = const Color(0xFFEF4444);
         text = '취소';
         break;
     }
@@ -216,15 +259,19 @@ class _GroupBuyingMyParticipationsPageState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(12),
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: color,
+          width: 1,
+        ),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: color,
           fontSize: 12,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
