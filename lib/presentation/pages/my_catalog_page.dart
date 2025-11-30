@@ -246,14 +246,6 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
               children: [
                 Row(
                   children: [
-                    const Text(
-                      '\$',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
                     Text(
                       _formatNumber(product.unitPrice),
                       style: const TextStyle(
