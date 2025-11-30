@@ -70,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFF),
+      backgroundColor: const Color(0xFF111827),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -100,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF3D405B),
+                            color: Color(0xFFF9FAFB),
                             letterSpacing: -0.5,
                           ),
                           textAlign: TextAlign.center,
@@ -115,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF3D405B),
+                              color: Color(0xFFE5E7EB),
                             ),
                           ),
                         ),
@@ -124,15 +124,20 @@ class _SignUpPageState extends State<SignUpPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: const Color(0xFF1F2937),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: const Color(0xFFE5E7EB),
+                                color: const Color(0xFFD4AF37).withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
                             child: DropdownButtonFormField<String>(
                               value: _selectedUserType,
+                              dropdownColor: const Color(0xFF1F2937),
+                              style: const TextStyle(
+                                color: Color(0xFFF9FAFB),
+                                fontSize: 16,
+                              ),
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(
@@ -141,7 +146,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                                 prefixIcon: Icon(
                                   Icons.business,
-                                  color: Color(0xFFA9B4C2),
+                                  color: Color(0xFFD4AF37),
                                   size: 24,
                                 ),
                               ),
@@ -209,7 +214,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               _obscurePassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
-                              color: const Color(0xFFA9B4C2),
+                              color: const Color(0xFF9CA3AF),
                               size: 24,
                             ),
                             onPressed: () {
@@ -241,7 +246,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               _obscureConfirmPassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
-                              color: const Color(0xFFA9B4C2),
+                              color: const Color(0xFF9CA3AF),
                               size: 24,
                             ),
                             onPressed: () {
@@ -351,15 +356,14 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ? null
                                 : _handleSignUp,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFF6F61),
-                              foregroundColor: Colors.white,
+                              backgroundColor: const Color(0xFFD4AF37),
+                              foregroundColor: const Color(0xFF1F2937),
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(9999),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              elevation: 8,
-                              shadowColor: const Color(0xFFFF6F61).withOpacity(0.3),
-                              disabledBackgroundColor: const Color(0xFFFF6F61).withOpacity(0.6),
+                              elevation: 0,
+                              disabledBackgroundColor: const Color(0xFFD4AF37).withOpacity(0.6),
                             ),
                             child: authProvider.state == AuthState.loading
                                 ? const SizedBox(
@@ -367,7 +371,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1F2937)),
                                     ),
                                   )
                                 : const Text(
@@ -391,7 +395,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               const Text(
                                 '이미 계정이 있으신가요? ',
                                 style: TextStyle(
-                                  color: Color(0xFFA9B4C2),
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 14,
                                 ),
                               ),
@@ -407,7 +411,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: const Text(
                                   '로그인',
                                   style: TextStyle(
-                                    color: Color(0xFF06D6A0),
+                                    color: Color(0xFFD4AF37),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -448,7 +452,7 @@ class _SignUpPageState extends State<SignUpPage> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF3D405B),
+              color: Color(0xFFE5E7EB),
             ),
           ),
         ),
@@ -459,38 +463,56 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: controller,
             obscureText: obscureText,
             keyboardType: keyboardType,
+            style: const TextStyle(
+              color: Color(0xFFF9FAFB),
+              fontSize: 16,
+            ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: const TextStyle(
-                color: Color(0xFFA9B4C2),
+                color: Color(0xFF6B7280),
                 fontSize: 16,
               ),
               prefixIcon: Icon(
                 icon,
-                color: const Color(0xFFA9B4C2),
+                color: const Color(0xFFD4AF37),
                 size: 24,
               ),
               suffixIcon: suffixIcon,
               filled: true,
-              fillColor: Colors.white,
+              fillColor: const Color(0xFF1F2937),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: Color(0xFFE5E7EB),
+                borderSide: BorderSide(
+                  color: const Color(0xFFD4AF37).withOpacity(0.3),
                   width: 1,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: Color(0xFFE5E7EB),
+                borderSide: BorderSide(
+                  color: const Color(0xFFD4AF37).withOpacity(0.3),
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0xFFFF6F61),
+                  color: Color(0xFFD4AF37),
+                  width: 2,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 1,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Colors.red,
                   width: 2,
                 ),
               ),
