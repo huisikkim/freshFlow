@@ -30,14 +30,25 @@ class _DistributorRecommendationsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFF),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
+        title: const Text(
+          '유통업체 찾기',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
+          ),
+        ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.compare_arrows),
             tooltip: '유통업체 비교',
+            color: const Color(0xFFD4AF37),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -56,7 +67,7 @@ class _DistributorRecommendationsPageState
           if (matchingProvider.state == MatchingState.loading) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFFFF6F61),
+                color: Color(0xFFD4AF37),
               ),
             );
           }
@@ -78,18 +89,18 @@ class _DistributorRecommendationsPageState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.store_outlined,
                       size: 80,
-                      color: const Color(0xFFFF6F61),
+                      color: Color(0xFFD4AF37),
                     ),
                     const SizedBox(height: 24),
                     const Text(
                       '매장 정보가 등록되지 않았습니다',
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF3D405B),
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFF9FAFB),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -98,7 +109,7 @@ class _DistributorRecommendationsPageState
                       '유통업체를 추천받으려면\n먼저 매장 정보를 등록해주세요',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFFA9B4C2),
+                        color: Color(0xFF9CA3AF),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -117,8 +128,8 @@ class _DistributorRecommendationsPageState
                       icon: const Icon(Icons.store),
                       label: const Text('매장 정보 등록하기'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF6F61),
-                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFFD4AF37),
+                        foregroundColor: const Color(0xFF1F2937),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 14,
@@ -136,8 +147,10 @@ class _DistributorRecommendationsPageState
                       icon: const Icon(Icons.arrow_back),
                       label: const Text('홈으로 돌아가기'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF6B7280),
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        foregroundColor: const Color(0xFF9CA3AF),
+                        side: const BorderSide(
+                          color: Color(0xFF374151),
+                        ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 14,
@@ -163,15 +176,15 @@ class _DistributorRecommendationsPageState
                     const Icon(
                       Icons.store_outlined,
                       size: 80,
-                      color: Color(0xFFA9B4C2),
+                      color: Color(0xFF4B5563),
                     ),
                     const SizedBox(height: 24),
                     const Text(
                       '추천할 유통업체가 없습니다',
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF3D405B),
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFF9FAFB),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -179,7 +192,7 @@ class _DistributorRecommendationsPageState
                       '아직 등록된 유통업체가 없거나\n매장 정보와 일치하는 업체가 없습니다',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFFA9B4C2),
+                        color: Color(0xFF9CA3AF),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -191,8 +204,8 @@ class _DistributorRecommendationsPageState
                       icon: const Icon(Icons.arrow_back),
                       label: const Text('홈으로 돌아가기'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF6F61),
-                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFFD4AF37),
+                        foregroundColor: const Color(0xFF1F2937),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 12,
@@ -222,12 +235,15 @@ class _DistributorRecommendationsPageState
   }
 
   Widget _buildRecommendationCard(DistributorRecommendation recommendation) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 1,
-      shadowColor: Colors.black.withOpacity(0.05),
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1F2937),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -243,9 +259,9 @@ class _DistributorRecommendationsPageState
                   child: Text(
                     recommendation.distributorName,
                     style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F2937),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFF9FAFB),
                       height: 1.2,
                     ),
                   ),
@@ -253,18 +269,22 @@ class _DistributorRecommendationsPageState
                 const SizedBox(width: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 7,
+                    horizontal: 12,
+                    vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: _getScoreColor(recommendation.totalScore),
-                    borderRadius: BorderRadius.circular(100),
+                    color: _getScoreColor(recommendation.totalScore).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _getScoreColor(recommendation.totalScore),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     '${recommendation.totalScore.toStringAsFixed(1)}점',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    style: TextStyle(
+                      color: _getScoreColor(recommendation.totalScore),
+                      fontWeight: FontWeight.w700,
                       fontSize: 13,
                     ),
                   ),
@@ -277,7 +297,7 @@ class _DistributorRecommendationsPageState
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFECFDF5),
+                color: const Color(0xFFD4AF37).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -285,7 +305,7 @@ class _DistributorRecommendationsPageState
                 children: [
                   const Icon(
                     Icons.lightbulb,
-                    color: Color(0xFF06D6A0),
+                    color: Color(0xFFD4AF37),
                     size: 20,
                   ),
                   const SizedBox(width: 10),
@@ -294,7 +314,7 @@ class _DistributorRecommendationsPageState
                       recommendation.matchReason,
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Color(0xFF065F46),
+                        color: Color(0xFFE5E7EB),
                         height: 1.4,
                       ),
                     ),
@@ -373,6 +393,36 @@ class _DistributorRecommendationsPageState
             const SizedBox(height: 20),
             
             // 액션 버튼들
+            ElevatedButton(
+              onPressed: () {
+                _showQuoteRequestDialog(context, recommendation);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFD4AF37),
+                foregroundColor: const Color(0xFF1F2937),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                minimumSize: const Size(double.infinity, 0),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.receipt_long, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    '견적 요청',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -391,11 +441,14 @@ class _DistributorRecommendationsPageState
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF10B981),
-                      side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                      foregroundColor: const Color(0xFFD4AF37),
+                      side: const BorderSide(
+                        color: Color(0xFFD4AF37),
+                        width: 1,
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Row(
@@ -416,96 +469,35 @@ class _DistributorRecommendationsPageState
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _showQuoteRequestDialog(context, recommendation);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B6B),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.receipt_long, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                          '견적 요청',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
                   child: OutlinedButton(
                     onPressed: () {
                       // TODO: 전화 걸기
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF10B981),
-                      side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      foregroundColor: const Color(0xFF9CA3AF),
+                      side: const BorderSide(
+                        color: Color(0xFF374151),
+                        width: 1,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.call, size: 18),
-                        const SizedBox(width: 6),
+                        const Icon(Icons.call, size: 16),
+                        const SizedBox(width: 4),
                         Flexible(
                           child: Text(
                             recommendation.phoneNumber,
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                             overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // TODO: 이메일 보내기
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFFF6B6B),
-                      side: const BorderSide(color: Color(0xFFFF6B6B), width: 1.5),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.mail, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                          '이메일',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -523,7 +515,7 @@ class _DistributorRecommendationsPageState
   Widget _buildScoreRow(String label, double score, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: const Color(0xFF9CA3AF)),
+        Icon(icon, size: 20, color: const Color(0xFFD4AF37)),
         const SizedBox(width: 10),
         SizedBox(
           width: 80,
@@ -531,7 +523,7 @@ class _DistributorRecommendationsPageState
             label,
             style: const TextStyle(
               fontSize: 13,
-              color: Color(0xFF6B7280),
+              color: Color(0xFF9CA3AF),
             ),
           ),
         ),
@@ -539,7 +531,7 @@ class _DistributorRecommendationsPageState
           child: Container(
             height: 8,
             decoration: BoxDecoration(
-              color: const Color(0xFFE5E7EB),
+              color: const Color(0xFF374151),
               borderRadius: BorderRadius.circular(4),
             ),
             child: FractionallySizedBox(
@@ -562,7 +554,7 @@ class _DistributorRecommendationsPageState
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1F2937),
+              color: Color(0xFFF9FAFB),
             ),
             textAlign: TextAlign.right,
           ),
@@ -575,22 +567,22 @@ class _DistributorRecommendationsPageState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF9CA3AF)),
+        Icon(icon, size: 18, color: const Color(0xFFD4AF37)),
         const SizedBox(width: 8),
         Expanded(
           child: Text.rich(
             TextSpan(
               style: const TextStyle(
                 fontSize: 13,
-                color: Color(0xFF6B7280),
+                color: Color(0xFF9CA3AF),
                 height: 1.4,
               ),
               children: [
                 TextSpan(
                   text: '$label: ',
                   style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF4B5563),
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFE5E7EB),
                   ),
                 ),
                 TextSpan(text: value),
