@@ -73,11 +73,20 @@ class _ProductFormPageState extends State<ProductFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFF),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        title: const Text('상품 등록'),
-        backgroundColor: Colors.white,
+        title: const Text(
+          '상품 등록',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFF9FAFB),
+          ),
+        ),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
       ),
       body: Consumer<CatalogProvider>(
         builder: (context, provider, child) {
@@ -202,8 +211,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         ? null
                         : _handleSubmit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF06D6A0),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -216,7 +225,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                                  AlwaysStoppedAnimation<Color>(Colors.black),
                             ),
                           )
                         : const Text(
@@ -252,7 +261,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF3D405B),
+            color: Color(0xFFF9FAFB),
           ),
         ),
         const SizedBox(height: 8),
@@ -260,25 +269,34 @@ class _ProductFormPageState extends State<ProductFormPage> {
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
+          style: const TextStyle(color: Color(0xFFF9FAFB)),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(
-              color: Color(0xFFA9B4C2),
+              color: Color(0xFF6B7280),
               fontSize: 14,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFF1F2937),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: Color(0xFF374151)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: Color(0xFF374151)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF06D6A0), width: 2),
+              borderSide: const BorderSide(color: Color(0xFFD4AF37), width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -311,26 +329,28 @@ class _ProductFormPageState extends State<ProductFormPage> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF3D405B),
+            color: Color(0xFFF9FAFB),
           ),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _selectedCategory,
+          style: const TextStyle(color: Color(0xFFF9FAFB)),
+          dropdownColor: const Color(0xFF1F2937),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFF1F2937),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: Color(0xFF374151)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: Color(0xFF374151)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF06D6A0), width: 2),
+              borderSide: const BorderSide(color: Color(0xFFD4AF37), width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
