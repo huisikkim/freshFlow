@@ -13,7 +13,7 @@ class StoreSettlementPage extends StatefulWidget {
 }
 
 class _SettlementColors {
-  static const primary = Color(0xFF6366F1); // Indigo
+  static const primary = Color(0xFFD4AF37); // Gold
   static const blue = Color(0xFF3B82F6);
   static const green = Color(0xFF10B981);
   static const red = Color(0xFFEF4444);
@@ -21,11 +21,11 @@ class _SettlementColors {
   static const purple = Color(0xFF8B5CF6);
   static const teal = Color(0xFF14B8A6);
   
-  static const cardBg = Colors.white;
-  static const textPrimary = Color(0xFF1E293B);
-  static const textSecondary = Color(0xFF64748B);
-  static const divider = Color(0xFFE2E8F0);
-  static const background = Color(0xFFF8FAFC);
+  static const cardBg = Color(0xFF1F2937);
+  static const textPrimary = Color(0xFFF9FAFB);
+  static const textSecondary = Color(0xFF9CA3AF);
+  static const divider = Color(0xFF374151);
+  static const background = Color(0xFF111827);
 }
 
 class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTickerProviderStateMixin {
@@ -115,7 +115,7 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          color: _SettlementColors.textSecondary,
+          color: _SettlementColors.primary,
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -123,7 +123,7 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
             margin: const EdgeInsets.only(right: 8),
             child: IconButton(
               icon: const Icon(Icons.calendar_month_outlined),
-              color: _SettlementColors.textSecondary,
+              color: _SettlementColors.primary,
               onPressed: _selectDateRange,
               tooltip: '기간 선택',
             ),
@@ -175,16 +175,30 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
     return Consumer<SettlementProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: _SettlementColors.primary,
+            ),
+          );
         }
 
         if (provider.error != null) {
-          return Center(child: Text('오류: ${provider.error}'));
+          return Center(
+            child: Text(
+              '오류: ${provider.error}',
+              style: const TextStyle(color: _SettlementColors.textSecondary),
+            ),
+          );
         }
 
         final stats = provider.statistics;
         if (stats == null) {
-          return const Center(child: Text('통계 데이터가 없습니다'));
+          return const Center(
+            child: Text(
+              '통계 데이터가 없습니다',
+              style: TextStyle(color: _SettlementColors.textSecondary),
+            ),
+          );
         }
 
         return RefreshIndicator(
@@ -201,13 +215,10 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
                     decoration: BoxDecoration(
                       color: _SettlementColors.cardBg,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      border: Border.all(
+                        color: _SettlementColors.primary.withOpacity(0.2),
+                        width: 1,
+                      ),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
@@ -262,14 +273,11 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
                 Container(
                   decoration: BoxDecoration(
                     color: _SettlementColors.cardBg,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _SettlementColors.primary.withOpacity(0.2),
+                      width: 1,
+                    ),
                   ),
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -373,16 +381,30 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
     return Consumer<SettlementProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: _SettlementColors.primary,
+            ),
+          );
         }
 
         if (provider.error != null) {
-          return Center(child: Text('오류: ${provider.error}'));
+          return Center(
+            child: Text(
+              '오류: ${provider.error}',
+              style: const TextStyle(color: _SettlementColors.textSecondary),
+            ),
+          );
         }
 
         final dailySettlements = provider.dailySettlements;
         if (dailySettlements.isEmpty) {
-          return const Center(child: Text('일일 정산 내역이 없습니다'));
+          return const Center(
+            child: Text(
+              '일일 정산 내역이 없습니다',
+              style: TextStyle(color: _SettlementColors.textSecondary),
+            ),
+          );
         }
 
         return RefreshIndicator(
@@ -489,16 +511,30 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
     return Consumer<SettlementProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: _SettlementColors.primary,
+            ),
+          );
         }
 
         if (provider.error != null) {
-          return Center(child: Text('오류: ${provider.error}'));
+          return Center(
+            child: Text(
+              '오류: ${provider.error}',
+              style: const TextStyle(color: _SettlementColors.textSecondary),
+            ),
+          );
         }
 
         final settlements = provider.settlements;
         if (settlements.isEmpty) {
-          return const Center(child: Text('정산 내역이 없습니다'));
+          return const Center(
+            child: Text(
+              '정산 내역이 없습니다',
+              style: TextStyle(color: _SettlementColors.textSecondary),
+            ),
+          );
         }
 
         return RefreshIndicator(
@@ -642,14 +678,11 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
     return Container(
       decoration: BoxDecoration(
         color: _SettlementColors.cardBg,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _SettlementColors.primary.withOpacity(0.2),
+          width: 1,
+        ),
       ),
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -715,13 +748,10 @@ class _StoreSettlementPageState extends State<StoreSettlementPage> with SingleTi
       decoration: BoxDecoration(
         color: _SettlementColors.cardBg,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(
+          color: _SettlementColors.primary.withOpacity(0.2),
+          width: 1,
+        ),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
