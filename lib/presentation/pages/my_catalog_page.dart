@@ -26,20 +26,21 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: const Text(
           '내 상품 관리',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFE5E7EB),
           ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1F2937),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
         centerTitle: true,
         automaticallyImplyLeading: false,
+        iconTheme: const IconThemeData(color: Color(0xFFE5E7EB)),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_outlined),
@@ -51,16 +52,6 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
       ),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 120),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF10B981).withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
         child: FloatingActionButton.extended(
           onPressed: () {
             Navigator.of(context).push(
@@ -74,16 +65,16 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
               context.read<CatalogProvider>().loadMyProducts();
             });
           },
-          icon: const Icon(Icons.add, size: 24),
+          icon: const Icon(Icons.add, size: 22, color: Colors.black),
           label: const Text(
             '상품 등록',
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
             ),
           ),
-          backgroundColor: const Color(0xFF10B981),
-          foregroundColor: Colors.white,
+          backgroundColor: const Color(0xFFD4AF37),
           elevation: 0,
         ),
       ),
@@ -92,7 +83,7 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
           if (provider.state == CatalogState.loading) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Color(0xFF06D6A0),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
               ),
             );
           }
@@ -107,12 +98,15 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                     const Icon(
                       Icons.error_outline,
                       size: 64,
-                      color: Colors.red,
+                      color: Color(0xFFEF4444),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       provider.errorMessage ?? '조회 실패',
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF9CA3AF),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -121,8 +115,12 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                         provider.loadMyProducts();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF06D6A0),
-                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFFD4AF37),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: const Text('다시 시도'),
                     ),
@@ -137,18 +135,18 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.inventory_2_outlined,
                     size: 80,
-                    color: Color(0xFFA9B4C2),
+                    color: const Color(0xFF9CA3AF).withOpacity(0.5),
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     '등록된 상품이 없습니다',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF3D405B),
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFE5E7EB),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -156,7 +154,7 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                     '하단 버튼을 눌러 상품을 등록하세요',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xFFA9B4C2),
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
@@ -180,15 +178,12 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF7FF),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFF374151).withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -205,17 +200,17 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                       Text(
                         product.productName,
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFE5E7EB),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         product.category,
                         style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF6B7280),
+                          fontSize: 13,
+                          color: Color(0xFF9CA3AF),
                         ),
                       ),
                     ],
@@ -228,16 +223,16 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                   ),
                   decoration: BoxDecoration(
                     color: product.isAvailable
-                        ? const Color(0xFFD1FAE5)
-                        : const Color(0xFFFEE2E2),
+                        ? const Color(0xFF10B981).withOpacity(0.15)
+                        : const Color(0xFFEF4444).withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     product.isAvailable ? '판매중' : '품절',
                     style: TextStyle(
                       color: product.isAvailable
-                          ? const Color(0xFF059669)
-                          : const Color(0xFFDC2626),
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444),
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -262,9 +257,9 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                     Text(
                       _formatNumber(product.unitPrice),
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFF87171),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFFD4AF37),
                       ),
                     ),
                     Text(
@@ -281,14 +276,14 @@ class _MyCatalogPageState extends State<MyCatalogPage> {
                     const Icon(
                       Icons.inventory_2_outlined,
                       size: 16,
-                      color: Color(0xFF6B7280),
+                      color: Color(0xFF9CA3AF),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '재고: ${product.stockQuantity}${product.unit}',
                       style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF6B7280),
+                        fontSize: 13,
+                        color: Color(0xFF9CA3AF),
                       ),
                     ),
                   ],
