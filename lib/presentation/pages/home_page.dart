@@ -17,17 +17,17 @@ class HomePage extends StatelessWidget {
     final isDistributor = user?.userType == 'DISTRIBUTOR';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF111827),
+      backgroundColor: const Color(0xFF1E293B), // 옅은 다크 블루그레이
       appBar: AppBar(
         title: Text(
           isStoreOwner ? '가게 관리' : '유통업체 관리',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFFE5E7EB),
+            color: Color(0xFFF1F5F9),
           ),
         ),
-        backgroundColor: const Color(0xFF111827),
+        backgroundColor: const Color(0xFF1E293B),
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: const Color(0xFF334155), // 옅은 다크 카드
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -93,8 +93,12 @@ class HomePage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withOpacity(0.1),
+                  color: const Color(0xFF334155), // 옅은 다크 카드
                   borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xFFD4AF37).withOpacity(0.3),
+                    width: 1,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

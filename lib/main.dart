@@ -8,6 +8,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await InjectionContainer.init();
   runApp(const MyApp());
+  
+  // 스플래시 스크린 제거 (앱 초기화 완료 후)
+  // FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {

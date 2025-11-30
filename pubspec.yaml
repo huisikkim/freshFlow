@@ -57,6 +57,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -117,3 +118,16 @@ flutter_launcher_icons:
   linux:
     generate: true
     image_path: "assets/icons/app_icon.png"
+
+# Flutter Native Splash Configuration
+flutter_native_splash:
+  color: "#1F2937"
+  image: assets/icons/app_icon.png
+  android: true
+  ios: true
+  web: false
+  
+  # 안드로이드 12+ 지원
+  android_12:
+    image: assets/icons/app_icon.png
+    color: "#1F2937"
