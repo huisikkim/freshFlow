@@ -98,19 +98,19 @@ class _DistributorRegistrationPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
         title: Text(
           _isEditMode ? '유통업체 정보 수정' : '유통업자 정보 등록',
           style: const TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFE1E2E2),
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFE5E7EB),
           ),
         ),
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFFE1E2E2)),
+        iconTheme: const IconThemeData(color: Color(0xFFE5E7EB)),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -136,7 +136,7 @@ class _DistributorRegistrationPageState
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -207,23 +207,23 @@ class _DistributorRegistrationPageState
                             hint: '예: 서울시 송파구 올림픽로 456',
                             icon: Icons.home_outlined,
                           ),
-                          const SizedBox(height: 24),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                          const SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Row(
                               children: [
                                 const Icon(
                                   Icons.local_shipping_outlined,
-                                  color: Color(0xFFA9A9A9),
+                                  color: Color(0xFFA0A0A0),
                                   size: 24,
                                 ),
                                 const SizedBox(width: 12),
                                 const Text(
                                   '배송 가능 여부',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xFFE1E2E2),
+                                    color: Color(0xFFA0A0A0),
                                   ),
                                 ),
                                 const Spacer(),
@@ -234,12 +234,15 @@ class _DistributorRegistrationPageState
                                       _deliveryAvailable = value;
                                     });
                                   },
-                                  activeColor: const Color(0xFFF26B5B),
+                                  activeColor: const Color(0xFFD4AF37),
+                                  activeTrackColor: const Color(0xFFD4AF37).withOpacity(0.5),
+                                  inactiveThumbColor: Colors.white,
+                                  inactiveTrackColor: const Color(0xFF374151),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
                           _buildTextField(
                             controller: _deliveryInfoController,
                             label: '배송 정보',
@@ -274,8 +277,8 @@ class _DistributorRegistrationPageState
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(24),
-                  color: const Color(0xFF121212),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  color: const Color(0xFF111827),
                   child: SizedBox(
                     width: double.infinity,
                     height: 56,
@@ -285,13 +288,14 @@ class _DistributorRegistrationPageState
                               ? null
                               : _handleSubmit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF26B5B),
-                        foregroundColor: Colors.white,
+                        backgroundColor: const Color(0xFFD4AF37),
+                        foregroundColor: Colors.black,
+                        disabledBackgroundColor: const Color(0xFFD4AF37).withOpacity(0.5),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 8,
-                        shadowColor: const Color(0xFFF26B5B).withOpacity(0.3),
+                        elevation: 0,
+                        shadowColor: const Color(0xFFD4AF37).withOpacity(0.2),
                       ),
                       child:
                           distributorProvider.state == DistributorState.loading
@@ -301,7 +305,7 @@ class _DistributorRegistrationPageState
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
+                                        Colors.black),
                                   ),
                                 )
                               : Text(
@@ -309,7 +313,7 @@ class _DistributorRegistrationPageState
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
                     ),
@@ -334,80 +338,80 @@ class _DistributorRegistrationPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFFE1E2E2),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFFA0A0A0),
+            ),
           ),
         ),
-        const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
           style: const TextStyle(
-            color: Color(0xFFE1E2E2),
+            color: Color(0xFFF5F5F5),
             fontSize: 15,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(
-              color: Color(0xFFA9A9A9),
+              color: Color(0xFFA0A0A0),
               fontSize: 15,
             ),
             prefixIcon: Padding(
               padding: const EdgeInsets.only(left: 16, right: 12),
               child: Icon(
                 icon,
-                color: const Color(0xFFA9A9A9),
-                size: 24,
+                color: const Color(0xFFA0A0A0),
+                size: 22,
               ),
             ),
             prefixIconConstraints: const BoxConstraints(
-              minWidth: 52,
+              minWidth: 50,
             ),
             filled: true,
-            fillColor: const Color(0xFF1E1E1E),
+            fillColor: const Color(0xFF1F2937),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF3A3A3C),
-                width: 1,
-              ),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF3A3A3C),
-                width: 1,
-              ),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFFF26B5B),
-                width: 2,
+                color: Color(0xFFD4AF37),
+                width: 1.5,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Colors.red,
+                color: Color(0xFFEF4444),
                 width: 1,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Colors.red,
-                width: 2,
+                color: Color(0xFFEF4444),
+                width: 1.5,
               ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: 12,
+              vertical: maxLines > 1 ? 14 : 12,
+            ),
+            errorStyle: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFFEF4444),
             ),
           ),
           validator: (value) {
