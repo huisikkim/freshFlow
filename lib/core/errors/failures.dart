@@ -1,10 +1,13 @@
 abstract class Failure {
   final String message;
   const Failure({required this.message});
+  
+  @override
+  String toString() => message;
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure({required super.message});
+  ServerFailure(String error) : super(message: error);
 }
 
 class NetworkFailure extends Failure {

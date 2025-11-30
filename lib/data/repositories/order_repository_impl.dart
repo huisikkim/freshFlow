@@ -31,7 +31,7 @@ class OrderRepositoryImpl implements OrderRepository {
       }
 
       if (user.storeId == null) {
-        return Left(ServerFailure(message: 'Store ID not found. Please login again.'));
+        return Left(ServerFailure('Store ID not found. Please login again.'));
       }
 
       print('🔑 토큰 확인: ${user.accessToken.substring(0, 20)}...');
@@ -58,11 +58,11 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(UnauthorizedFailure());
     } on ServerException catch (e) {
       print('❌ 서버 예외: ${e.message}');
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       print('❌ 예상치 못한 오류: $e');
       print('❌ 오류 타입: ${e.runtimeType}');
-      return Left(ServerFailure(message: 'Unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
     }
   }
 
@@ -75,7 +75,7 @@ class OrderRepositoryImpl implements OrderRepository {
       }
 
       if (user.storeId == null) {
-        return Left(ServerFailure(message: 'Store ID not found. Please login again.'));
+        return Left(ServerFailure('Store ID not found. Please login again.'));
       }
 
       final orders = await remoteDataSource.getOrders(user.accessToken, user.storeId!);
@@ -83,9 +83,9 @@ class OrderRepositoryImpl implements OrderRepository {
     } on UnauthorizedException {
       return Left(UnauthorizedFailure());
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error occurred'));
+      return Left(ServerFailure('Unexpected error occurred'));
     }
   }
 
@@ -98,7 +98,7 @@ class OrderRepositoryImpl implements OrderRepository {
       }
 
       if (user.distributorId == null) {
-        return Left(ServerFailure(message: 'Distributor ID not found. Please login again.'));
+        return Left(ServerFailure('Distributor ID not found. Please login again.'));
       }
 
       final orders = await remoteDataSource.getDistributorOrders(
@@ -109,9 +109,9 @@ class OrderRepositoryImpl implements OrderRepository {
     } on UnauthorizedException {
       return Left(UnauthorizedFailure());
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error occurred'));
+      return Left(ServerFailure('Unexpected error occurred'));
     }
   }
 
@@ -124,7 +124,7 @@ class OrderRepositoryImpl implements OrderRepository {
       }
 
       if (user.storeId == null) {
-        return Left(ServerFailure(message: 'Store ID not found. Please login again.'));
+        return Left(ServerFailure('Store ID not found. Please login again.'));
       }
 
       final order = await remoteDataSource.getOrderById(user.accessToken, user.storeId!, orderId);
@@ -134,9 +134,9 @@ class OrderRepositoryImpl implements OrderRepository {
     } on NotFoundException catch (e) {
       return Left(NotFoundFailure(message: e.message));
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error occurred'));
+      return Left(ServerFailure('Unexpected error occurred'));
     }
   }
 
@@ -149,7 +149,7 @@ class OrderRepositoryImpl implements OrderRepository {
       }
 
       if (user.storeId == null) {
-        return Left(ServerFailure(message: 'Store ID not found. Please login again.'));
+        return Left(ServerFailure('Store ID not found. Please login again.'));
       }
 
       final order = await remoteDataSource.cancelOrder(user.accessToken, user.storeId!, orderId);
@@ -159,9 +159,9 @@ class OrderRepositoryImpl implements OrderRepository {
     } on NotFoundException catch (e) {
       return Left(NotFoundFailure(message: e.message));
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error occurred'));
+      return Left(ServerFailure('Unexpected error occurred'));
     }
   }
 
@@ -196,10 +196,10 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(UnauthorizedFailure());
     } on ServerException catch (e) {
       print('❌ 서버 예외: ${e.message}');
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       print('❌ 예상치 못한 오류: $e');
-      return Left(ServerFailure(message: 'Unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
     }
   }
 
@@ -229,10 +229,10 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(NotFoundFailure(message: e.message));
     } on ServerException catch (e) {
       print('❌ 서버 예외: ${e.message}');
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       print('❌ 예상치 못한 오류: $e');
-      return Left(ServerFailure(message: 'Unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
     }
   }
 }

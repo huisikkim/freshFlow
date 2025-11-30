@@ -6,6 +6,7 @@ import 'package:fresh_flow/presentation/providers/order_provider.dart';
 import 'package:fresh_flow/presentation/widgets/ship_delivery_modal.dart';
 import 'package:fresh_flow/presentation/pages/create_store_review_page.dart';
 import 'package:fresh_flow/presentation/pages/create_distributor_review_page.dart';
+import 'package:fresh_flow/presentation/pages/quality_issue/submit_quality_issue_page.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetailPage extends StatelessWidget {
@@ -74,6 +75,12 @@ class OrderDetailPage extends StatelessWidget {
               // 리뷰 작성 버튼 (배송완료 상태일 때)
               if (order.status == OrderStatus.delivered)
                 _buildReviewButton(context, isDark),
+              
+              // 품질 이슈 신고 버튼 (배송완료 상태일 때, 가게사장님만)
+              if (!isDistributor && order.status == OrderStatus.delivered) ...[
+                const SizedBox(height: 16),
+                _buildQualityIssueButton(context, isDark),
+              ],
               
               const SizedBox(height: 16),
             ],
@@ -251,6 +258,97 @@ class OrderDetailPage extends StatelessWidget {
         );
       }
     }
+  }
+
+  Widget _buildQualityIssueButton(BuildContext context, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.report_problem_outlined,
+                color: isDark ? const Color(0xFFFB923C) : const Color(0xFFF97316),
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '품질 문제가 있나요?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF111827),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '상품에 문제가 있으면 신고해주세요. 환불 또는 교환 처리해드립니다.',
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SubmitQualityIssuePage(
+                      storeId: order.storeId,
+                      // 주문 정보를 미리 채워서 전달
+                      prefilledData: {
+                        'orderId': order.dbId?.toString() ?? order.id,
+                        'distributorId': order.distributorId,
+                      },
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.report,
+                color: isDark ? const Color(0xFFFB923C) : const Color(0xFFF97316),
+              ),
+              label: Text(
+                '품질 이슈 신고하기',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? const Color(0xFFFB923C) : const Color(0xFFF97316),
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: BorderSide(
+                  color: isDark ? const Color(0xFFFB923C) : const Color(0xFFF97316),
+                  width: 2,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildReviewButton(BuildContext context, bool isDark) {

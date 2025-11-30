@@ -26,29 +26,27 @@ class _ChatListPageState extends State<ChatListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF8F7FA),
+      backgroundColor: const Color(0xFF111827),
       appBar: AppBar(
-        backgroundColor: isDark 
-            ? const Color(0xFF2C2C2E).withOpacity(0.8) 
-            : Colors.white.withOpacity(0.8),
+        backgroundColor: const Color(0xFF111827),
         elevation: 0,
-        centerTitle: true,
-        title: Text(
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        title: const Text(
           '채팅',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: isDark ? const Color(0xFFF9FAFB) : const Color(0xFF111827),
+            color: Color(0xFFF9FAFB),
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.search,
-              color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+              color: Color(0xFF9CA3AF),
+              size: 28,
             ),
             onPressed: () {
               // 검색 기능 구현 예정
@@ -67,25 +65,25 @@ class _ChatListPageState extends State<ChatListPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.chat_bubble_outline,
                     size: 64,
-                    color: isDark ? const Color(0xFF9CA3AF) : Colors.grey,
+                    color: Color(0xFF6B7280),
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  const Text(
                     '채팅 목록을 불러올 수 없습니다',
                     style: TextStyle(
                       fontSize: 16,
-                      color: isDark ? const Color(0xFF9CA3AF) : Colors.grey[700],
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     '서버 연결을 확인해주세요',
                     style: TextStyle(
                       fontSize: 14,
-                      color: isDark ? const Color(0xFF6B7280) : Colors.grey[500],
+                      color: Color(0xFF6B7280),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -97,8 +95,8 @@ class _ChatListPageState extends State<ChatListPage> {
                     icon: const Icon(Icons.refresh),
                     label: const Text('다시 시도'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEF4444),
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
@@ -114,21 +112,21 @@ class _ChatListPageState extends State<ChatListPage> {
           }
 
           if (provider.chatRooms.isEmpty) {
-            return Center(
+            return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.chat_bubble_outline,
                     size: 64,
-                    color: isDark ? const Color(0xFF9CA3AF) : Colors.grey[400],
+                    color: Color(0xFF6B7280),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Text(
                     '아직 대화가 없습니다',
                     style: TextStyle(
                       fontSize: 16,
-                      color: isDark ? const Color(0xFF9CA3AF) : Colors.grey[600],
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
@@ -139,12 +137,12 @@ class _ChatListPageState extends State<ChatListPage> {
           return RefreshIndicator(
             onRefresh: () => provider.loadChatRooms(),
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.all(16),
               itemCount: provider.chatRooms.length,
               itemBuilder: (context, index) {
                 final room = provider.chatRooms[index];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: 12),
                   child: _ChatRoomTile(
                     room: room,
                     onTap: () => _navigateToChatRoom(context, room),
@@ -188,7 +186,6 @@ class _ChatRoomTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final userType = authProvider.user?.userType;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // userType에 따라 표시할 이름 결정
     final displayName = userType == 'STORE_OWNER'
@@ -209,45 +206,16 @@ class _ChatRoomTile extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+            color: const Color(0xFF1F2937),
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 프로필 아바타
-              Stack(
-                children: [
-                  _buildAvatar(displayName, isDark),
-                  // 온라인 상태 표시 (임의로 첫 번째 채팅방만 온라인으로 표시)
-                  if (room.unreadCount > 0)
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981), // green-500
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              _buildAvatar(displayName),
               const SizedBox(width: 12),
               // 채팅 정보
               Expanded(
@@ -261,12 +229,10 @@ class _ChatRoomTile extends StatelessWidget {
                         Expanded(
                           child: Text(
                             displayName,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: isDark 
-                                  ? const Color(0xFFF9FAFB) 
-                                  : const Color(0xFF111827),
+                              color: Color(0xFFF9FAFB),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -274,11 +240,9 @@ class _ChatRoomTile extends StatelessWidget {
                         if (timeText.isNotEmpty)
                           Text(
                             timeText,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
-                              color: isDark 
-                                  ? const Color(0xFF9CA3AF) 
-                                  : const Color(0xFF6B7280),
+                              color: Color(0xFF9CA3AF),
                             ),
                           ),
                       ],
@@ -289,24 +253,20 @@ class _ChatRoomTile extends StatelessWidget {
                       children: [
                         // 읽음 표시 아이콘 (읽지 않은 메시지가 없을 때만)
                         if (!hasUnread && room.lastMessageAt != null)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 4),
                             child: Icon(
                               Icons.done_all,
                               size: 16,
-                              color: isDark 
-                                  ? const Color(0xFF9CA3AF) 
-                                  : const Color(0xFF6B7280),
+                              color: Color(0xFF6B7280),
                             ),
                           ),
                         Expanded(
                           child: Text(
                             _getLastMessagePreview(),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              color: isDark 
-                                  ? const Color(0xFF9CA3AF) 
-                                  : const Color(0xFF6B7280),
+                              color: Color(0xFF9CA3AF),
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
@@ -345,15 +305,15 @@ class _ChatRoomTile extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(String displayName, bool isDark) {
+  Widget _buildAvatar(String displayName) {
     // 이름의 첫 글자로 색상 결정
     final colors = [
-      const Color(0xFF8B5CF6), // purple
+      const Color(0xFFEC4899), // pink
       const Color(0xFF3B82F6), // blue
       const Color(0xFF10B981), // green
       const Color(0xFFF59E0B), // amber
       const Color(0xFFEF4444), // red
-      const Color(0xFF06B6D4), // cyan
+      const Color(0xFF8B5CF6), // purple
     ];
     
     final colorIndex = displayName.codeUnitAt(0) % colors.length;
@@ -363,14 +323,14 @@ class _ChatRoomTile extends StatelessWidget {
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        color: avatarColor.withOpacity(isDark ? 0.3 : 0.15),
+        color: avatarColor.withOpacity(0.2),
         shape: BoxShape.circle,
       ),
       child: Center(
         child: Text(
           displayName[0],
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w700,
             color: avatarColor,
           ),

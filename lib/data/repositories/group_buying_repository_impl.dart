@@ -58,7 +58,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final room = await remoteDataSource.createRoom(roomData);
       return Right(room);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -71,7 +71,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final result = await remoteDataSource.openRoom(roomId, distributorId);
       return Right(result);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -84,7 +84,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final result = await remoteDataSource.closeRoom(roomId, distributorId);
       return Right(result);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -98,7 +98,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       await remoteDataSource.cancelRoom(roomId, distributorId, reason);
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -110,7 +110,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final rooms = await remoteDataSource.getDistributorRooms(distributorId);
       return Right(rooms);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -126,7 +126,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       );
       return Right(rooms);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -136,7 +136,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final room = await remoteDataSource.getRoomDetail(roomId);
       return Right(room);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -146,7 +146,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final rooms = await remoteDataSource.getFeaturedRooms();
       return Right(rooms);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -156,7 +156,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final rooms = await remoteDataSource.getDeadlineSoonRooms();
       return Right(rooms);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -181,7 +181,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final participant = await remoteDataSource.joinRoom(participantData);
       return Right(participant);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -195,7 +195,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       await remoteDataSource.cancelParticipation(participantId, storeId, reason);
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -207,7 +207,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final participants = await remoteDataSource.getStoreParticipations(storeId);
       return Right(participants);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -219,7 +219,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final participants = await remoteDataSource.getRoomParticipants(roomId);
       return Right(participants);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -231,7 +231,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final stats = await remoteDataSource.getDistributorStatistics(distributorId);
       return Right(stats);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -243,7 +243,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final stats = await remoteDataSource.getStoreStatistics(storeId);
       return Right(stats);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -253,7 +253,7 @@ class GroupBuyingRepositoryImpl implements GroupBuyingRepository {
       final stats = await remoteDataSource.getSystemStatistics();
       return Right(stats);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 }
