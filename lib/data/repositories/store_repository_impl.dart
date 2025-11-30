@@ -42,4 +42,14 @@ class StoreRepositoryImpl implements StoreRepository {
       address: address,
     );
   }
+
+  @override
+  Future<Store?> getStoreInfo() async {
+    final user = await authRepository.getCurrentUser();
+    if (user == null) {
+      throw Exception('로그인이 필요합니다');
+    }
+
+    return await remoteDataSource.getStoreInfo(token: user.accessToken);
+  }
 }

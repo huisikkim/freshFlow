@@ -16,6 +16,8 @@ abstract class StoreRemoteDataSource {
     required String phoneNumber,
     required String address,
   });
+  
+  Future<StoreModel?> getStoreInfo({required String token});
 }
 
 class StoreRemoteDataSourceImpl implements StoreRemoteDataSource {
@@ -59,6 +61,25 @@ class StoreRemoteDataSourceImpl implements StoreRemoteDataSource {
       return StoreModel.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('매장 등록에 실패했습니다: ${response.body}');
+    }
+  }
+
+  @override
+  Future<StoreModel?> getStoreInfo({required String token}) async {
+    final response = await client.get(
+      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.storeInfoEndpoint}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return StoreModel.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 404) {
+      return null; // 매장 정보가 없는 경우
+    } else {
+      throw Exception('매장 정보 조회에 실패했습니다: ${response.body}');
     }
   }
 }

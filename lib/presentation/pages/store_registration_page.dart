@@ -22,6 +22,36 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
   final _operatingHoursController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _addressController = TextEditingController();
+  bool _isEditMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadStoreInfo();
+    });
+  }
+
+  Future<void> _loadStoreInfo() async {
+    final storeProvider = context.read<StoreProvider>();
+    await storeProvider.loadStoreInfo();
+    
+    if (storeProvider.store != null) {
+      final store = storeProvider.store!;
+      setState(() {
+        _isEditMode = true;
+        _storeNameController.text = store.storeName;
+        _businessTypeController.text = store.businessType;
+        _regionController.text = store.region;
+        _mainProductsController.text = store.mainProducts;
+        _descriptionController.text = store.description;
+        _employeeCountController.text = store.employeeCount.toString();
+        _operatingHoursController.text = store.operatingHours;
+        _phoneNumberController.text = store.phoneNumber;
+        _addressController.text = store.address;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -59,9 +89,9 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text(
-          '매장 등록',
-          style: TextStyle(
+        title: Text(
+          _isEditMode ? '매장 정보 수정' : '매장 등록',
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Color(0xFF1F2937),
@@ -77,16 +107,28 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
           builder: (context, storeProvider, child) {
             if (storeProvider.state == StoreState.success) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ChangeNotifierProvider(
-                      create: (_) =>
-                          InjectionContainer.getMatchingProvider(),
-                      child: const DistributorRecommendationsPage(),
+                if (_isEditMode) {
+                  // 수정 모드인 경우 이전 페이지로 돌아가기
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('매장 정보가 수정되었습니다'),
+                      backgroundColor: Color(0xFF10B981),
                     ),
-                  ),
-                );
+                  );
+                  Navigator.of(context).pop();
+                } else {
+                  // 신규 등록인 경우 유통업체 찾기 페이지로 이동
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider(
+                        create: (_) =>
+                            InjectionContainer.getMatchingProvider(),
+                        child: const DistributorRecommendationsPage(),
+                      ),
+                    ),
+                  );
+                }
               });
             }
 
@@ -224,9 +266,9 @@ class _StoreRegistrationPageState extends State<StoreRegistrationPage> {
                                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                   ),
                                 )
-                              : const Text(
-                                  '매장 등록',
-                                  style: TextStyle(
+                              : Text(
+                                  _isEditMode ? '매장 정보 수정' : '매장 등록',
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),

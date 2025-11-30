@@ -12,4 +12,6 @@ abstract class StoreRepository {
     required String phoneNumber,
     required String address,
   });
+  
+  Future<Store?> getStoreInfo();
 }
